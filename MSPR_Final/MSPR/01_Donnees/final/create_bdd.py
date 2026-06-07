@@ -4,8 +4,11 @@ import os
 import random
 
 # Load the initial large dataset in chunks or limit columns to speed up, or just read it
-input_path = r'C:/Users/tarek/Downloads/economic-pulse-analyzer/ml/data/data_nouvelle_aquitaine_final.csv'
-output_dir = r'C:/Users/tarek/Downloads/economic-pulse-analyzer/MSPR_Final/MSPR/01_Donnees/final'
+_SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+_MSPR_FINAL = os.path.abspath(os.path.join(_SCRIPT_DIR, '..', '..', '..'))
+
+input_path = os.path.join(_MSPR_FINAL, 'MSPR', '01_Donnees', 'data_nouvelle_aquitaine_final.csv')
+output_dir = _SCRIPT_DIR
 output_path = os.path.join(output_dir, 'data_nouvelle_aquitaine_final_2022.csv')
 
 print("Reading input database...")

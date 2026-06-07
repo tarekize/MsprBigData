@@ -24,17 +24,18 @@ import seaborn as sns
 
 warnings.filterwarnings('ignore')
 
-# Configuration des chemins
-# Mise à jour du base_path pour correspondre à l'environnement actuel
-base_path = r'c:\Users\tarek\Downloads\economic-pulse-analyzer'
-data_2016_path = os.path.join(base_path, 'MSPR_Final', 'indicateur data 2016')
-data_2020_path = os.path.join(base_path, 'MSPR_Final', 'indicateur data 2020')
-securite_2017_path = os.path.join(base_path, 'MSPR_Final', 'MSPR', '01_Donnees', 'facteur', 'securite', 'Données chiffrées RALFSS 2017')
-securite_2021_path = os.path.join(base_path, 'MSPR_Final', 'MSPR', '01_Donnees', 'facteur', 'securite', 'securite 2021')
-delta_dir = os.path.join(base_path, 'MSPR_Final', 'MSPR', '01_Donnees', 'delta_tables')
-elec_file = os.path.join(base_path, 'MSPR_Final', 'MSPR', '01_Donnees', 'brut', 'nouvelle_aquitaine_2012_2017_tour1.csv')
-export_final_path = os.path.join(base_path, 'MSPR_Final', 'MSPR', '01_Donnees', 'data_nouvelle_aquitaine_final.csv')
-export_delta_lake = os.path.join(base_path, 'MSPR_Final', 'MSPR', '01_Donnees', 'delta_lake_final')
+# Configuration des chemins — relatifs au script, portables cross-platform
+_SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+_MSPR_FINAL = os.path.abspath(os.path.join(_SCRIPT_DIR, '..', '..', '..'))
+
+data_2016_path = os.path.join(_MSPR_FINAL, 'indicateur data 2016')
+data_2020_path = os.path.join(_MSPR_FINAL, 'indicateur data 2020')
+securite_2017_path = os.path.join(_MSPR_FINAL, 'MSPR', '01_Donnees', 'facteur', 'securite', 'Données chiffrées RALFSS 2017')
+securite_2021_path = os.path.join(_MSPR_FINAL, 'MSPR', '01_Donnees', 'facteur', 'securite', 'securite 2021')
+delta_dir = os.path.join(_MSPR_FINAL, 'MSPR', '01_Donnees', 'delta_tables')
+elec_file = os.path.join(_MSPR_FINAL, 'MSPR', '01_Donnees', 'brut', 'nouvelle_aquitaine_2012_2017_tour1.csv')
+export_final_path = os.path.join(_MSPR_FINAL, 'MSPR', '01_Donnees', 'data_nouvelle_aquitaine_final.csv')
+export_delta_lake = os.path.join(_MSPR_FINAL, 'MSPR', '01_Donnees', 'delta_lake_final')
 
 os.makedirs(delta_dir, exist_ok=True)
 
