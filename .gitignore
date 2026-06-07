@@ -58,3 +58,10 @@ dist-ssr
 *.sw?
 ml/data/*.csv
 !ml/data/.gitkeep
+
+# MSPR_Final - fichiers lourds exclus
+MSPR_Final/.venv/
+MSPR_Final/outputs/nosql_db.json
+MSPR_Final/MSPR/01_Donnees/delta_lake_final/
+MSPR_Final/**/*.parquet
+MSPR_Final/**/*.snappy.parquet
