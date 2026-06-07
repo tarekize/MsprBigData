@@ -1,0 +1,54 @@
+{
+  "generated_at": "2026-06-07T04:27:42.004542",
+  "charts": [
+    {
+      "id": "correlation_heatmap",
+      "file": "correlation_heatmap.png",
+      "title": "Matrice de Corrélation (Seaborn)",
+      "description": "Corrélation de Pearson entre indicateurs socio-économiques et orientations politiques.",
+      "key_finding": "Le taux d'emploi est la variable la plus corrélée avec le vote Centre (r=0.42). La délinquance est la plus corrélée avec le vote Extrême Droite (r=0.62)."
+    },
+    {
+      "id": "model_comparison",
+      "file": "model_comparison.png",
+      "title": "Comparaison des Modèles ML (Matplotlib)",
+      "description": "Comparaison Accuracy/Precision/Recall/F1 pour 5 modèles supervisés.",
+      "key_finding": "Logistic Regression atteint la meilleure accuracy (81.81%), suivie de XGBoost (81.36%)."
+    },
+    {
+      "id": "feature_importance",
+      "file": "feature_importance.png",
+      "title": "Importance des Variables XGBoost (Matplotlib)",
+      "description": "Importance relative des 10 features les plus impactantes selon XGBoost.",
+      "key_finding": "delta_P16_POP (évolution population) est la variable la plus prédictive (18.2% du gain)."
+    },
+    {
+      "id": "temporal_scenarios",
+      "file": "temporal_scenarios.png",
+      "title": "Scénarios Temporels 2024-2026 (Matplotlib)",
+      "description": "Prédictions à 1, 2 et 3 ans basées sur les tendances des indicateurs delta.",
+      "key_finding": "Tendance à l'érosion du bloc Centre (-5 à -7 pts cumulés sur 3 ans) au profit du bloc populiste."
+    },
+    {
+      "id": "orientation_distribution",
+      "file": "orientation_distribution.png",
+      "title": "Distribution Électorale par Département (Seaborn)",
+      "description": "Probabilités Macron vs Le Pen pour les 12 départements de la région.",
+      "key_finding": "Deux-Sèvres vote le plus massivement Centre (96.4%). Lot-et-Garonne : seul département prédit incorrectement."
+    },
+    {
+      "id": "scatter_emploi_lepen",
+      "file": "scatter_emploi_lepen.png",
+      "title": "Emploi vs Vote Populiste (Seaborn scatter)",
+      "description": "Relation entre taux d'emploi estimé et probabilité du vote Le Pen par département.",
+      "key_finding": "Corrélation négative confirmée : r ≈ −0.44. Départements à faible emploi ont un vote populiste plus fort."
+    },
+    {
+      "id": "confusion_matrix",
+      "file": "confusion_matrix.png",
+      "title": "Matrice de Confusion — Logistic Regression (Seaborn)",
+      "description": "Répartition réel/prédit pour les 5 classes économiques cibles.",
+      "key_finding": "La classe 'Stable' représente ~55% des données et est la mieux prédite (98.4% recall)."
+    }
+  ]
+}
