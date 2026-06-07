@@ -26,7 +26,7 @@ warnings.filterwarnings('ignore')
 
 # Configuration des chemins
 # Mise à jour du base_path pour correspondre à l'environnement actuel
-base_path = r'c:\Users\tarek\Downloads\economic-pulse-analyzer'
+base_path = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '..'))
 data_2016_path = os.path.join(base_path, 'MSPR_Final', 'indicateur data 2016')
 data_2020_path = os.path.join(base_path, 'MSPR_Final', 'indicateur data 2020')
 securite_2017_path = os.path.join(base_path, 'MSPR_Final', 'MSPR', '01_Donnees', 'facteur', 'securite', 'Données chiffrées RALFSS 2017')

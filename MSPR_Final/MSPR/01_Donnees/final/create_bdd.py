@@ -19,7 +19,6 @@ print("=" * 70)
 if not os.path.exists(input_path):
     alt_paths = [
         os.path.join(_SCRIPT_DIR, 'data_nouvelle_aquitaine_final.csv'),
-        r'C:/Users/tarek/Downloads/aliMSPR/MSPR_Final/MSPR/01_Donnees/data_nouvelle_aquitaine_final.csv',
     ]
     for alt in alt_paths:
         if os.path.exists(alt):
