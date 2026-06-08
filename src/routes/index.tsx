@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { fetchPredictions, type Level, type PredictionEntity } from "@/lib/predictions";
 import { KpiCard } from "@/components/dashboard/KpiCard";
 import { PoliticalSpectrum } from "@/components/dashboard/PoliticalSpectrum";
@@ -26,8 +26,36 @@ const itemVariant = {
   show: { opacity: 1, y: 0, transition: { duration: 0.5 } },
 };
 
+interface TendancePrediction {
+  annee: string; year: number; is_base: boolean;
+  exg: number; gauche: number; centre: number; droite: number; exd: number;
+  confidence?: number;
+}
+interface TendancesJSON {
+  metadata: { model: string; model_accuracy: number; base_year: number; forecast_years: number[] };
+  deltas: Record<string, number>;
+  predictions: TendancePrediction[];
+}
+
+const BLOCS_PREVIEW = [
+  { key: "exg",    label: "Extrême G.", color: "#b91c1c" },
+  { key: "gauche", label: "Gauche",     color: "#ef4444" },
+  { key: "centre", label: "Centre",     color: "#eab308" },
+  { key: "droite", label: "Droite",     color: "#3b82f6" },
+  { key: "exd",    label: "Extrême D.", color: "#1d4ed8" },
+] as const;
+
 function Index() {
   const [selectedModel, setSelectedModel] = useState<string>("xgboost");
+  const [tendances, setTendances] = useState<TendancesJSON | null>(null);
+  const [selectedTendanceYear, setSelectedTendanceYear] = useState<number>(2020);
+
+  useEffect(() => {
+    fetch("/data/predictions_tendances.json")
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
+      .then((d: TendancesJSON) => setTendances(d))
+      .catch(() => {});
+  }, []);
 
   const MODELS = SUPERVISED_MODELS;
 
@@ -290,6 +318,113 @@ function Index() {
 
         {/* Tables */}
         {data && <PredictionTable data={tableData} levelLabel={tableLevel} />}
+
+        {/* Prévision tendances 5 blocs — aperçu rapide (données depuis predictions_tendances.json) */}
+        {tendances && (
+          <motion.section
+            variants={itemVariant}
+            initial="hidden"
+            animate="show"
+            className="rounded-3xl border border-border bg-card/50 p-6 backdrop-blur-xl shadow-[var(--shadow-card)]"
+          >
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <div>
+                <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-accent">
+                  Prévision électorale à moyen terme · {tendances.metadata.model}
+                </p>
+                <h2 className="mt-1 text-lg font-semibold tracking-tight">
+                  Tendances {tendances.metadata.forecast_years.join(" · ")} — 5 Blocs Politiques
+                </h2>
+              </div>
+              <Link
+                to="/visualisation"
+                className="shrink-0 rounded-full border border-border bg-secondary/60 px-4 py-2 text-xs text-muted-foreground transition-all hover:border-primary/50 hover:text-foreground"
+              >
+                Voir les graphiques →
+              </Link>
+            </div>
+            <p className="mb-4 text-xs text-muted-foreground">
+              % de territoires projetés par orientation politique — prédictions{" "}
+              {tendances.metadata.model} ({tendances.metadata.model_accuracy}% acc.) sur indicateurs delta socio-économiques.
+              Base {tendances.metadata.base_year}.
+            </p>
+
+            {/* Sélecteur d'année */}
+            <div className="mb-4 flex flex-wrap gap-2">
+              {tendances.predictions.map((p) => (
+                <button
+                  key={p.year}
+                  onClick={() => setSelectedTendanceYear(p.year)}
+                  className={`rounded-full px-3 py-1 text-xs font-semibold transition-all border ${
+                    selectedTendanceYear === p.year
+                      ? "border-primary bg-primary/20 text-primary"
+                      : "border-border bg-secondary/40 text-muted-foreground hover:border-primary/50 hover:text-foreground"
+                  }`}
+                >
+                  {p.year}{p.is_base ? " (base)" : ""}
+                  {p.confidence != null && !p.is_base && (
+                    <span className="ml-1 opacity-60">· {p.confidence}%</span>
+                  )}
+                </button>
+              ))}
+            </div>
+
+            {/* Cartes 5 blocs pour l'année sélectionnée */}
+            {(() => {
+              const basePred   = tendances.predictions.find((p) => p.is_base) ?? tendances.predictions[0];
+              const yearPred   = tendances.predictions.find((p) => p.year === selectedTendanceYear) ?? basePred;
+              return (
+                <>
+                  <div className="grid gap-3 sm:grid-cols-5">
+                    {BLOCS_PREVIEW.map((bloc) => {
+                      const val   = yearPred?.[bloc.key] ?? 0;
+                      const base  = basePred?.[bloc.key] ?? 0;
+                      const delta = +(val - base).toFixed(2);
+                      const isUp  = delta > 0;
+                      const deltaColor =
+                        bloc.key === "centre"
+                          ? isUp ? "text-emerald-400" : "text-rose-400"
+                          : isUp ? "text-amber-400" : "text-emerald-400";
+                      return (
+                        <div key={bloc.key} className="rounded-2xl border border-border bg-background/30 p-3 text-center">
+                          <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground leading-tight">{bloc.label}</p>
+                          <p className="mt-2 text-xl font-bold" style={{ color: bloc.color }}>{val.toFixed(1)}%</p>
+                          {yearPred?.is_base ? (
+                            <p className="mt-1 text-xs text-muted-foreground">base</p>
+                          ) : (
+                            <p className={`mt-1 text-xs font-semibold ${deltaColor}`}>
+                              {isUp ? "+" : ""}{delta}pp vs {basePred?.year}
+                            </p>
+                          )}
+                          <div className="mt-2 h-1 rounded-full bg-border/40">
+                            <div
+                              className="h-1 rounded-full"
+                              style={{ width: `${Math.min(val, 100)}%`, backgroundColor: bloc.color, opacity: 0.7 }}
+                            />
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  {!yearPred?.is_base && (
+                    <div className="mt-4 rounded-xl border border-rose-500/20 bg-rose-500/5 px-4 py-2.5 text-xs text-rose-300">
+                      <strong>{yearPred?.year} vs {basePred?.year} :</strong>{" "}
+                      Centre {((yearPred?.centre ?? 0) - (basePred?.centre ?? 0)) >= 0 ? "+" : ""}
+                      {+((yearPred?.centre ?? 0) - (basePred?.centre ?? 0)).toFixed(2)}pp —{" "}
+                      EXD {((yearPred?.exd ?? 0) - (basePred?.exd ?? 0)) >= 0 ? "+" : ""}
+                      {+((yearPred?.exd ?? 0) - (basePred?.exd ?? 0)).toFixed(2)}pp —{" "}
+                      EXG {((yearPred?.exg ?? 0) - (basePred?.exg ?? 0)) >= 0 ? "+" : ""}
+                      {+((yearPred?.exg ?? 0) - (basePred?.exg ?? 0)).toFixed(2)}pp
+                      {yearPred?.confidence != null && (
+                        <span className="ml-2 opacity-70">· confiance modèle : {yearPred.confidence}%</span>
+                      )}
+                    </div>
+                  )}
+                </>
+              );
+            })()}
+          </motion.section>
+        )}
 
         {/* KPI grid */}
         <section className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">

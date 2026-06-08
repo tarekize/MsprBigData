@@ -150,6 +150,48 @@ const deptTemporalData = depts.map((d, i) => {
 });
 
 /* ═══════════════════════════════════════════════════════════════════════
+   PRÉVISION TENDANCES 5 BLOCS — types & méta UI (données chargées depuis JSON)
+   Fichier source : /public/data/predictions_tendances.json
+   Généré par : MSPR_Final/MSPR/03_Data_Science/generate_tendances.py
+   ═══════════════════════════════════════════════════════════════════════ */
+
+interface BlocData {
+  annee: string;
+  year: number;
+  is_base: boolean;
+  exg: number;
+  gauche: number;
+  centre: number;
+  droite: number;
+  exd: number;
+  eco_states?: Record<string, number>;
+  confidence?: number;
+}
+
+type BlocKey = "exg" | "gauche" | "centre" | "droite" | "exd";
+
+interface TendancesJSON {
+  metadata: {
+    model: string;
+    model_accuracy: number;
+    base_year: number;
+    forecast_years: number[];
+    methodology: string;
+    indicators: string[];
+  };
+  deltas: Record<BlocKey, number>;
+  predictions: BlocData[];
+}
+
+const BLOCS_META: Array<{ key: BlocKey; label: string; color: string }> = [
+  { key: "exg",    label: "Extrême Gauche", color: "#b91c1c" },
+  { key: "gauche", label: "Gauche",         color: "#ef4444" },
+  { key: "centre", label: "Centre",         color: "#eab308" },
+  { key: "droite", label: "Droite",         color: "#3b82f6" },
+  { key: "exd",    label: "Extrême Droite", color: "#1d4ed8" },
+];
+
+/* ═══════════════════════════════════════════════════════════════════════
    PYTHON CHARTS MANIFEST (loaded at runtime from /data/charts/manifest.json)
    ═══════════════════════════════════════════════════════════════════════ */
 
@@ -297,8 +339,20 @@ function VisualisationPage() {
   const [activeCurve, setActiveCurve] = useState<"40" | "20">("40");
   const [hoveredCell, setHoveredCell] = useState<{ r: number; c: number } | null>(null);
   const [activeTemporalTab, setActiveTemporalTab] = useState("region");
+  const [activeBlocs, setActiveBlocs] = useState<"stacked" | "evolution" | "tableau">("stacked");
+  const [tendancesData, setTendancesData] = useState<TendancesJSON | null>(null);
+  const [tendancesLoading, setTendancesLoading] = useState(true);
+  const [selectedTendanceYear, setSelectedTendanceYear] = useState<number>(2020);
   const [charts, setCharts] = useState<ChartMeta[]>([]);
   const [chartsLoading, setChartsLoading] = useState(true);
+
+  /* Load tendances ML predictions 2017–2020 */
+  useEffect(() => {
+    fetch("/data/predictions_tendances.json")
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
+      .then((data: TendancesJSON) => { setTendancesData(data); setTendancesLoading(false); })
+      .catch(() => setTendancesLoading(false));
+  }, []);
 
   /* Load Python chart manifest */
   useEffect(() => {
@@ -522,6 +576,245 @@ function VisualisationPage() {
                 franchissent le seuil d'alerte 20%.
               </div>
             </div>
+          )}
+        </SectionCard>
+
+        {/* ╔══════ B2. PRÉVISION TENDANCES ÉLECTORALES — 5 BLOCS ══════╗ */}
+        <SectionCard title="Prévision des Tendances Électorales — 5 Blocs Politiques (2018–2020)" icon={<TrendingUp className="h-5 w-5" />}>
+          {tendancesLoading && (
+            <div className="flex items-center justify-center py-16 text-sm text-muted-foreground animate-pulse">
+              Chargement des prédictions ML…
+            </div>
+          )}
+
+          {!tendancesLoading && !tendancesData && (
+            <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 px-4 py-3 text-xs text-amber-300">
+              <strong>Fichier non trouvé.</strong> Exécutez :{" "}
+              <code className="text-white">python MSPR_Final/MSPR/03_Data_Science/generate_tendances.py</code>
+            </div>
+          )}
+
+          {!tendancesLoading && tendancesData && (
+            <>
+              {/* Description avec méta-données du modèle */}
+              <p className="mb-4 text-xs text-muted-foreground">
+                Prédictions à moyen terme (S+1, S+2, S+3) générées par{" "}
+                <strong className="text-foreground">{tendancesData.metadata.model}</strong> (accuracy {tendancesData.metadata.model_accuracy}%)
+                via extrapolation des indicateurs delta : {tendancesData.metadata.indicators.join(", ")}.
+                Base : {tendancesData.metadata.base_year} — Horizons : {tendancesData.metadata.forecast_years.join(", ")}.
+                Chaque valeur = % de territoires projetés dans cette orientation politique.
+              </p>
+
+              {/* Sélecteur d'année */}
+              <div className="mb-4 flex flex-wrap gap-2">
+                {tendancesData.predictions.map((p) => (
+                  <button
+                    key={p.year}
+                    onClick={() => setSelectedTendanceYear(p.year)}
+                    className={`rounded-full px-4 py-1.5 text-xs font-semibold transition-all border ${
+                      selectedTendanceYear === p.year
+                        ? "border-primary bg-primary/20 text-primary"
+                        : "border-border bg-secondary/40 text-muted-foreground hover:border-primary/50 hover:text-foreground"
+                    }`}
+                  >
+                    {p.year}{p.is_base ? " (base)" : ""}
+                    {p.confidence != null && !p.is_base && (
+                      <span className="ml-1 opacity-60">· {p.confidence}%</span>
+                    )}
+                  </button>
+                ))}
+              </div>
+
+              {/* Résumé tendances — 5 cartes pour l'année sélectionnée */}
+              {(() => {
+                const basePred = tendancesData.predictions.find((p) => p.is_base) ?? tendancesData.predictions[0];
+                const yearPred = tendancesData.predictions.find((p) => p.year === selectedTendanceYear) ?? basePred;
+                return (
+                  <>
+                    <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+                      {BLOCS_META.map((bloc) => {
+                        const val   = yearPred?.[bloc.key] ?? 0;
+                        const base  = basePred?.[bloc.key] ?? 0;
+                        const delta = +(val - base).toFixed(1);
+                        const isUp  = delta > 0;
+                        const deltaColor =
+                          bloc.key === "centre"
+                            ? isUp ? "text-emerald-400" : "text-rose-400"
+                            : isUp ? "text-amber-400" : "text-emerald-400";
+                        return (
+                          <div key={bloc.key} className="rounded-2xl border border-border bg-background/20 p-4 text-center">
+                            <div className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">{bloc.label}</div>
+                            <div className="mt-2 text-2xl font-bold" style={{ color: bloc.color }}>{(val as number).toFixed(1)}%</div>
+                            {yearPred?.is_base ? (
+                              <div className="mt-1 text-xs text-muted-foreground">base {basePred?.year}</div>
+                            ) : (
+                              <>
+                                <div className={`mt-1 text-sm font-semibold ${deltaColor}`}>
+                                  {isUp ? "+" : ""}{delta}pp
+                                </div>
+                                <div className="text-[10px] text-muted-foreground">vs {basePred?.year}</div>
+                              </>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                    {!yearPred?.is_base && (
+                      <div className="mb-4 rounded-xl border border-rose-500/20 bg-rose-500/5 px-4 py-2.5 text-xs text-rose-300">
+                        <strong>{yearPred?.annee} vs base {basePred?.year} :</strong>{" "}
+                        Centre {((yearPred?.centre ?? 0) - (basePred?.centre ?? 0)) >= 0 ? "+" : ""}
+                        {+((yearPred?.centre ?? 0) - (basePred?.centre ?? 0)).toFixed(2)}pp —{" "}
+                        EXD {((yearPred?.exd ?? 0) - (basePred?.exd ?? 0)) >= 0 ? "+" : ""}
+                        {+((yearPred?.exd ?? 0) - (basePred?.exd ?? 0)).toFixed(2)}pp —{" "}
+                        EXG {((yearPred?.exg ?? 0) - (basePred?.exg ?? 0)) >= 0 ? "+" : ""}
+                        {+((yearPred?.exg ?? 0) - (basePred?.exg ?? 0)).toFixed(2)}pp
+                        {yearPred?.confidence != null && (
+                          <span className="ml-2 opacity-70">· confiance modèle : {yearPred.confidence}%</span>
+                        )}
+                      </div>
+                    )}
+                  </>
+                );
+              })()}
+
+              <ChartTabs
+                tabs={[
+                  { id: "stacked",   label: "Vue Empilée" },
+                  { id: "evolution", label: "Évolution par Bloc" },
+                  { id: "tableau",   label: "Tableau" },
+                ]}
+                active={activeBlocs}
+                onChange={(id) => setActiveBlocs(id as "stacked" | "evolution" | "tableau")}
+              />
+
+              {/* Tab 1 — Stacked Bar */}
+              {activeBlocs === "stacked" && (
+                <div>
+                  <p className="mb-3 text-xs text-muted-foreground">
+                    Composition politique des territoires pour chaque horizon — vue 100% empilée.
+                  </p>
+                  <ResponsiveContainer width="100%" height={380}>
+                    <BarChart data={tendancesData.predictions} margin={{ top: 5, right: 10, left: -10, bottom: 5 }}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+                      <XAxis dataKey="annee" tick={{ fill: "rgba(255,255,255,0.5)", fontSize: 11 }} />
+                      <YAxis domain={[0, 100]} tickFormatter={(v: number) => `${v}%`} tick={{ fill: "rgba(255,255,255,0.5)", fontSize: 11 }} />
+                      <Tooltip
+                        contentStyle={{ background: "rgba(20,20,40,0.95)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, color: "#fff", fontSize: 11 }}
+                        formatter={(v: unknown, name: unknown) => [`${(+(v as number)).toFixed(1)}%`, name as string]}
+                      />
+                      <Legend wrapperStyle={{ fontSize: 10, color: "rgba(255,255,255,0.6)" }} />
+                      {BLOCS_META.map((bloc) => (
+                        <Bar key={bloc.key} dataKey={bloc.key} name={bloc.label} stackId="blocs" fill={bloc.color} />
+                      ))}
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              )}
+
+              {/* Tab 2 — Evolution par bloc */}
+              {activeBlocs === "evolution" && (
+                <div className="grid gap-6 lg:grid-cols-2">
+                  <div>
+                    <h3 className="mb-3 text-sm font-medium text-muted-foreground">Centre — évolution sur 3 ans</h3>
+                    <ResponsiveContainer width="100%" height={260}>
+                      <LineChart data={tendancesData.predictions} margin={{ top: 5, right: 10, left: -10, bottom: 5 }}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+                        <XAxis dataKey="annee" tick={{ fill: "rgba(255,255,255,0.45)", fontSize: 10 }} />
+                        <YAxis tickFormatter={(v: number) => `${v}%`} tick={{ fill: "rgba(255,255,255,0.45)", fontSize: 10 }} />
+                        <Tooltip
+                          contentStyle={{ background: "rgba(20,20,40,0.95)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, color: "#fff", fontSize: 11 }}
+                          formatter={(v: unknown) => [`${(+(v as number)).toFixed(1)}%`, "Centre"]}
+                        />
+                        <Line type="monotone" dataKey="centre" name="Centre" stroke="#eab308" strokeWidth={2.5} dot={{ r: 5, fill: "#eab308" }} activeDot={{ r: 7 }} />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </div>
+                  <div>
+                    <h3 className="mb-3 text-sm font-medium text-muted-foreground">Blocs périphériques — variations</h3>
+                    <ResponsiveContainer width="100%" height={260}>
+                      <LineChart data={tendancesData.predictions} margin={{ top: 5, right: 10, left: -10, bottom: 5 }}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+                        <XAxis dataKey="annee" tick={{ fill: "rgba(255,255,255,0.45)", fontSize: 10 }} />
+                        <YAxis tickFormatter={(v: number) => `${v}%`} tick={{ fill: "rgba(255,255,255,0.45)", fontSize: 10 }} />
+                        <Tooltip
+                          contentStyle={{ background: "rgba(20,20,40,0.95)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, color: "#fff", fontSize: 11 }}
+                          formatter={(v: unknown, name: unknown) => [`${(+(v as number)).toFixed(1)}%`, name as string]}
+                        />
+                        <Legend wrapperStyle={{ fontSize: 10, color: "rgba(255,255,255,0.6)" }} />
+                        {BLOCS_META.filter((b) => b.key !== "centre").map((bloc) => (
+                          <Line key={bloc.key} type="monotone" dataKey={bloc.key} name={bloc.label} stroke={bloc.color} strokeWidth={2} dot={{ r: 4 }} activeDot={{ r: 6 }} />
+                        ))}
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+              )}
+
+              {/* Tab 3 — Tableau */}
+              {activeBlocs === "tableau" && (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-border/60">
+                        <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">Bloc politique</th>
+                        {tendancesData.predictions.map((d) => (
+                          <th key={d.annee} className="px-4 py-3 text-center text-xs font-medium uppercase tracking-wider text-muted-foreground">{d.annee}</th>
+                        ))}
+                        <th className="px-4 py-3 text-center text-xs font-medium uppercase tracking-wider text-muted-foreground">Δ 3 ans</th>
+                        <th className="px-4 py-3 text-center text-xs font-medium uppercase tracking-wider text-muted-foreground">Tendance</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {BLOCS_META.map((bloc) => {
+                        const delta = +(tendancesData.deltas[bloc.key] ?? 0).toFixed(1);
+                        const isUp = delta > 0;
+                        const deltaColor =
+                          bloc.key === "centre"
+                            ? isUp ? "text-emerald-400" : "text-rose-400"
+                            : isUp ? "text-amber-400" : "text-emerald-400";
+                        return (
+                          <tr key={bloc.key} className="border-t border-border/30 transition-colors hover:bg-secondary/20">
+                            <td className="px-4 py-3">
+                              <span className="font-semibold" style={{ color: bloc.color }}>{bloc.label}</span>
+                            </td>
+                            {tendancesData.predictions.map((d) => (
+                              <td key={d.annee} className="px-4 py-3 text-center font-mono text-sm text-foreground">
+                                {(d[bloc.key] as number).toFixed(1)}%
+                              </td>
+                            ))}
+                            <td className={`px-4 py-3 text-center font-bold ${deltaColor}`}>
+                              {isUp ? "+" : ""}{delta}pp
+                            </td>
+                            <td className="px-4 py-3 text-center text-base font-bold" style={{ color: bloc.color }}>
+                              {isUp ? "↑" : "↓"}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                  <p className="mt-3 text-[11px] text-muted-foreground">
+                    Confiance modèle : base {tendancesData.predictions[0]?.confidence ?? "—"}% →{" "}
+                    {tendancesData.predictions[tendancesData.predictions.length - 1]?.confidence ?? "—"}% (S+3,
+                    dégradation naturelle de l'horizon prédictif).
+                  </p>
+                </div>
+              )}
+
+              {/* Analyse dynamique depuis les deltas JSON */}
+              <div className="mt-5 rounded-xl border border-amber-500/20 bg-amber-500/5 px-4 py-3 text-xs text-amber-300">
+                <strong>Analyse {tendancesData.metadata.model} :</strong>{" "}
+                Le Centre{" "}
+                {(tendancesData.deltas.centre ?? 0) >= 0 ? "progresse" : "recule"} de{" "}
+                <strong>{(tendancesData.deltas.centre ?? 0) > 0 ? "+" : ""}{tendancesData.deltas.centre ?? "—"}pp</strong>.{" "}
+                L'Extrême Droite évolue de{" "}
+                <strong>{(tendancesData.deltas.exd ?? 0) > 0 ? "+" : ""}{tendancesData.deltas.exd ?? "—"}pp</strong>,
+                l'Extrême Gauche de{" "}
+                <strong>{(tendancesData.deltas.exg ?? 0) > 0 ? "+" : ""}{tendancesData.deltas.exg ?? "—"}pp</strong>{" "}
+                sur la période 2017–2020. Le choc économique de 2020 (COVID) amplifie les tendances protestataires
+                et réduit la part des territoires en croissance.
+              </div>
+            </>
           )}
         </SectionCard>
 
