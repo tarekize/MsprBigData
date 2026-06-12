@@ -7,12 +7,40 @@ interface Props {
   levelLabel: string;
 }
 
+const ORIENTATION_COLORS: Record<string, string> = {
+  "extreme-gauche": "#800000",
+  "gauche":         "#CC0000",
+  "centre":         "#D4A017",
+  "droite":         "#0066CC",
+  "extreme-droite": "#1C3B8A",
+  "unknown":        "#888888",
+};
+
+const CANDIDATE_COLORS: Record<string, string> = {
+  "Macron (LREM)":       "#D4A017",
+  "Le Pen (RN)":         "#1C3B8A",
+  "Melenchon (LFI)":     "#CC0000",
+  "Pecresse (LR)":       "#0066CC",
+  "Jadot (EELV)":        "#2D7D2D",
+  "Lassalle (Resist)":   "#8B4513",
+  "Roussel (PCF)":       "#990000",
+  "Hidalgo (PS)":        "#FF69B4",
+  "Poutou (NPA)":        "#800000",
+  "Arthaud (LO)":        "#660000",
+  "Zemmour (Reconv)":    "#003399",
+  "Dupont-Aignan (DLF)": "#001F7A",
+};
+
+function candidateColor(name: string, side?: string): string {
+  return CANDIDATE_COLORS[name] ?? ORIENTATION_COLORS[side ?? "unknown"] ?? "#888888";
+}
+
 export function PredictionTable({ data, levelLabel }: Props) {
   return (
     <section className="rounded-3xl border border-border bg-card/50 p-6 md:p-8 backdrop-blur-xl shadow-[var(--shadow-card)]">
       <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
-          <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-accent">Prédictions XGBoost</p>
+          <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-accent">Prédictions — 12 candidats 2022</p>
           <h2 className="mt-1 text-2xl md:text-3xl font-semibold text-foreground">Détail {levelLabel}</h2>
         </div>
       </header>
@@ -25,10 +53,10 @@ export function PredictionTable({ data, levelLabel }: Props) {
             <thead>
               <tr className="bg-secondary/60 text-left text-[11px] uppercase tracking-widest text-muted-foreground">
                 <th className="px-4 py-3">Entité</th>
-                <th className="px-4 py-3">Bord & Gagnant</th>
-                <th className="px-4 py-3">État Économique</th>
-                <th className="px-4 py-3">Réel</th>
-                <th className="px-4 py-3 w-[30%]">Probabilités</th>
+                <th className="px-4 py-3">Prédit (gagnant)</th>
+                <th className="px-4 py-3">État Éco</th>
+                <th className="px-4 py-3">Réel 2022</th>
+                <th className="px-4 py-3 w-[32%]">Top candidats</th>
                 <th className="px-4 py-3 text-center">✓</th>
               </tr>
             </thead>
@@ -54,7 +82,7 @@ export function PredictionTable({ data, levelLabel }: Props) {
                     <Pill candidate={r.real} side="unknown" />
                   </td>
                   <td className="px-4 py-3">
-                    <ProbBar macron={r.proba?.MACRON ?? 0} lepen={r.proba?.['LE PEN'] ?? 0} />
+                    <TopBar top5={r.top5} side={r.political_side} />
                   </td>
                   <td className="px-4 py-3 text-center">
                     {r.is_correct ? (
@@ -78,13 +106,11 @@ export function PredictionTable({ data, levelLabel }: Props) {
 }
 
 function Pill({ candidate, side }: { candidate: string; side: string }) {
-  const isMacron = candidate === "MACRON";
-  const color = isMacron ? "var(--color-primary)" : candidate === "LE PEN" ? "var(--pol-far-right)" : "var(--pol-left)";
-  
+  const color = candidateColor(candidate, side);
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-0.5">
       <span className="text-[10px] uppercase tracking-tighter text-muted-foreground font-semibold">
-        {side?.replace('-', ' ')}
+        {side?.replace(/-/g, " ")}
       </span>
       <span
         className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium w-fit"
@@ -100,16 +126,34 @@ function Pill({ candidate, side }: { candidate: string; side: string }) {
   );
 }
 
-function ProbBar({ macron, lepen }: { macron: number; lepen: number }) {
+function TopBar({ top5, side }: { top5: [string, number][]; side: string }) {
+  if (!top5 || top5.length === 0) return null;
+
+  const top3 = top5.slice(0, 3);
+  const total = top3.reduce((s, [, v]) => s + v, 0);
+  const rest = Math.max(0, 100 - total);
+
   return (
     <div className="space-y-1.5">
-      <div className="flex h-2 w-full overflow-hidden rounded-full bg-secondary">
-        <div className="h-full" style={{ width: `${macron}%`, background: "var(--color-primary)" }} />
-        <div className="h-full" style={{ width: `${lepen}%`, background: "var(--pol-far-right)" }} />
+      <div className="flex h-2.5 w-full overflow-hidden rounded-full bg-secondary">
+        {top3.map(([name, score]) => (
+          <div
+            key={name}
+            className="h-full"
+            style={{ width: `${score}%`, background: candidateColor(name, side) }}
+          />
+        ))}
+        {rest > 0 && (
+          <div className="h-full bg-muted/40" style={{ width: `${rest}%` }} />
+        )}
       </div>
-      <div className="flex justify-between text-[10px] text-muted-foreground">
-        <span>M {macron.toFixed(1)}%</span>
-        <span>LP {lepen.toFixed(1)}%</span>
+      <div className="flex flex-wrap gap-x-2 gap-y-0.5">
+        {top3.map(([name, score]) => (
+          <span key={name} className="text-[10px] text-muted-foreground whitespace-nowrap">
+            <span style={{ color: candidateColor(name, side) }}>■</span>{" "}
+            {name.split(" ")[0]} {score.toFixed(1)}%
+          </span>
+        ))}
       </div>
     </div>
   );

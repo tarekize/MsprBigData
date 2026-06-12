@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { useState, useMemo, useEffect } from "react";
-import { fetchPredictions, type Level, type PredictionEntity } from "@/lib/predictions";
+import { type PredictionEntity } from "@/lib/predictions";
 import { KpiCard } from "@/components/dashboard/KpiCard";
 import { PoliticalSpectrum } from "@/components/dashboard/PoliticalSpectrum";
 import { PartyDonut } from "@/components/dashboard/PartyDonut";
@@ -14,11 +14,11 @@ export const Route = createFileRoute("/")({
 });
 
 const SUPERVISED_MODELS = [
-  { id: "xgboost", name: "XGBoost" },
-  { id: "random_forest", name: "Random Forest" },
-  { id: "gradient_boosting", name: "Gradient Boosting" },
-  { id: "logistic_regression", name: "Logistic Regression" },
-  { id: "svm_(linear)", name: "SVM (Linear)" }
+  { id: "hist_gradient_boosting", name: "HistGradientBoosting ★" },
+  { id: "logistic_regression",    name: "Logistic Regression" },
+  { id: "xgboost",                name: "XGBoost" },
+  { id: "random_forest",          name: "Random Forest" },
+  { id: "linear_svm",             name: "LinearSVM" },
 ];
 
 const itemVariant = {
@@ -46,7 +46,7 @@ const BLOCS_PREVIEW = [
 ] as const;
 
 function Index() {
-  const [selectedModel, setSelectedModel] = useState<string>("xgboost");
+  const [selectedModel, setSelectedModel] = useState<string>("hist_gradient_boosting");
   const [tendances, setTendances] = useState<TendancesJSON | null>(null);
   const [selectedTendanceYear, setSelectedTendanceYear] = useState<number>(2020);
 

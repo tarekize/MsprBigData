@@ -45,18 +45,18 @@ export const Route = createFileRoute("/visualisation")({
    ═══════════════════════════════════════════════════════════════════════ */
 
 const modelComparison = [
-  { name: "Logistic Reg.", accuracy: 81.81, precision: 81.79, recall: 81.81, f1: 81.77, fill: "#6366f1" },
-  { name: "XGBoost", accuracy: 81.36, precision: 81.30, recall: 81.36, f1: 81.30, fill: "#8b5cf6" },
-  { name: "Grad. Boost.", accuracy: 80.83, precision: 80.73, recall: 80.83, f1: 80.70, fill: "#a78bfa" },
-  { name: "Random Forest", accuracy: 78.89, precision: 79.36, recall: 78.89, f1: 78.31, fill: "#c4b5fd" },
-  { name: "SVM (Linear)", accuracy: 69.20, precision: 69.96, recall: 69.20, f1: 66.47, fill: "#e0e7ff" },
+  { name: "HistGradBoost ★", accuracy: 82.11, precision: 82.20, recall: 82.11, f1: 82.10, fill: "#6366f1" },
+  { name: "Logistic Reg.",   accuracy: 82.10, precision: 82.16, recall: 82.10, f1: 82.06, fill: "#8b5cf6" },
+  { name: "XGBoost",         accuracy: 82.05, precision: 82.17, recall: 82.05, f1: 82.03, fill: "#a78bfa" },
+  { name: "Random Forest",   accuracy: 79.57, precision: 80.15, recall: 79.57, f1: 79.22, fill: "#c4b5fd" },
+  { name: "LinearSVM",       accuracy: 70.70, precision: 73.59, recall: 70.70, f1: 68.67, fill: "#e0e7ff" },
 ];
 
 const radarData = [
-  { metric: "Accuracy", "Logistic Reg.": 81.81, XGBoost: 81.36, "Random Forest": 78.89, "Grad. Boost.": 80.83, SVM: 69.20 },
-  { metric: "Precision", "Logistic Reg.": 81.79, XGBoost: 81.30, "Random Forest": 79.36, "Grad. Boost.": 80.73, SVM: 69.96 },
-  { metric: "Recall", "Logistic Reg.": 81.81, XGBoost: 81.36, "Random Forest": 78.89, "Grad. Boost.": 80.83, SVM: 69.20 },
-  { metric: "F1-Score", "Logistic Reg.": 81.77, XGBoost: 81.30, "Random Forest": 78.31, "Grad. Boost.": 80.70, SVM: 66.47 },
+  { metric: "Accuracy",  "HistGradBoost": 82.11, XGBoost: 82.05, "Random Forest": 79.57, "Logistic Reg.": 82.10, LinearSVM: 70.70 },
+  { metric: "Precision", "HistGradBoost": 82.20, XGBoost: 82.17, "Random Forest": 80.15, "Logistic Reg.": 82.16, LinearSVM: 73.59 },
+  { metric: "Recall",    "HistGradBoost": 82.11, XGBoost: 82.05, "Random Forest": 79.57, "Logistic Reg.": 82.10, LinearSVM: 70.70 },
+  { metric: "F1-Score",  "HistGradBoost": 82.10, XGBoost: 82.03, "Random Forest": 79.22, "Logistic Reg.": 82.06, LinearSVM: 68.67 },
 ];
 
 const trainingCurves40 = Array.from({ length: 40 }, (_, i) => {
@@ -494,7 +494,7 @@ function VisualisationPage() {
                   <YAxis domain={[60, 100]} tickFormatter={(v: number) => `${v}%`} tick={{ fill: "rgba(255,255,255,0.5)", fontSize: 11 }} />
                   <Tooltip
                     contentStyle={{ background: "rgba(20,20,40,0.95)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, color: "#fff", fontSize: 12 }}
-                    formatter={(v: number, name: string) => [`${v.toFixed(1)}%`, name]}
+                    formatter={(v: any, name: any) => [`${Number(v ?? 0).toFixed(1)}%`, name]}
                   />
                   <Legend wrapperStyle={{ fontSize: 10, color: "rgba(255,255,255,0.6)" }} />
                   <Bar dataKey="centre"    name="Bloc Centre (%)"    radius={[8,8,0,0]} barSize={60}>
@@ -528,7 +528,7 @@ function VisualisationPage() {
                     <YAxis domain={[30, 105]} tickFormatter={(v: number) => `${v}%`} tick={{ fill: "rgba(255,255,255,0.45)", fontSize: 10 }} />
                     <Tooltip
                       contentStyle={{ background: "rgba(20,20,40,0.95)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, color: "#fff", fontSize: 11 }}
-                      formatter={(v: number) => [`${v}%`]}
+                      formatter={(v: any) => [`${Number(v ?? 0)}%`]}
                     />
                     <Legend wrapperStyle={{ fontSize: 10, color: "rgba(255,255,255,0.6)" }} />
                     <Bar dataKey="2022" name="2022 (Réel)"  fill="#10b981" radius={[4,4,0,0]} barSize={14} />
@@ -563,7 +563,7 @@ function VisualisationPage() {
                   <YAxis tickFormatter={(v: number) => `${v}%`} tick={{ fill: "rgba(255,255,255,0.45)", fontSize: 10 }} />
                   <Tooltip
                     contentStyle={{ background: "rgba(20,20,40,0.95)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, color: "#fff", fontSize: 11 }}
-                    formatter={(v: number, name: string) => [`${(100 - Number(v)).toFixed(1)}% populiste`, name]}
+                    formatter={(v: any, name: any) => [`${(100 - Number(v ?? 0)).toFixed(1)}% populiste`, name]}
                   />
                   <Legend wrapperStyle={{ fontSize: 10, color: "rgba(255,255,255,0.6)" }} />
                   <Area type="monotone" dataKey="2022" name="2022 (Réel)"  stroke="#10b981" fill="url(#grad22)" strokeWidth={2} dot={false} />
@@ -1018,7 +1018,7 @@ function VisualisationPage() {
                 <XAxis dataKey="name" tick={{ fill: "rgba(255,255,255,0.5)", fontSize: 11 }} axisLine={{ stroke: "rgba(255,255,255,0.1)" }} />
                 <YAxis domain={[55, 90]} tick={{ fill: "rgba(255,255,255,0.5)", fontSize: 11 }} axisLine={{ stroke: "rgba(255,255,255,0.1)" }} tickFormatter={(v: number) => `${v}%`} />
                 <Tooltip contentStyle={{ background: "rgba(20,20,40,0.95)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, color: "#fff", fontSize: 12 }}
-                  formatter={(v: number) => [`${v.toFixed(2)}%`, activeMetric.charAt(0).toUpperCase() + activeMetric.slice(1)]} />
+                  formatter={(v: any) => [`${Number(v ?? 0).toFixed(2)}%`, activeMetric.charAt(0).toUpperCase() + activeMetric.slice(1)]} />
                 <Bar dataKey={metricKey} radius={[8, 8, 0, 0]} barSize={36}>
                   {modelComparison.map((entry, idx) => <Cell key={`cell-${idx}`} fill={entry.fill} />)}
                 </Bar>
@@ -1101,7 +1101,7 @@ function VisualisationPage() {
                 <XAxis dataKey="name" tick={{ fill: "rgba(255,255,255,0.5)", fontSize: 10 }} axisLine={{ stroke: "rgba(255,255,255,0.1)" }} />
                 <YAxis domain={[0, 100]} tick={{ fill: "rgba(255,255,255,0.5)", fontSize: 10 }} axisLine={{ stroke: "rgba(255,255,255,0.1)" }} tickFormatter={(v: number) => `${v}%`} />
                 <Tooltip contentStyle={{ background: "rgba(20,20,40,0.95)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, color: "#fff", fontSize: 12 }}
-                  formatter={(v: number) => [`${v.toFixed(1)}%`, "Accuracy"]} />
+                  formatter={(v: any) => [`${Number(v ?? 0).toFixed(1)}%`, "Accuracy"]} />
                 <Bar dataKey="accuracy" radius={[6, 6, 0, 0]} barSize={32}>
                   {modelAccOld.map((entry, idx) => <Cell key={`cell-o-${idx}`} fill={entry.fill} />)}
                 </Bar>
@@ -1117,7 +1117,7 @@ function VisualisationPage() {
                 <XAxis dataKey="name" tick={{ fill: "rgba(255,255,255,0.5)", fontSize: 11 }} axisLine={{ stroke: "rgba(255,255,255,0.1)" }} />
                 <YAxis domain={[0, 100]} tick={{ fill: "rgba(255,255,255,0.5)", fontSize: 11 }} axisLine={{ stroke: "rgba(255,255,255,0.1)" }} tickFormatter={(v: number) => `${v}%`} />
                 <Tooltip contentStyle={{ background: "rgba(20,20,40,0.95)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, color: "#fff", fontSize: 12 }}
-                  formatter={(v: number) => [`${v.toFixed(1)}%`, "Accuracy"]} />
+                  formatter={(v: any) => [`${Number(v ?? 0).toFixed(1)}%`, "Accuracy"]} />
                 <Bar dataKey="accuracy" radius={[6, 6, 0, 0]} barSize={44}>
                   {modelAcc2.map((entry, idx) => <Cell key={`cell-b-${idx}`} fill={entry.fill} />)}
                 </Bar>
