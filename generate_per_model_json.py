@@ -64,9 +64,9 @@ REAL_WINNERS = {
     "CHARENTE":             "Macron (LREM)",
     "CHARENTE MARITIME":    "Macron (LREM)",
     "CORREZE":              "Macron (LREM)",
-    "CREUSE":               "Le Pen (RN)",
+    "CREUSE":               "Macron (LREM)",
     "DEUX SEVRES":          "Macron (LREM)",
-    "DORDOGNE":             "Le Pen (RN)",
+    "DORDOGNE":             "Macron (LREM)",
     "GIRONDE":              "Macron (LREM)",
     "HAUTE VIENNE":         "Macron (LREM)",
     "LANDES":               "Macron (LREM)",
@@ -145,10 +145,14 @@ for model_key, model_id in MODEL_ID_MAP.items():
         for p, c in sorted(pred_counts.items(), key=lambda x: -x[1])
     ]
 
-    # political_real (résultats réels 2022 en Nouvelle-Aquitaine)
+    # political_real — calculé dynamiquement depuis REAL_WINNERS (départements uniquement)
+    real_counts: dict = {}
+    for entity, winner in REAL_WINNERS.items():
+        if entity != "NOUVELLE AQUITAINE":
+            real_counts[winner] = real_counts.get(winner, 0) + 1
     political_real = [
-        {"party": "Macron (LREM)", "count": 9, "color": CANDIDATE_COLORS["Macron (LREM)"]},
-        {"party": "Le Pen (RN)",   "count": 3, "color": CANDIDATE_COLORS["Le Pen (RN)"]},
+        {"party": p, "count": c, "color": CANDIDATE_COLORS.get(p, "#888888")}
+        for p, c in sorted(real_counts.items(), key=lambda x: -x[1])
     ]
 
     out = {
