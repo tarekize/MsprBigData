@@ -26,7 +26,6 @@ import {
   BarChart3,
   TrendingUp,
   Grid3x3,
-  Brain,
   Layers,
   Sparkles,
   Image,
@@ -107,22 +106,6 @@ const corrMatrix: number[][] = [
   [-0.15, -0.12, -0.08, -0.05, -0.02, 0.45, 0.35, 0.30, 0.50, 1.00],
 ];
 
-const modelAccOld = [
-  { name: "KNeighbors", accuracy: 83.5, fill: "#3b82f6" },
-  { name: "L. Regression", accuracy: 87.0, fill: "#6366f1" },
-  { name: "D. Tree", accuracy: 75.5, fill: "#8b5cf6" },
-  { name: "R. Forest", accuracy: 79.5, fill: "#a78bfa" },
-  { name: "XGBoost", accuracy: 79.5, fill: "#c084fc" },
-  { name: "MLP", accuracy: 86.7, fill: "#e879f9" },
-  { name: "KNN", accuracy: 83.5, fill: "#f472b6" },
-];
-
-const modelAcc2 = [
-  { name: "L. Regression", accuracy: 75.0, fill: "#3b82f6" },
-  { name: "R. Forest", accuracy: 80.5, fill: "#6366f1" },
-  { name: "SVC", accuracy: 75.0, fill: "#8b5cf6" },
-  { name: "MLP", accuracy: 75.0, fill: "#a78bfa" },
-];
 
 /* ═══════════════════════════════════════════════════════════════════════
    TEMPORAL SCENARIOS DATA
@@ -417,8 +400,8 @@ function VisualisationPage() {
             </p>
             <div className="mt-8 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
               {[
-                { label: "Meilleur score",     value: "81.81%",    sub: "Logistic Regression" },
-                { label: "MLP final",          value: "86.70%",    sub: "40 epochs" },
+                { label: "Meilleur score",     value: "82.11%",    sub: "HistGradBoost ★" },
+                { label: "Modèles testés",     value: "5",         sub: "HistGradBoost · LR · XGB · RF · SVM" },
                 { label: "Variables",          value: "10",        sub: "Corrélations visualisées" },
                 { label: "Scénarios",          value: "3 ans",     sub: "2024 · 2025 · 2026" },
               ].map((item) => (
@@ -1033,10 +1016,11 @@ function VisualisationPage() {
                 <PolarGrid stroke="rgba(255,255,255,0.08)" />
                 <PolarAngleAxis dataKey="metric" tick={{ fill: "rgba(255,255,255,0.6)", fontSize: 11 }} />
                 <PolarRadiusAxis angle={30} domain={[60, 85]} tick={{ fill: "rgba(255,255,255,0.3)", fontSize: 9 }} />
-                <Radar name="Logistic Reg." dataKey="Logistic Reg." stroke="#6366f1" fill="#6366f1" fillOpacity={0.15} strokeWidth={2} />
-                <Radar name="XGBoost"       dataKey="XGBoost"       stroke="#8b5cf6" fill="#8b5cf6" fillOpacity={0.1}  strokeWidth={2} />
-                <Radar name="Random Forest" dataKey="Random Forest" stroke="#c4b5fd" fill="#c4b5fd" fillOpacity={0.08} strokeWidth={1.5} />
-                <Radar name="SVM"           dataKey="SVM"           stroke="#e0e7ff" fill="#e0e7ff" fillOpacity={0.05} strokeWidth={1} strokeDasharray="4 4" />
+                <Radar name="HistGradBoost ★" dataKey="HistGradBoost" stroke="#10b981" fill="#10b981" fillOpacity={0.18} strokeWidth={2.5} />
+                <Radar name="Logistic Reg."  dataKey="Logistic Reg." stroke="#6366f1" fill="#6366f1" fillOpacity={0.12} strokeWidth={2} />
+                <Radar name="XGBoost"        dataKey="XGBoost"       stroke="#8b5cf6" fill="#8b5cf6" fillOpacity={0.10} strokeWidth={2} />
+                <Radar name="Random Forest"  dataKey="Random Forest" stroke="#f59e0b" fill="#f59e0b" fillOpacity={0.08} strokeWidth={1.5} />
+                <Radar name="LinearSVM"      dataKey="LinearSVM"     stroke="#f43f5e" fill="#f43f5e" fillOpacity={0.05} strokeWidth={1} strokeDasharray="4 4" />
                 <Legend wrapperStyle={{ fontSize: 10, color: "rgba(255,255,255,0.6)" }} />
                 <Tooltip contentStyle={{ background: "rgba(20,20,40,0.95)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, color: "#fff", fontSize: 11 }} />
               </RadarChart>
@@ -1048,8 +1032,8 @@ function VisualisationPage() {
         <SectionCard title="Courbes d'Apprentissage" icon={<TrendingUp className="h-5 w-5" />}>
           <ChartTabs
             tabs={[
-              { id: "40", label: "MLP · 40 Epochs (86.70%)" },
-              { id: "20", label: "Modèle alternatif · 20 Epochs" },
+              { id: "40", label: "HistGradBoost / XGBoost · 40 itérations (82.11%)" },
+              { id: "20", label: "LogisticReg / LinearSVM · 20 itérations (82.10%)" },
             ]}
             active={activeCurve}
             onChange={(id) => setActiveCurve(id as "40" | "20")}
@@ -1086,45 +1070,15 @@ function VisualisationPage() {
           </div>
           {activeCurve === "40" && (
             <div className="mt-4 rounded-xl border border-emerald-500/20 bg-emerald-500/5 px-4 py-3 text-xs text-emerald-300">
-              <strong>Exactitude finale :</strong> 86.70% — Le modèle converge rapidement et maintient des performances stables sur l'ensemble de validation.
+              <strong>Exactitude finale :</strong> 82.11% (HistGradBoost ★) — Convergence stable après ~30 itérations, faible écart train/validation.
+            </div>
+          )}
+          {activeCurve === "20" && (
+            <div className="mt-4 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 text-xs text-primary">
+              <strong>Exactitude finale :</strong> 82.10% (Logistic Regression) — Convergence rapide dès les premières itérations, très stable.
             </div>
           )}
         </SectionCard>
-
-        {/* ╔══════ 4. Classification Models – Bar Charts ══════╗ */}
-        <div className="grid gap-8 lg:grid-cols-2">
-          <SectionCard title="Pourcentages des Variables (7 modèles)" icon={<Brain className="h-5 w-5" />}>
-            <p className="mb-4 text-xs text-muted-foreground">Comparaison de 7 algorithmes sur les données électorales.</p>
-            <ResponsiveContainer width="100%" height={280}>
-              <BarChart data={modelAccOld} margin={{ top: 5, right: 10, left: -10, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
-                <XAxis dataKey="name" tick={{ fill: "rgba(255,255,255,0.5)", fontSize: 10 }} axisLine={{ stroke: "rgba(255,255,255,0.1)" }} />
-                <YAxis domain={[0, 100]} tick={{ fill: "rgba(255,255,255,0.5)", fontSize: 10 }} axisLine={{ stroke: "rgba(255,255,255,0.1)" }} tickFormatter={(v: number) => `${v}%`} />
-                <Tooltip contentStyle={{ background: "rgba(20,20,40,0.95)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, color: "#fff", fontSize: 12 }}
-                  formatter={(v: any) => [`${Number(v ?? 0).toFixed(1)}%`, "Accuracy"]} />
-                <Bar dataKey="accuracy" radius={[6, 6, 0, 0]} barSize={32}>
-                  {modelAccOld.map((entry, idx) => <Cell key={`cell-o-${idx}`} fill={entry.fill} />)}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </SectionCard>
-
-          <SectionCard title="Pourcentages des Variables (4 modèles)" icon={<Brain className="h-5 w-5" />}>
-            <p className="mb-4 text-xs text-muted-foreground">Classification binaire — performance sur un sous-ensemble de données.</p>
-            <ResponsiveContainer width="100%" height={280}>
-              <BarChart data={modelAcc2} margin={{ top: 5, right: 10, left: -10, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
-                <XAxis dataKey="name" tick={{ fill: "rgba(255,255,255,0.5)", fontSize: 11 }} axisLine={{ stroke: "rgba(255,255,255,0.1)" }} />
-                <YAxis domain={[0, 100]} tick={{ fill: "rgba(255,255,255,0.5)", fontSize: 11 }} axisLine={{ stroke: "rgba(255,255,255,0.1)" }} tickFormatter={(v: number) => `${v}%`} />
-                <Tooltip contentStyle={{ background: "rgba(20,20,40,0.95)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, color: "#fff", fontSize: 12 }}
-                  formatter={(v: any) => [`${Number(v ?? 0).toFixed(1)}%`, "Accuracy"]} />
-                <Bar dataKey="accuracy" radius={[6, 6, 0, 0]} barSize={44}>
-                  {modelAcc2.map((entry, idx) => <Cell key={`cell-b-${idx}`} fill={entry.fill} />)}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </SectionCard>
-        </div>
 
         {/* ╔══════ Summary stats ══════╗ */}
         <motion.section variants={itemVariant} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
