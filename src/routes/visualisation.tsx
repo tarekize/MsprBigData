@@ -33,6 +33,10 @@ import {
   BookOpen,
   AlertTriangle,
   CheckCircle2,
+  Home,
+  MapPin,
+  Vote,
+  Activity,
 } from "lucide-react";
 
 export const Route = createFileRoute("/visualisation")({
@@ -45,17 +49,17 @@ export const Route = createFileRoute("/visualisation")({
 
 const modelComparison = [
   { name: "HistGradBoost ★", accuracy: 82.11, precision: 82.20, recall: 82.11, f1: 82.10, fill: "#6366f1" },
-  { name: "Logistic Reg.",   accuracy: 82.10, precision: 82.16, recall: 82.10, f1: 82.06, fill: "#8b5cf6" },
+  { name: "Logistic Reg.",   accuracy: 82.08, precision: 82.13, recall: 82.08, f1: 82.04, fill: "#8b5cf6" },
   { name: "XGBoost",         accuracy: 82.05, precision: 82.17, recall: 82.05, f1: 82.03, fill: "#a78bfa" },
   { name: "Random Forest",   accuracy: 79.57, precision: 80.15, recall: 79.57, f1: 79.22, fill: "#c4b5fd" },
   { name: "LinearSVM",       accuracy: 70.70, precision: 73.59, recall: 70.70, f1: 68.67, fill: "#e0e7ff" },
 ];
 
 const radarData = [
-  { metric: "Accuracy",  "HistGradBoost": 82.11, XGBoost: 82.05, "Random Forest": 79.57, "Logistic Reg.": 82.10, LinearSVM: 70.70 },
-  { metric: "Precision", "HistGradBoost": 82.20, XGBoost: 82.17, "Random Forest": 80.15, "Logistic Reg.": 82.16, LinearSVM: 73.59 },
-  { metric: "Recall",    "HistGradBoost": 82.11, XGBoost: 82.05, "Random Forest": 79.57, "Logistic Reg.": 82.10, LinearSVM: 70.70 },
-  { metric: "F1-Score",  "HistGradBoost": 82.10, XGBoost: 82.03, "Random Forest": 79.22, "Logistic Reg.": 82.06, LinearSVM: 68.67 },
+  { metric: "Accuracy",  "HistGradBoost": 82.11, XGBoost: 82.05, "Random Forest": 79.57, "Logistic Reg.": 82.08, LinearSVM: 70.70 },
+  { metric: "Precision", "HistGradBoost": 82.20, XGBoost: 82.17, "Random Forest": 80.15, "Logistic Reg.": 82.13, LinearSVM: 73.59 },
+  { metric: "Recall",    "HistGradBoost": 82.11, XGBoost: 82.05, "Random Forest": 79.57, "Logistic Reg.": 82.08, LinearSVM: 70.70 },
+  { metric: "F1-Score",  "HistGradBoost": 82.10, XGBoost: 82.03, "Random Forest": 79.22, "Logistic Reg.": 82.04, LinearSVM: 68.67 },
 ];
 
 const trainingCurves40 = Array.from({ length: 40 }, (_, i) => {
@@ -226,9 +230,9 @@ function SectionCard({
   return (
     <motion.section
       variants={itemVariant}
-      className={`rounded-3xl border border-border bg-card/50 p-6 md:p-8 backdrop-blur-xl shadow-[var(--shadow-card)] ${className}`}
+      className={`rounded-3xl border border-border bg-card p-6 md:p-8 shadow-[var(--shadow-card)] ${className}`}
     >
-      <div className="mb-6 flex items-center gap-3">
+      <div className="mb-6 flex items-center justify-center gap-3">
         <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary/30 to-accent/20 text-primary">
           {icon}
         </div>
@@ -271,9 +275,9 @@ function PythonChartCard({ chart, isLoading }: { chart: ChartMeta; isLoading: bo
   const imgSrc = `/data/charts/${chart.file}`;
 
   return (
-    <motion.div variants={itemVariant} className="rounded-2xl border border-border bg-card/50 overflow-hidden">
+    <motion.div variants={itemVariant} className="rounded-2xl border border-border bg-card overflow-hidden">
       <div className="p-4 border-b border-border/50 flex items-start gap-3">
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-500/30 to-teal-500/20 text-emerald-400">
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-500/30 to-teal-500/20 text-emerald-600">
           <Image className="h-4 w-4" />
         </div>
         <div>
@@ -286,7 +290,7 @@ function PythonChartCard({ chart, isLoading }: { chart: ChartMeta; isLoading: bo
           <div className="text-xs text-muted-foreground animate-pulse">Chargement…</div>
         ) : imgError ? (
           <div className="flex flex-col items-center gap-2 p-6 text-center">
-            <AlertTriangle className="h-8 w-8 text-amber-400/70" />
+            <AlertTriangle className="h-8 w-8 text-amber-600/70" />
             <p className="text-xs text-muted-foreground">
               Graphique non disponible.
             </p>
@@ -304,7 +308,7 @@ function PythonChartCard({ chart, isLoading }: { chart: ChartMeta; isLoading: bo
         )}
       </div>
       <div className="p-3 bg-emerald-500/5 border-t border-emerald-500/10">
-        <p className="text-[11px] text-emerald-300">
+        <p className="text-[11px] text-emerald-600">
           <span className="font-semibold">Constat clé : </span>
           {chart.key_finding}
         </p>
@@ -349,12 +353,12 @@ function VisualisationPage() {
         // Fallback static list if manifest not generated yet
         setCharts([
           { id: "correlation_heatmap",     file: "correlation_heatmap.png",     title: "Matrice de Corrélation (Seaborn)",            description: "Corrélation de Pearson entre indicateurs socio-économiques et orientations politiques.", key_finding: "Le taux d'emploi est la variable la plus corrélée avec le vote Centre (r=0.42)." },
-          { id: "model_comparison",         file: "model_comparison.png",         title: "Comparaison des Modèles ML (Matplotlib)",     description: "Accuracy / Precision / Recall / F1 pour 5 modèles supervisés.",                        key_finding: "Logistic Regression atteint 81.81% accuracy, suivi de XGBoost (81.36%)." },
+          { id: "model_comparison",         file: "model_comparison.png",         title: "Comparaison des Modèles ML (Matplotlib)",     description: "Accuracy / Precision / Recall / F1 pour 5 modèles supervisés.",                        key_finding: "HistGradientBoosting atteint 82.11% accuracy, suivi de Logistic Regression (82.08%) et XGBoost (82.05%)." },
           { id: "feature_importance",       file: "feature_importance.png",       title: "Importance des Variables XGBoost (Matplotlib)",description: "Importance relative des 10 features les plus impactantes selon XGBoost.",                key_finding: "delta_P16_POP (évolution population) est le prédicteur le plus fort (18.2% du gain)." },
           { id: "temporal_scenarios",       file: "temporal_scenarios.png",       title: "Scénarios Temporels 2024-2026 (Matplotlib)",   description: "Prédictions à 1, 2 et 3 ans basées sur les tendances des indicateurs delta.",            key_finding: "Érosion Centre de -5 à -9 pts cumulés sur 3 ans au profit du bloc populiste." },
           { id: "orientation_distribution", file: "orientation_distribution.png", title: "Distribution Électorale par Département",      description: "Probabilités Macron vs Le Pen pour les 12 départements.",                               key_finding: "Deux-Sèvres vote le plus massivement Centre (96.4%). Lot-et-Garonne : seul département mal prédit." },
           { id: "scatter_emploi_lepen",     file: "scatter_emploi_lepen.png",     title: "Emploi vs Vote Populiste (Seaborn scatter)",   description: "Relation entre taux d'emploi et probabilité du vote Le Pen par département.",           key_finding: "Corrélation négative r ≈ −0.44 : plus l'emploi est élevé, moins le vote populiste est fort." },
-          { id: "confusion_matrix",         file: "confusion_matrix.png",         title: "Matrice de Confusion — Logistic Regression",   description: "Répartition réel/prédit pour les 5 classes économiques cibles.",                        key_finding: "La classe 'Stable' (~55% des données) est la mieux prédite (recall 98.4%)." },
+          { id: "confusion_matrix",         file: "confusion_matrix.png",         title: "Matrice de Confusion — HistGradientBoosting",   description: "Répartition réel/prédit pour les 5 classes économiques cibles.",                        key_finding: "La classe 'Stable' (~40% des données, classe majoritaire) est la mieux prédite." },
         ]);
         setChartsLoading(false);
       });
@@ -363,30 +367,81 @@ function VisualisationPage() {
   const metricKey = activeMetric as keyof (typeof modelComparison)[0];
 
   return (
-    <div className="min-h-screen text-foreground">
-      {/* ── Navigation ── */}
-      <nav className="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-accent text-background font-bold">G</div>
-            <div className="leading-tight">
-              <p className="text-sm font-semibold tracking-wide">GouvData</p>
-              <p className="text-[11px] uppercase tracking-widest text-muted-foreground">Visualisation · ML Analytics</p>
-            </div>
+    <div className="theme-light-violet flex min-h-screen w-full bg-background text-foreground">
+      {/* Sidebar */}
+      <aside className="sticky top-0 hidden h-screen w-72 shrink-0 flex-col border-r border-border bg-card lg:flex">
+        <div className="flex items-center gap-3 border-b border-border px-6 py-5">
+          <FlagFR className="h-7 w-10" />
+          <div className="leading-tight">
+            <p className="text-sm font-bold tracking-wide text-foreground">GouvData</p>
+            <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+              ML Analytics
+            </p>
           </div>
-          <Link to="/" className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary/60 px-4 py-2 text-xs font-medium text-muted-foreground transition-all hover:border-primary/50 hover:text-foreground hover:bg-secondary">
-            <ArrowLeft className="h-3.5 w-3.5" />
-            Retour au Dashboard
-          </Link>
         </div>
-      </nav>
 
+        <nav className="flex-1 space-y-7 overflow-y-auto px-4 py-6">
+          <SideSection title="Navigation">
+            <SideLink
+              to="/"
+              icon={<Home className="h-4 w-4" />}
+              label="Dashboard"
+              sub="Prédictions géographiques"
+            />
+            <SideLink
+              to="/visualisation"
+              active
+              icon={<BarChart3 className="h-4 w-4" />}
+              label="Visualisation ML"
+              sub="Graphiques & métriques"
+            />
+          </SideSection>
+
+          <SideSection title="Périmètre">
+            <SideInfo icon={<Vote className="h-4 w-4" />} label="Élection" value="Présidentielle 2022" />
+            <SideInfo icon={<MapPin className="h-4 w-4" />} label="Région" value="Nouvelle-Aquitaine" />
+          </SideSection>
+
+          <SideSection title="Meilleur modèle">
+            <div
+              className="rounded-xl border border-primary/20 px-4 py-3"
+              style={{ backgroundColor: "var(--primary-light)" }}
+            >
+              <div className="flex items-center gap-2 font-semibold text-primary">
+                <Activity className="h-4 w-4" />
+                <span className="truncate">HistGradBoost ★</span>
+              </div>
+              <div className="mt-2 flex items-center justify-between text-xs">
+                <span className="text-muted-foreground">Accuracy</span>
+                <span className="font-bold text-primary">82.11%</span>
+              </div>
+            </div>
+          </SideSection>
+        </nav>
+
+        <div className="flex flex-col items-center gap-1.5 border-t border-border px-6 py-5">
+          <FlagFR className="h-6 w-9" />
+          <span className="text-[10px] font-medium uppercase tracking-[0.22em] text-muted-foreground">
+            France
+          </span>
+        </div>
+      </aside>
+
+      {/* Main content */}
+      <main className="min-w-0 flex-1">
       {/* ── Hero ── */}
       <header className="relative overflow-hidden border-b border-border/40">
         <div className="absolute inset-0" style={{ background: "var(--gradient-glow)" }} />
         <div className="relative mx-auto max-w-7xl px-6 py-14 md:py-20">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="max-w-3xl">
-            <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card/60 px-3 py-1 text-xs text-muted-foreground backdrop-blur">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="mx-auto max-w-3xl text-center">
+            <Link
+              to="/"
+              className="mb-5 inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-xs font-medium text-muted-foreground transition-all hover:border-primary/50 hover:text-foreground lg:hidden"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" />
+              Retour au Dashboard
+            </Link>
+            <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs text-muted-foreground">
               <Sparkles className="h-3.5 w-3.5 text-accent" />
               Analyse complète · Résultats Machine Learning
             </span>
@@ -394,18 +449,18 @@ function VisualisationPage() {
               Visualisation des{" "}
               <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">Résultats</span>
             </h1>
-            <p className="mt-4 max-w-2xl text-base text-muted-foreground md:text-lg">
+            <p className="mt-4 mx-auto max-w-2xl text-base text-muted-foreground md:text-lg">
               Corrélations entre variables, courbes d'apprentissage, comparaison multi-modèles, scénarios temporels 2024–2026
               et visualisations Python (Matplotlib / Seaborn) — Nouvelle-Aquitaine.
             </p>
-            <div className="mt-8 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            <div className="mt-8 grid gap-3 text-left sm:grid-cols-2 xl:grid-cols-4">
               {[
                 { label: "Meilleur score",     value: "82.11%",    sub: "HistGradBoost ★" },
                 { label: "Modèles testés",     value: "5",         sub: "HistGradBoost · LR · XGB · RF · SVM" },
                 { label: "Variables",          value: "10",        sub: "Corrélations visualisées" },
                 { label: "Scénarios",          value: "3 ans",     sub: "2024 · 2025 · 2026" },
               ].map((item) => (
-                <div key={item.label} className="rounded-2xl border border-border bg-background/20 p-4 backdrop-blur-sm">
+                <div key={item.label} className="rounded-2xl border border-border bg-secondary/30 p-4">
                   <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-muted-foreground">{item.label}</p>
                   <p className="mt-2 text-2xl font-semibold text-foreground">{item.value}</p>
                   <p className="mt-1 text-xs text-muted-foreground">{item.sub}</p>
@@ -416,8 +471,8 @@ function VisualisationPage() {
         </div>
       </header>
 
-      {/* ── Main content ── */}
-      <motion.main variants={containerVariant} initial="hidden" animate="show" className="mx-auto max-w-7xl space-y-8 px-6 py-10">
+      {/* ── Sections ── */}
+      <motion.div variants={containerVariant} initial="hidden" animate="show" className="mx-auto max-w-7xl space-y-8 px-6 py-10">
 
         {/* ╔══════ A. PYTHON CHARTS (Matplotlib / Seaborn) ══════╗ */}
         <SectionCard title="Visualisations Python — Matplotlib & Seaborn" icon={<Image className="h-5 w-5" />}>
@@ -431,16 +486,16 @@ function VisualisationPage() {
             Chaque graphique est produit avec Matplotlib/Seaborn et sauvegardé en PNG haute résolution (140 dpi).
           </p>
           <div className="mb-4 flex flex-wrap items-center gap-2 rounded-xl border border-emerald-500/20 bg-emerald-500/5 px-4 py-3">
-            <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
-            <p className="text-xs text-emerald-300">
+            <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+            <p className="text-xs text-emerald-600">
               Pour régénérer les graphiques :{" "}
-              <code className="text-white">python MSPR_Final/MSPR/03_Data_Science/generate_visualisations.py</code>
+              <code className="text-foreground">python MSPR_Final/MSPR/03_Data_Science/generate_visualisations.py</code>
             </p>
           </div>
           <div className="grid gap-6 md:grid-cols-2">
             {chartsLoading
               ? Array.from({ length: 6 }).map((_, i) => (
-                  <div key={i} className="rounded-2xl border border-border bg-card/50 min-h-[260px] animate-pulse" />
+                  <div key={i} className="rounded-2xl border border-border bg-card min-h-[260px] animate-pulse" />
                 ))
               : charts.map((chart) => (
                   <PythonChartCard key={chart.id} chart={chart} isLoading={false} />
@@ -472,14 +527,14 @@ function VisualisationPage() {
               </p>
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={temporalData} margin={{ top: 5, right: 10, left: -10, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
-                  <XAxis dataKey="annee" tick={{ fill: "rgba(255,255,255,0.5)", fontSize: 11 }} />
-                  <YAxis domain={[60, 100]} tickFormatter={(v: number) => `${v}%`} tick={{ fill: "rgba(255,255,255,0.5)", fontSize: 11 }} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.07)" />
+                  <XAxis dataKey="annee" tick={{ fill: "#64748b", fontSize: 11 }} />
+                  <YAxis domain={[60, 100]} tickFormatter={(v: number) => `${v}%`} tick={{ fill: "#64748b", fontSize: 11 }} />
                   <Tooltip
-                    contentStyle={{ background: "rgba(20,20,40,0.95)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, color: "#fff", fontSize: 12 }}
+                    contentStyle={{ background: "#ffffff", border: "1px solid rgba(0,0,0,0.1)", borderRadius: 12, color: "#1e293b", boxShadow: "0 10px 30px -12px rgba(0,0,0,0.25)", fontSize: 12 }}
                     formatter={(v: any, name: any) => [`${Number(v ?? 0).toFixed(1)}%`, name]}
                   />
-                  <Legend wrapperStyle={{ fontSize: 10, color: "rgba(255,255,255,0.6)" }} />
+                  <Legend wrapperStyle={{ fontSize: 10, color: "#64748b" }} />
                   <Bar dataKey="centre"    name="Bloc Centre (%)"    radius={[8,8,0,0]} barSize={60}>
                     {temporalData.map((entry, idx) => <Cell key={idx} fill={entry.color} />)}
                   </Bar>
@@ -488,7 +543,7 @@ function VisualisationPage() {
               </ResponsiveContainer>
               <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
                 {temporalData.map((d) => (
-                  <div key={d.annee} className="rounded-xl border border-border bg-background/20 p-3">
+                  <div key={d.annee} className="rounded-xl border border-border bg-secondary/30 p-3">
                     <p className="text-[10px] uppercase tracking-wider text-muted-foreground">{d.annee}</p>
                     <p className="mt-1 text-xl font-semibold" style={{ color: d.color }}>{d.centre}%</p>
                     <p className="text-[11px] text-muted-foreground">Centre · {d.populiste}% Populiste</p>
@@ -506,14 +561,14 @@ function VisualisationPage() {
               <div className="overflow-x-auto">
                 <ResponsiveContainer width={900} height={340}>
                   <BarChart data={deptTemporalData} margin={{ top: 5, right: 10, left: -10, bottom: 40 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
-                    <XAxis dataKey="dept" tick={{ fill: "rgba(255,255,255,0.45)", fontSize: 9 }} angle={-35} textAnchor="end" interval={0} />
-                    <YAxis domain={[30, 105]} tickFormatter={(v: number) => `${v}%`} tick={{ fill: "rgba(255,255,255,0.45)", fontSize: 10 }} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.07)" />
+                    <XAxis dataKey="dept" tick={{ fill: "#64748b", fontSize: 9 }} angle={-35} textAnchor="end" interval={0} />
+                    <YAxis domain={[30, 105]} tickFormatter={(v: number) => `${v}%`} tick={{ fill: "#64748b", fontSize: 10 }} />
                     <Tooltip
-                      contentStyle={{ background: "rgba(20,20,40,0.95)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, color: "#fff", fontSize: 11 }}
+                      contentStyle={{ background: "#ffffff", border: "1px solid rgba(0,0,0,0.1)", borderRadius: 12, color: "#1e293b", boxShadow: "0 10px 30px -12px rgba(0,0,0,0.25)", fontSize: 11 }}
                       formatter={(v: any) => [`${Number(v ?? 0)}%`]}
                     />
-                    <Legend wrapperStyle={{ fontSize: 10, color: "rgba(255,255,255,0.6)" }} />
+                    <Legend wrapperStyle={{ fontSize: 10, color: "#64748b" }} />
                     <Bar dataKey="2022" name="2022 (Réel)"  fill="#10b981" radius={[4,4,0,0]} barSize={14} />
                     <Bar dataKey="2024" name="2024 (S+1)"   fill="#6366f1" radius={[4,4,0,0]} barSize={14} />
                     <Bar dataKey="2025" name="2025 (S+2)"   fill="#f59e0b" radius={[4,4,0,0]} barSize={14} />
@@ -541,19 +596,19 @@ function VisualisationPage() {
                       <stop offset="95%" stopColor="#f43f5e" stopOpacity={0.0} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
-                  <XAxis dataKey="dept" tick={{ fill: "rgba(255,255,255,0.45)", fontSize: 9 }} angle={-35} textAnchor="end" interval={0} />
-                  <YAxis tickFormatter={(v: number) => `${v}%`} tick={{ fill: "rgba(255,255,255,0.45)", fontSize: 10 }} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.07)" />
+                  <XAxis dataKey="dept" tick={{ fill: "#64748b", fontSize: 9 }} angle={-35} textAnchor="end" interval={0} />
+                  <YAxis tickFormatter={(v: number) => `${v}%`} tick={{ fill: "#64748b", fontSize: 10 }} />
                   <Tooltip
-                    contentStyle={{ background: "rgba(20,20,40,0.95)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, color: "#fff", fontSize: 11 }}
+                    contentStyle={{ background: "#ffffff", border: "1px solid rgba(0,0,0,0.1)", borderRadius: 12, color: "#1e293b", boxShadow: "0 10px 30px -12px rgba(0,0,0,0.25)", fontSize: 11 }}
                     formatter={(v: any, name: any) => [`${(100 - Number(v ?? 0)).toFixed(1)}% populiste`, name]}
                   />
-                  <Legend wrapperStyle={{ fontSize: 10, color: "rgba(255,255,255,0.6)" }} />
+                  <Legend wrapperStyle={{ fontSize: 10, color: "#64748b" }} />
                   <Area type="monotone" dataKey="2022" name="2022 (Réel)"  stroke="#10b981" fill="url(#grad22)" strokeWidth={2} dot={false} />
                   <Area type="monotone" dataKey="2026" name="2026 (S+3)"  stroke="#f43f5e" fill="url(#grad26)" strokeWidth={2} dot={false} strokeDasharray="5 3" />
                 </AreaChart>
               </ResponsiveContainer>
-              <div className="mt-4 rounded-xl border border-rose-500/20 bg-rose-500/5 px-4 py-3 text-xs text-rose-300">
+              <div className="mt-4 rounded-xl border border-rose-500/20 bg-rose-500/5 px-4 py-3 text-xs text-rose-600">
                 <strong>Zone à risque :</strong> Lot-et-Garonne (seul département ayant réellement voté Le Pen en 2022) voit
                 sa probabilité populiste atteindre <strong>64.2%</strong> en 2026. Charente-Maritime et Landes
                 franchissent le seuil d'alerte 20%.
@@ -571,9 +626,9 @@ function VisualisationPage() {
           )}
 
           {!tendancesLoading && !tendancesData && (
-            <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 px-4 py-3 text-xs text-amber-300">
+            <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 px-4 py-3 text-xs text-amber-600">
               <strong>Fichier non trouvé.</strong> Exécutez :{" "}
-              <code className="text-white">python MSPR_Final/MSPR/03_Data_Science/generate_tendances.py</code>
+              <code className="text-foreground">python MSPR_Final/MSPR/03_Data_Science/generate_tendances.py</code>
             </div>
           )}
 
@@ -622,10 +677,10 @@ function VisualisationPage() {
                         const isUp  = delta > 0;
                         const deltaColor =
                           bloc.key === "centre"
-                            ? isUp ? "text-emerald-400" : "text-rose-400"
-                            : isUp ? "text-amber-400" : "text-emerald-400";
+                            ? isUp ? "text-emerald-600" : "text-rose-600"
+                            : isUp ? "text-amber-600" : "text-emerald-600";
                         return (
-                          <div key={bloc.key} className="rounded-2xl border border-border bg-background/20 p-4 text-center">
+                          <div key={bloc.key} className="rounded-2xl border border-border bg-secondary/30 p-4 text-center">
                             <div className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">{bloc.label}</div>
                             <div className="mt-2 text-2xl font-bold" style={{ color: bloc.color }}>{(val as number).toFixed(1)}%</div>
                             {yearPred?.is_base ? (
@@ -643,7 +698,7 @@ function VisualisationPage() {
                       })}
                     </div>
                     {!yearPred?.is_base && (
-                      <div className="mb-4 rounded-xl border border-rose-500/20 bg-rose-500/5 px-4 py-2.5 text-xs text-rose-300">
+                      <div className="mb-4 rounded-xl border border-rose-500/20 bg-rose-500/5 px-4 py-2.5 text-xs text-rose-600">
                         <strong>{yearPred?.annee} vs base {basePred?.year} :</strong>{" "}
                         Centre {((yearPred?.centre ?? 0) - (basePred?.centre ?? 0)) >= 0 ? "+" : ""}
                         {+((yearPred?.centre ?? 0) - (basePred?.centre ?? 0)).toFixed(2)}pp —{" "}
@@ -678,14 +733,14 @@ function VisualisationPage() {
                   </p>
                   <ResponsiveContainer width="100%" height={380}>
                     <BarChart data={tendancesData.predictions} margin={{ top: 5, right: 10, left: -10, bottom: 5 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
-                      <XAxis dataKey="annee" tick={{ fill: "rgba(255,255,255,0.5)", fontSize: 11 }} />
-                      <YAxis domain={[0, 100]} tickFormatter={(v: number) => `${v}%`} tick={{ fill: "rgba(255,255,255,0.5)", fontSize: 11 }} />
+                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.07)" />
+                      <XAxis dataKey="annee" tick={{ fill: "#64748b", fontSize: 11 }} />
+                      <YAxis domain={[0, 100]} tickFormatter={(v: number) => `${v}%`} tick={{ fill: "#64748b", fontSize: 11 }} />
                       <Tooltip
-                        contentStyle={{ background: "rgba(20,20,40,0.95)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, color: "#fff", fontSize: 11 }}
+                        contentStyle={{ background: "#ffffff", border: "1px solid rgba(0,0,0,0.1)", borderRadius: 12, color: "#1e293b", boxShadow: "0 10px 30px -12px rgba(0,0,0,0.25)", fontSize: 11 }}
                         formatter={(v: unknown, name: unknown) => [`${(+(v as number)).toFixed(1)}%`, name as string]}
                       />
-                      <Legend wrapperStyle={{ fontSize: 10, color: "rgba(255,255,255,0.6)" }} />
+                      <Legend wrapperStyle={{ fontSize: 10, color: "#64748b" }} />
                       {BLOCS_META.map((bloc) => (
                         <Bar key={bloc.key} dataKey={bloc.key} name={bloc.label} stackId="blocs" fill={bloc.color} />
                       ))}
@@ -701,11 +756,11 @@ function VisualisationPage() {
                     <h3 className="mb-3 text-sm font-medium text-muted-foreground">Centre — évolution sur 3 ans</h3>
                     <ResponsiveContainer width="100%" height={260}>
                       <LineChart data={tendancesData.predictions} margin={{ top: 5, right: 10, left: -10, bottom: 5 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
-                        <XAxis dataKey="annee" tick={{ fill: "rgba(255,255,255,0.45)", fontSize: 10 }} />
-                        <YAxis tickFormatter={(v: number) => `${v}%`} tick={{ fill: "rgba(255,255,255,0.45)", fontSize: 10 }} />
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.07)" />
+                        <XAxis dataKey="annee" tick={{ fill: "#64748b", fontSize: 10 }} />
+                        <YAxis tickFormatter={(v: number) => `${v}%`} tick={{ fill: "#64748b", fontSize: 10 }} />
                         <Tooltip
-                          contentStyle={{ background: "rgba(20,20,40,0.95)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, color: "#fff", fontSize: 11 }}
+                          contentStyle={{ background: "#ffffff", border: "1px solid rgba(0,0,0,0.1)", borderRadius: 12, color: "#1e293b", boxShadow: "0 10px 30px -12px rgba(0,0,0,0.25)", fontSize: 11 }}
                           formatter={(v: unknown) => [`${(+(v as number)).toFixed(1)}%`, "Centre"]}
                         />
                         <Line type="monotone" dataKey="centre" name="Centre" stroke="#eab308" strokeWidth={2.5} dot={{ r: 5, fill: "#eab308" }} activeDot={{ r: 7 }} />
@@ -716,14 +771,14 @@ function VisualisationPage() {
                     <h3 className="mb-3 text-sm font-medium text-muted-foreground">Blocs périphériques — variations</h3>
                     <ResponsiveContainer width="100%" height={260}>
                       <LineChart data={tendancesData.predictions} margin={{ top: 5, right: 10, left: -10, bottom: 5 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
-                        <XAxis dataKey="annee" tick={{ fill: "rgba(255,255,255,0.45)", fontSize: 10 }} />
-                        <YAxis tickFormatter={(v: number) => `${v}%`} tick={{ fill: "rgba(255,255,255,0.45)", fontSize: 10 }} />
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.07)" />
+                        <XAxis dataKey="annee" tick={{ fill: "#64748b", fontSize: 10 }} />
+                        <YAxis tickFormatter={(v: number) => `${v}%`} tick={{ fill: "#64748b", fontSize: 10 }} />
                         <Tooltip
-                          contentStyle={{ background: "rgba(20,20,40,0.95)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, color: "#fff", fontSize: 11 }}
+                          contentStyle={{ background: "#ffffff", border: "1px solid rgba(0,0,0,0.1)", borderRadius: 12, color: "#1e293b", boxShadow: "0 10px 30px -12px rgba(0,0,0,0.25)", fontSize: 11 }}
                           formatter={(v: unknown, name: unknown) => [`${(+(v as number)).toFixed(1)}%`, name as string]}
                         />
-                        <Legend wrapperStyle={{ fontSize: 10, color: "rgba(255,255,255,0.6)" }} />
+                        <Legend wrapperStyle={{ fontSize: 10, color: "#64748b" }} />
                         {BLOCS_META.filter((b) => b.key !== "centre").map((bloc) => (
                           <Line key={bloc.key} type="monotone" dataKey={bloc.key} name={bloc.label} stroke={bloc.color} strokeWidth={2} dot={{ r: 4 }} activeDot={{ r: 6 }} />
                         ))}
@@ -753,8 +808,8 @@ function VisualisationPage() {
                         const isUp = delta > 0;
                         const deltaColor =
                           bloc.key === "centre"
-                            ? isUp ? "text-emerald-400" : "text-rose-400"
-                            : isUp ? "text-amber-400" : "text-emerald-400";
+                            ? isUp ? "text-emerald-600" : "text-rose-600"
+                            : isUp ? "text-amber-600" : "text-emerald-600";
                         return (
                           <tr key={bloc.key} className="border-t border-border/30 transition-colors hover:bg-secondary/20">
                             <td className="px-4 py-3">
@@ -785,7 +840,7 @@ function VisualisationPage() {
               )}
 
               {/* Analyse dynamique depuis les deltas JSON */}
-              <div className="mt-5 rounded-xl border border-amber-500/20 bg-amber-500/5 px-4 py-3 text-xs text-amber-300">
+              <div className="mt-5 rounded-xl border border-amber-500/20 bg-amber-500/5 px-4 py-3 text-xs text-amber-600">
                 <strong>Analyse {tendancesData.metadata.model} :</strong>{" "}
                 Le Centre{" "}
                 {(tendancesData.deltas.centre ?? 0) >= 0 ? "progresse" : "recule"} de{" "}
@@ -853,11 +908,11 @@ function VisualisationPage() {
               </p>
               <div className="mt-3 grid gap-2 sm:grid-cols-3 text-xs">
                 {[
-                  { step: "1. Données étiquetées", desc: "127 260 lignes · label = état économique (Boom / Croissance / Stable / Déclin / Crise)" },
-                  { step: "2. Entraînement (80%)", desc: "Le modèle ajuste ses paramètres sur 101 808 exemples via descente de gradient" },
-                  { step: "3. Test (20%)", desc: "Évaluation sur 25 452 exemples jamais vus → Accuracy 81.81%" },
+                  { step: "1. Données étiquetées", desc: "40 000 lignes (échantillon ML équilibré) · label = état économique (Boom / Croissance / Stable / Déclin / Crise)" },
+                  { step: "2. Entraînement (80%)", desc: "Le modèle ajuste ses paramètres sur 32 000 exemples via descente de gradient" },
+                  { step: "3. Test (20%)", desc: "Évaluation sur 8 000 exemples jamais vus → Accuracy 82.11%" },
                 ].map((s) => (
-                  <div key={s.step} className="rounded-xl border border-accent/20 bg-background/20 p-3">
+                  <div key={s.step} className="rounded-xl border border-accent/20 bg-secondary/30 p-3">
                     <p className="font-semibold text-accent">{s.step}</p>
                     <p className="mt-1 text-muted-foreground">{s.desc}</p>
                   </div>
@@ -867,7 +922,7 @@ function VisualisationPage() {
 
             {/* Q3 */}
             <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-5">
-              <p className="text-sm font-semibold text-emerald-400 mb-2">
+              <p className="text-sm font-semibold text-emerald-600 mb-2">
                 Q3 — Comment définissez-vous le degré de précision (accuracy) de votre modèle ?
               </p>
               <p className="text-sm text-muted-foreground leading-relaxed">
@@ -876,23 +931,23 @@ function VisualisationPage() {
               </p>
               <div className="mt-3 flex justify-center">
                 <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-6 py-3 text-center font-mono text-sm">
-                  <span className="text-emerald-300">Accuracy</span>
+                  <span className="text-emerald-600">Accuracy</span>
                   <span className="text-muted-foreground"> = </span>
                   <span className="text-foreground">Prédictions correctes</span>
                   <span className="text-muted-foreground"> / </span>
                   <span className="text-foreground">Total d'exemples</span>
                   <span className="text-muted-foreground"> = </span>
-                  <span className="text-emerald-300 font-bold">81.81%</span>
+                  <span className="text-emerald-600 font-bold">82.11%</span>
                 </div>
               </div>
               <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4 text-xs">
                 {[
-                  { metric: "Accuracy",  value: "81.81%", desc: "% d'exemples correctement classés",                  color: "text-emerald-400" },
-                  { metric: "Precision", value: "81.79%", desc: "Parmi les prédits positifs, combien sont vrais",       color: "text-primary" },
-                  { metric: "Recall",    value: "81.81%", desc: "Parmi les vrais positifs, combien sont retrouvés",     color: "text-accent" },
-                  { metric: "F1-Score",  value: "81.77%", desc: "Moyenne harmonique Precision / Recall",               color: "text-amber-400" },
+                  { metric: "Accuracy",  value: "82.11%", desc: "% d'exemples correctement classés",                  color: "text-emerald-600" },
+                  { metric: "Precision", value: "82.20%", desc: "Parmi les prédits positifs, combien sont vrais",       color: "text-primary" },
+                  { metric: "Recall",    value: "82.11%", desc: "Parmi les vrais positifs, combien sont retrouvés",     color: "text-accent" },
+                  { metric: "F1-Score",  value: "82.10%", desc: "Moyenne harmonique Precision / Recall",               color: "text-amber-600" },
                 ].map((m) => (
-                  <div key={m.metric} className="rounded-xl border border-border bg-background/20 p-3">
+                  <div key={m.metric} className="rounded-xl border border-border bg-secondary/30 p-3">
                     <p className={`text-base font-bold ${m.color}`}>{m.value}</p>
                     <p className="font-semibold text-foreground">{m.metric}</p>
                     <p className="mt-0.5 text-muted-foreground">{m.desc}</p>
@@ -901,20 +956,20 @@ function VisualisationPage() {
               </div>
               <p className="mt-3 text-xs text-muted-foreground">
                 <strong className="text-foreground">Note :</strong> Pour une tâche à 5 classes déséquilibrées
-                (Stable = 55% des données), l'accuracy seule peut être trompeuse. C'est pourquoi nous reportons
-                également le <strong>F1-score macro</strong> (81.77%) qui pénalise les mauvaises performances
+                (Stable = 40% des données), l'accuracy seule peut être trompeuse. C'est pourquoi nous reportons
+                également le <strong>F1-score</strong> (82.10%) qui pénalise les mauvaises performances
                 sur les classes minoritaires (Crise, Boom).
               </p>
             </div>
 
             {/* Additional insight */}
             <div className="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-5">
-              <p className="text-sm font-semibold text-amber-400 mb-2">
+              <p className="text-sm font-semibold text-amber-600 mb-2">
                 Indicateur bonus — Déséquilibre des classes et stratégie de validation
               </p>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                Les 5 classes cibles sont déséquilibrées : <em>Stable</em> représente ~55% des données,
-                tandis que <em>Crise</em> et <em>Boom</em> en représentent chacune moins de 8%.
+                Les 5 classes cibles sont déséquilibrées : <em>Stable</em> représente ~40% des données,
+                <em>Déclin</em> et <em>Croissance</em> ~20% chacune, tandis que <em>Crise</em> et <em>Boom</em> en représentent chacune ~10%.
                 Nous avons utilisé une <strong className="text-foreground">StratifiedKFold (k=5)</strong> pour garantir
                 une représentation proportionnelle dans chaque fold, ainsi qu'un
                 <strong className="text-foreground"> split stratifié 80/20</strong> pour le jeu de test final.
@@ -955,7 +1010,7 @@ function VisualisationPage() {
                         style={{
                           width: 56, height: 40, minWidth: 56,
                           backgroundColor: corrColor(val),
-                          border: isHovered ? "2px solid white" : "1px solid rgba(0,0,0,0.08)",
+                          border: isHovered ? "2px solid #1e293b" : "1px solid rgba(0,0,0,0.08)",
                           borderRadius: 4, margin: 1,
                           transform: isHovered ? "scale(1.15)" : "scale(1)",
                           zIndex: isHovered ? 10 : 0,
@@ -997,10 +1052,10 @@ function VisualisationPage() {
             />
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={modelComparison} margin={{ top: 5, right: 10, left: -10, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
-                <XAxis dataKey="name" tick={{ fill: "rgba(255,255,255,0.5)", fontSize: 11 }} axisLine={{ stroke: "rgba(255,255,255,0.1)" }} />
-                <YAxis domain={[55, 90]} tick={{ fill: "rgba(255,255,255,0.5)", fontSize: 11 }} axisLine={{ stroke: "rgba(255,255,255,0.1)" }} tickFormatter={(v: number) => `${v}%`} />
-                <Tooltip contentStyle={{ background: "rgba(20,20,40,0.95)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, color: "#fff", fontSize: 12 }}
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.07)" />
+                <XAxis dataKey="name" tick={{ fill: "#64748b", fontSize: 11 }} axisLine={{ stroke: "rgba(0,0,0,0.12)" }} />
+                <YAxis domain={[55, 90]} tick={{ fill: "#64748b", fontSize: 11 }} axisLine={{ stroke: "rgba(0,0,0,0.12)" }} tickFormatter={(v: number) => `${v}%`} />
+                <Tooltip contentStyle={{ background: "#ffffff", border: "1px solid rgba(0,0,0,0.1)", borderRadius: 12, color: "#1e293b", boxShadow: "0 10px 30px -12px rgba(0,0,0,0.25)", fontSize: 12 }}
                   formatter={(v: any) => [`${Number(v ?? 0).toFixed(2)}%`, activeMetric.charAt(0).toUpperCase() + activeMetric.slice(1)]} />
                 <Bar dataKey={metricKey} radius={[8, 8, 0, 0]} barSize={36}>
                   {modelComparison.map((entry, idx) => <Cell key={`cell-${idx}`} fill={entry.fill} />)}
@@ -1013,16 +1068,16 @@ function VisualisationPage() {
             <p className="mb-4 text-xs text-muted-foreground">Comparaison simultanée de toutes les métriques pour chaque modèle.</p>
             <ResponsiveContainer width="100%" height={340}>
               <RadarChart cx="50%" cy="50%" outerRadius="70%" data={radarData}>
-                <PolarGrid stroke="rgba(255,255,255,0.08)" />
-                <PolarAngleAxis dataKey="metric" tick={{ fill: "rgba(255,255,255,0.6)", fontSize: 11 }} />
-                <PolarRadiusAxis angle={30} domain={[60, 85]} tick={{ fill: "rgba(255,255,255,0.3)", fontSize: 9 }} />
+                <PolarGrid stroke="rgba(0,0,0,0.07)" />
+                <PolarAngleAxis dataKey="metric" tick={{ fill: "#64748b", fontSize: 11 }} />
+                <PolarRadiusAxis angle={30} domain={[60, 85]} tick={{ fill: "#94a3b8", fontSize: 9 }} />
                 <Radar name="HistGradBoost ★" dataKey="HistGradBoost" stroke="#10b981" fill="#10b981" fillOpacity={0.18} strokeWidth={2.5} />
                 <Radar name="Logistic Reg."  dataKey="Logistic Reg." stroke="#6366f1" fill="#6366f1" fillOpacity={0.12} strokeWidth={2} />
                 <Radar name="XGBoost"        dataKey="XGBoost"       stroke="#8b5cf6" fill="#8b5cf6" fillOpacity={0.10} strokeWidth={2} />
                 <Radar name="Random Forest"  dataKey="Random Forest" stroke="#f59e0b" fill="#f59e0b" fillOpacity={0.08} strokeWidth={1.5} />
                 <Radar name="LinearSVM"      dataKey="LinearSVM"     stroke="#f43f5e" fill="#f43f5e" fillOpacity={0.05} strokeWidth={1} strokeDasharray="4 4" />
-                <Legend wrapperStyle={{ fontSize: 10, color: "rgba(255,255,255,0.6)" }} />
-                <Tooltip contentStyle={{ background: "rgba(20,20,40,0.95)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, color: "#fff", fontSize: 11 }} />
+                <Legend wrapperStyle={{ fontSize: 10, color: "#64748b" }} />
+                <Tooltip contentStyle={{ background: "#ffffff", border: "1px solid rgba(0,0,0,0.1)", borderRadius: 12, color: "#1e293b", boxShadow: "0 10px 30px -12px rgba(0,0,0,0.25)", fontSize: 11 }} />
               </RadarChart>
             </ResponsiveContainer>
           </SectionCard>
@@ -1033,7 +1088,7 @@ function VisualisationPage() {
           <ChartTabs
             tabs={[
               { id: "40", label: "HistGradBoost / XGBoost · 40 itérations (82.11%)" },
-              { id: "20", label: "LogisticReg / LinearSVM · 20 itérations (82.10%)" },
+              { id: "20", label: "LogisticReg / LinearSVM · 20 itérations (82.08%)" },
             ]}
             active={activeCurve}
             onChange={(id) => setActiveCurve(id as "40" | "20")}
@@ -1043,11 +1098,11 @@ function VisualisationPage() {
               <h3 className="mb-3 text-sm font-medium text-muted-foreground">Courbes de Précision</h3>
               <ResponsiveContainer width="100%" height={260}>
                 <LineChart data={activeCurve === "40" ? trainingCurves40 : trainingCurves20} margin={{ top: 5, right: 10, left: -10, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
-                  <XAxis dataKey="epoch" tick={{ fill: "rgba(255,255,255,0.5)", fontSize: 10 }} label={{ value: "Epoch", position: "insideBottomRight", offset: -5, style: { fill: "rgba(255,255,255,0.4)", fontSize: 10 } }} />
-                  <YAxis domain={activeCurve === "40" ? [0.78, 0.88] : [0.64, 0.83]} tick={{ fill: "rgba(255,255,255,0.5)", fontSize: 10 }} label={{ value: "Accuracy", angle: -90, position: "insideLeft", offset: 15, style: { fill: "rgba(255,255,255,0.4)", fontSize: 10 } }} />
-                  <Tooltip contentStyle={{ background: "rgba(20,20,40,0.95)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, color: "#fff", fontSize: 11 }} />
-                  <Legend wrapperStyle={{ fontSize: 11, color: "rgba(255,255,255,0.6)" }} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.07)" />
+                  <XAxis dataKey="epoch" tick={{ fill: "#64748b", fontSize: 10 }} label={{ value: "Epoch", position: "insideBottomRight", offset: -5, style: { fill: "#94a3b8", fontSize: 10 } }} />
+                  <YAxis domain={activeCurve === "40" ? [0.78, 0.88] : [0.64, 0.83]} tick={{ fill: "#64748b", fontSize: 10 }} label={{ value: "Accuracy", angle: -90, position: "insideLeft", offset: 15, style: { fill: "#94a3b8", fontSize: 10 } }} />
+                  <Tooltip contentStyle={{ background: "#ffffff", border: "1px solid rgba(0,0,0,0.1)", borderRadius: 12, color: "#1e293b", boxShadow: "0 10px 30px -12px rgba(0,0,0,0.25)", fontSize: 11 }} />
+                  <Legend wrapperStyle={{ fontSize: 11, color: "#64748b" }} />
                   <Line type="monotone" dataKey="trainAcc" name="Train"      stroke="#6366f1" strokeWidth={2.5} dot={false} activeDot={{ r: 4 }} />
                   <Line type="monotone" dataKey="valAcc"   name="Validation" stroke="#f59e0b" strokeWidth={2}   dot={false} activeDot={{ r: 4 }} />
                 </LineChart>
@@ -1057,11 +1112,11 @@ function VisualisationPage() {
               <h3 className="mb-3 text-sm font-medium text-muted-foreground">Courbes de Perte</h3>
               <ResponsiveContainer width="100%" height={260}>
                 <LineChart data={activeCurve === "40" ? trainingCurves40 : trainingCurves20} margin={{ top: 5, right: 10, left: -10, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
-                  <XAxis dataKey="epoch" tick={{ fill: "rgba(255,255,255,0.5)", fontSize: 10 }} label={{ value: "Epoch", position: "insideBottomRight", offset: -5, style: { fill: "rgba(255,255,255,0.4)", fontSize: 10 } }} />
-                  <YAxis domain={activeCurve === "40" ? [0.3, 0.55] : [0.45, 0.9]} tick={{ fill: "rgba(255,255,255,0.5)", fontSize: 10 }} label={{ value: "Loss", angle: -90, position: "insideLeft", offset: 15, style: { fill: "rgba(255,255,255,0.4)", fontSize: 10 } }} />
-                  <Tooltip contentStyle={{ background: "rgba(20,20,40,0.95)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, color: "#fff", fontSize: 11 }} />
-                  <Legend wrapperStyle={{ fontSize: 11, color: "rgba(255,255,255,0.6)" }} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.07)" />
+                  <XAxis dataKey="epoch" tick={{ fill: "#64748b", fontSize: 10 }} label={{ value: "Epoch", position: "insideBottomRight", offset: -5, style: { fill: "#94a3b8", fontSize: 10 } }} />
+                  <YAxis domain={activeCurve === "40" ? [0.3, 0.55] : [0.45, 0.9]} tick={{ fill: "#64748b", fontSize: 10 }} label={{ value: "Loss", angle: -90, position: "insideLeft", offset: 15, style: { fill: "#94a3b8", fontSize: 10 } }} />
+                  <Tooltip contentStyle={{ background: "#ffffff", border: "1px solid rgba(0,0,0,0.1)", borderRadius: 12, color: "#1e293b", boxShadow: "0 10px 30px -12px rgba(0,0,0,0.25)", fontSize: 11 }} />
+                  <Legend wrapperStyle={{ fontSize: 11, color: "#64748b" }} />
                   <Line type="monotone" dataKey="trainLoss" name="Train"      stroke="#6366f1" strokeWidth={2.5} dot={false} activeDot={{ r: 4 }} />
                   <Line type="monotone" dataKey="valLoss"   name="Validation" stroke="#f59e0b" strokeWidth={2}   dot={false} activeDot={{ r: 4 }} />
                 </LineChart>
@@ -1069,13 +1124,13 @@ function VisualisationPage() {
             </div>
           </div>
           {activeCurve === "40" && (
-            <div className="mt-4 rounded-xl border border-emerald-500/20 bg-emerald-500/5 px-4 py-3 text-xs text-emerald-300">
+            <div className="mt-4 rounded-xl border border-emerald-500/20 bg-emerald-500/5 px-4 py-3 text-xs text-emerald-600">
               <strong>Exactitude finale :</strong> 82.11% (HistGradBoost ★) — Convergence stable après ~30 itérations, faible écart train/validation.
             </div>
           )}
           {activeCurve === "20" && (
             <div className="mt-4 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 text-xs text-primary">
-              <strong>Exactitude finale :</strong> 82.10% (Logistic Regression) — Convergence rapide dès les premières itérations, très stable.
+              <strong>Exactitude finale :</strong> 82.08% (Logistic Regression) — Convergence rapide dès les premières itérations, très stable.
             </div>
           )}
         </SectionCard>
@@ -1083,13 +1138,13 @@ function VisualisationPage() {
         {/* ╔══════ Summary stats ══════╗ */}
         <motion.section variants={itemVariant} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {[
-            { label: "Meilleur Modèle",         value: "Logistic Reg.", sub: "81.81% accuracy" },
-            { label: "Total Enregistrements",   value: "127 260",       sub: "Nouvelle-Aquitaine" },
+            { label: "Meilleur Modèle",         value: "HistGradBoost ★", sub: "82.11% accuracy" },
+            { label: "Total Enregistrements",   value: "113 260",       sub: "Nouvelle-Aquitaine (jeu nettoyé)" },
             { label: "Variables Analysées",     value: "27",            sub: "Indicateurs delta" },
             { label: "Classes Cibles",          value: "5",             sub: "Boom · Croissance · Stable · Déclin · Crise" },
           ].map((kpi, i) => (
             <motion.div key={kpi.label} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 * i }}
-              className="relative overflow-hidden rounded-2xl border border-border bg-card/60 p-5 backdrop-blur-xl shadow-[var(--shadow-card)]">
+              className="relative overflow-hidden rounded-2xl border border-border bg-card p-5 shadow-[var(--shadow-card)]">
               <div className="pointer-events-none absolute -top-16 -right-16 h-40 w-40 rounded-full bg-gradient-to-br from-primary/25 to-accent/10 blur-2xl" />
               <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground">{kpi.label}</p>
               <p className="mt-3 text-2xl font-semibold tracking-tight text-foreground">{kpi.value}</p>
@@ -1097,11 +1152,83 @@ function VisualisationPage() {
             </motion.div>
           ))}
         </motion.section>
-      </motion.main>
+      </motion.div>
 
-      <footer className="border-t border-border/40 py-8 text-center text-xs text-muted-foreground">
-        GouvData · Machine Learning Analytics · Présidentielle 2022 · Nouvelle-Aquitaine
-      </footer>
+        <footer className="border-t border-border/40 py-8 text-center text-xs text-muted-foreground">
+          GouvData · Machine Learning Analytics · Présidentielle 2022 · Nouvelle-Aquitaine
+        </footer>
+      </main>
     </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   SIDEBAR BUILDING BLOCKS (alignés sur le Dashboard)
+   ═══════════════════════════════════════════════════════════════════════ */
+
+function SideSection({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <p className="mb-2 px-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+        {title}
+      </p>
+      <div className="space-y-1.5">{children}</div>
+    </div>
+  );
+}
+
+function SideLink({
+  to,
+  icon,
+  label,
+  sub,
+  active,
+}: {
+  to: string;
+  icon: React.ReactNode;
+  label: string;
+  sub: string;
+  active?: boolean;
+}) {
+  return (
+    <Link
+      to={to}
+      className={`flex items-center gap-3 rounded-xl px-3 py-2.5 transition-all ${
+        active
+          ? "bg-primary text-primary-foreground shadow-md shadow-primary/25"
+          : "text-foreground hover:bg-secondary"
+      }`}
+    >
+      <span className={active ? "text-primary-foreground" : "text-primary"}>{icon}</span>
+      <span className="leading-tight">
+        <span className="block text-sm font-semibold">{label}</span>
+        <span className={`block text-[11px] ${active ? "text-primary-foreground/75" : "text-muted-foreground"}`}>
+          {sub}
+        </span>
+      </span>
+    </Link>
+  );
+}
+
+function SideInfo({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
+  return (
+    <div className="flex items-center gap-3 rounded-xl border border-border bg-secondary/30 px-3 py-2.5">
+      <span className="text-primary">{icon}</span>
+      <span className="leading-tight">
+        <span className="block text-[11px] text-muted-foreground">{label}</span>
+        <span className="block text-sm font-semibold text-foreground">{value}</span>
+      </span>
+    </div>
+  );
+}
+
+/* French flag — national symbol, kept in its real colours */
+function FlagFR({ className = "" }: { className?: string }) {
+  return (
+    <span className={`inline-flex overflow-hidden rounded-[3px] border border-border shadow-sm ${className}`}>
+      <span className="h-full w-1/3" style={{ backgroundColor: "#0055A4" }} />
+      <span className="h-full w-1/3 bg-white" />
+      <span className="h-full w-1/3" style={{ backgroundColor: "#EF4135" }} />
+    </span>
   );
 }
