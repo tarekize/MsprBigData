@@ -1,0 +1,131 @@
+%=============================================================
+% Chapitre 7 — Interface applicative React 19
+%=============================================================
+\chapter{Interface applicative}
+\label{ch:ui}
+
+\section{Architecture technique frontend}
+
+L'interface web Electio-Analytics est développée en \textbf{React 19} avec TypeScript.
+
+\begin{table}[H]
+\centering
+\caption{Stack technique frontend}
+\label{tab:stack}
+\begin{tabular}{lll}
+\toprule
+\textbf{Composant} & \textbf{Bibliothèque} & \textbf{Rôle} \\
+\midrule
+Routing          & TanStack Router v1   & Navigation sans rechargement \\
+Visualisation    & Recharts 2.x         & Graphiques interactifs \\
+Animations       & Framer Motion 11     & Transitions fluides \\
+Styles           & Tailwind CSS 4       & Design system utilitaire \\
+État global      & TanStack Query       & Cache et synchronisation API \\
+Données          & MongoDB + PyMongo    & Prédictions, statistiques, graphiques \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Pages et composants principaux}
+
+\subsection{Dashboard principal (\texttt{index.tsx})}
+
+Le tableau de bord principal offre :
+\begin{itemize}
+  \item Un sélecteur de \textbf{modèle ML} (HistGradientBoosting, XGBoost, etc.)
+  \item Des filtres géographiques \textbf{en cascade} : Région $\rightarrow$ Département $\rightarrow$ Canton
+  \item Des cartes de KPIs (accuracy, F1-score, nombre de cantons prédits)
+  \item Un graphique Recharts affichant les scores par candidat pour le territoire sélectionné
+\end{itemize}
+
+\subsection{Page Visualisation (\texttt{visualisation.tsx})}
+
+La page intègre les graphiques Python (PNG générés par \texttt{generate\_visualisations.py}) :
+\begin{itemize}
+  \item Matrice de corrélations (heatmap)
+  \item Comparaison des modèles (barres + courbes d'apprentissage)
+  \item Importance des features (barres horizontales)
+  \item Scatter emploi vs vote populiste
+  \item Distribution des orientations par département
+  \item Projections temporelles 2022--2026
+\end{itemize}
+
+\subsection{Architecture de routage}
+
+\medskip\noindent\textit{TanStack Router --- routes principales :}
+\begin{verbatim}
+const router = createBrowserRouter([
+  { path: "/",             component: DashboardPage },
+  { path: "/visualisation", component: VisualisationPage },
+  { path: "/resultats/:dept", component: ResultatsDeptPage },
+  { path: "/comparaison",  component: ComparaisonModelesPage },
+]);
+\end{verbatim}
+
+\section{Flux de données}
+
+Les données transitent depuis \textbf{MongoDB} vers le dashboard React via une
+couche API Python (FastAPI / Flask) qui expose les collections MongoDB en JSON :
+
+\begin{center}
+\begin{tabular}{ccccc}
+\fbox{MongoDB \texttt{predictions}} & $\longrightarrow$ & \fbox{API Python} & $\longrightarrow$ & \fbox{React Query} \\[0.3cm]
+\fbox{MongoDB \texttt{tendances}}   & $\longrightarrow$ & \fbox{API Python} &                   & $\downarrow$ \\[0.3cm]
+\fbox{MongoDB \texttt{charts}}      & $\longrightarrow$ & \fbox{API Python} & $\longrightarrow$ & \fbox{Composants Recharts} \\
+\end{tabular}
+\end{center}
+
+\medskip\noindent
+Les collections MongoDB exposées par l'API backend :
+\begin{itemize}
+  \item \texttt{predictions} --- scores par candidat, département et modèle
+  \item \texttt{tendances} --- projections temporelles 2022--2026
+  \item \texttt{models\_meta} --- métriques et hyperparamètres des 5 modèles
+  \item \texttt{charts} --- images de visualisation (PNG encodées en base64)
+\end{itemize}
+
+\section{Expérience utilisateur}
+
+\begin{itemize}
+  \item \textbf{Progressive disclosure} : les détails apparaissent au clic/survol
+  \item \textbf{Couleurs sémantiques} : bleu = Centre, rouge = Extrême-Droite,
+    rose = Gauche, orange = Droite, violet = Extrême-Gauche
+  \item \textbf{Animations Framer Motion} : transitions 300ms ease-in-out
+  \item \textbf{Responsive design} : adaptation mobile/tablette/desktop
+\end{itemize}
+
+\section{Génération des visualisations Python}
+
+Les graphiques sont produits depuis les données de la collection \texttt{data\_final}
+de MongoDB, puis les images PNG sont stockées dans la collection \texttt{charts}
+(encodage base64), ce qui permet au dashboard de les récupérer sans accès
+au système de fichiers local :
+
+\medskip\noindent\textit{Extrait de \texttt{generate\_visualisations.py} :}
+\begin{verbatim}
+import matplotlib.pyplot as plt, seaborn as sns
+import base64, io
+from pymongo import MongoClient
+
+db = MongoClient("mongodb://localhost:27017/")["electio_analytics"]
+df = pd.DataFrame(list(db["data_final"].find({}, {"_id": 0})))
+
+# Génération de la heatmap
+fig, ax = plt.subplots(figsize=(10, 8))
+sns.heatmap(corr_matrix, annot=True, fmt=".2f", ax=ax)
+
+# Encodage en base64 et stockage dans MongoDB
+buf = io.BytesIO()
+plt.savefig(buf, format="png", dpi=150, bbox_inches="tight")
+img_b64 = base64.b64encode(buf.getvalue()).decode()
+db["charts"].update_one(
+    {"name": "correlation_heatmap"},
+    {"$set": {"data": img_b64, "format": "png"}},
+    upsert=True
+)
+plt.close()
+\end{verbatim}
+
+\noindent Le même patron est appliqué aux six graphiques du projet :
+heatmap, comparaison des modèles, importance des features, scatter emploi/vote,
+distribution des orientations, projections temporelles.

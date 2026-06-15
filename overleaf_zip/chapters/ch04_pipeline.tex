@@ -1,0 +1,207 @@
+%=============================================================
+% Chapitre 3 — Architecture et pipeline ETL
+%=============================================================
+\chapter{Architecture et pipeline de traitement}
+\label{ch:pipeline}
+
+\section{Vue d'ensemble du pipeline en 8 phases}
+
+Le projet s'appuie sur un pipeline de traitement structuré en \textbf{8 phases séquentielles},
+allant de la collecte automatisée via internet à la restitution applicative.
+\textbf{MongoDB} constitue le socle de stockage central à chaque étape clé du flux :
+les données brutes y sont ingérées dès la collecte, la base préparée y est également
+stockée, et le pipeline ML s'y connecte directement pour l'entraînement.
+
+\begin{table}[H]
+\centering
+\caption{Les 8 phases du pipeline Electio-Analytics}
+\label{tab:pipeline}
+\begin{tabular}{clll}
+\toprule
+\textbf{Phase} & \textbf{Nom} & \textbf{Outil} & \textbf{Sortie} \\
+\midrule
+1 & Collecte brute       & Python / wget         & CSV téléchargés \\
+2 & Ingestion brute      & PyMongo               & Collection \texttt{raw\_data} \\
+3 & Nettoyage            & Pandas + PyMongo      & Données propres \\
+4 & Ingénierie $\Delta$  & Pandas / NumPy        & 27 delta-features \\
+5 & Stockage final       & PyMongo               & Collection \texttt{data\_final} \\
+6 & EDA                  & Seaborn / Matplotlib  & Graphiques \\
+7 & Modélisation ML      & Scikit-learn / XGBoost & Modèles .pkl \\
+8 & Restitution          & React 19              & Dashboard web \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Phase 1 --- Collecte des données brutes}
+
+Les données sont collectées automatiquement depuis les portails ouverts de l'\textbf{INSEE}
+(Filosofi, RP) via \texttt{wget} ou la bibliothèque Python \texttt{requests}.
+Les fichiers couvrent les millésimes \textbf{2016} et \textbf{2022}
+au niveau \textbf{canton} (niveau infra-départemental).
+Aucune donnée n'est conservée localement de façon permanente : les fichiers
+téléchargés sont immédiatement ingérés en base (phase~2) puis peuvent être supprimés.
+
+\medskip\noindent\textit{Téléchargement automatisé depuis internet (wget / Python) :}
+\begin{verbatim}
+import os, subprocess
+
+URLS = {
+    "emploi_2016":    "https://www.insee.fr/data/Emploi_2016.csv",
+    "emploi_2022":    "https://www.insee.fr/data/Emploi_2022.csv",
+    "logement_2016":  "https://www.insee.fr/data/Logement_2016.csv",
+    "logement_2022":  "https://www.insee.fr/data/Logement_2022.csv",
+    "chomage_2016":   "https://www.insee.fr/data/Chomage_2016.csv",
+    "chomage_2022":   "https://www.insee.fr/data/Chomage_2022.csv",
+}
+
+os.makedirs("raw_data", exist_ok=True)
+
+for name, url in URLS.items():
+    dest = f"raw_data/{name}.csv"
+    subprocess.run(["wget", "-q", "-O", dest, url], check=True)
+    print(f"[OK] {name} -> {dest}")
+\end{verbatim}
+
+\section{Phase 2 --- Ingestion brute dans MongoDB}
+
+Une fois téléchargés, les fichiers CSV sont immédiatement ingérés dans
+\textbf{MongoDB} (collection \texttt{raw\_data}), qui constitue la
+\textbf{source de vérité unique} du pipeline.
+Chaque document est enrichi d'un champ \texttt{millesime} (2016 ou 2022)
+et d'un champ \texttt{theme} (emploi, logement, chômage\ldots) pour faciliter
+les requêtes ultérieures.
+
+\medskip\noindent\textit{Chargement CSV et insertion dans MongoDB :}
+\begin{verbatim}
+import pandas as pd
+from pymongo import MongoClient
+
+client = MongoClient("mongodb://localhost:27017/")
+db = client["electio_analytics"]
+db["raw_data"].drop()     # réinitialisation avant chaque collecte
+
+for name, _ in URLS.items():
+    millesime = 2016 if "2016" in name else 2022
+    theme     = name.split("_")[0]      # "emploi", "logement", ...
+
+    df = pd.read_csv(f"raw_data/{name}.csv",
+                     sep=";", encoding="utf-8")
+    df["millesime"] = millesime
+    df["theme"]     = theme
+
+    db["raw_data"].insert_many(df.to_dict(orient="records"))
+
+total = db["raw_data"].count_documents({})
+print(f"{total} documents insérés dans raw_data.")
+\end{verbatim}
+
+\section{Phases 3--4 --- Préparation des données depuis MongoDB}
+
+Toute la préparation (nettoyage, normalisation, ingénierie des
+\texorpdfstring{$\Delta$}{delta}-variables) est effectuée en lisant
+\emph{directement} la collection \texttt{raw\_data} de MongoDB.
+Cette approche garantit la traçabilité complète du flux et évite toute
+dépendance aux fichiers CSV locaux.
+
+\medskip\noindent\textit{Lecture depuis MongoDB, nettoyage et calcul des delta-features :}
+\begin{verbatim}
+import pandas as pd
+from pymongo import MongoClient
+
+client = MongoClient("mongodb://localhost:27017/")
+db = client["electio_analytics"]
+
+# Chargement depuis la collection brute
+df_2016 = pd.DataFrame(list(
+    db["raw_data"].find({"millesime": 2016}, {"_id": 0})
+))
+df_2022 = pd.DataFrame(list(
+    db["raw_data"].find({"millesime": 2022}, {"_id": 0})
+))
+
+# Nettoyage : suppression des colonnes trop lacunaires
+seuil = 0.80
+df_2016.dropna(axis=1, thresh=int(seuil * len(df_2016)), inplace=True)
+df_2022.dropna(axis=1, thresh=int(seuil * len(df_2022)), inplace=True)
+
+# Ingénierie des 27 delta-features
+epsilon = 1e-8
+features_2016 = [c for c in df_2016.columns if c.endswith("_2016")]
+
+for col in features_2016:
+    col_22 = col.replace("_2016", "_2022")
+    if col_22 in df_2022.columns:
+        df_merged[f"delta_{col}"] = (
+            (df_2022[col_22] - df_2016[col]) /
+            (df_2016[col].abs() + epsilon)
+        )
+\end{verbatim}
+
+La phase 4 produit ainsi \textbf{27 variables de variation inter-recensements}
+($\Delta$-features) selon la formule décrite au chapitre précédent (équation~\ref{eq:delta}).
+
+\section{Phase 5 --- Stockage de la base finale dans MongoDB}
+
+La base de données entièrement préparée est stockée dans la collection
+\texttt{data\_final} de MongoDB. Cette collection devient la
+\textbf{source exclusive} pour les phases aval : EDA et pipeline ML.
+
+\medskip\noindent\textit{Persistance de la base finale dans MongoDB :}
+\begin{verbatim}
+db["data_final"].drop()
+records = df_merged.to_dict(orient="records")
+db["data_final"].insert_many(records)
+print(f"Base finale : {db['data_final'].count_documents({})} cantons stockes.")
+\end{verbatim}
+
+Les quatre collections MongoDB utilisées par le projet sont les suivantes :
+
+\begin{itemize}
+  \item Collection \texttt{raw\_data} : données brutes INSEE (2016 et 2022)
+  \item Collection \texttt{data\_final} : features nettoyées + 27 delta-variables
+  \item Collection \texttt{predictions} : résultats par département et modèle
+  \item Collection \texttt{models\_meta} : hyperparamètres et métriques des modèles
+\end{itemize}
+
+\section{Phase 7 --- Pipeline ML depuis MongoDB}
+
+L'entraînement est lancé depuis le notebook
+\texttt{Nouvelle\_Aquitaine\_Machine\_Learning.ipynb}.
+La première opération consiste à charger la collection \texttt{data\_final}
+directement depuis MongoDB, sans passer par aucun fichier intermédiaire.
+
+\medskip\noindent\textit{Chargement de la base ML depuis MongoDB :}
+\begin{verbatim}
+from pymongo import MongoClient
+import pandas as pd
+
+client = MongoClient("mongodb://localhost:27017/")
+db = client["electio_analytics"]
+
+df = pd.DataFrame(list(db["data_final"].find({}, {"_id": 0})))
+X = df.drop(columns=["label"])
+y = df["label"]
+\end{verbatim}
+
+Le notebook orchestre ensuite les étapes suivantes :
+
+\begin{enumerate}
+  \item Chargement depuis MongoDB (\texttt{data\_final}, 40\,000 cantons $\times$ 171 colonnes)
+  \item Split stratifié 80\,\%/20\,\% (32\,000 train / 8\,000 test)
+  \item Validation croisée 5-fold sur le jeu d'entraînement
+  \item Évaluation finale sur le jeu de test
+  \item Génération du rapport de classification et de la matrice de confusion
+  \item Export des modèles en \texttt{.pkl} et stockage des prédictions dans MongoDB
+\end{enumerate}
+
+\section{Architecture globale}
+
+\begin{center}
+\begin{tabular}{ccccc}
+\fbox{INSEE (internet)} & $\longrightarrow$ & \fbox{wget / Python} & $\longrightarrow$ & \fbox{MongoDB \texttt{raw\_data}} \\[0.3cm]
+                        &                   &                      &                   & $\downarrow$ \\[0.3cm]
+\fbox{MongoDB \texttt{data\_final}} & $\longleftarrow$ & \multicolumn{3}{c}{\fbox{Préparation ETL (Pandas + PyMongo)}} \\[0.3cm]
+$\downarrow$            &                   &                      &                   & \\[0.3cm]
+\fbox{Pipeline ML}      & $\longrightarrow$ & \fbox{Prédictions}   & $\longrightarrow$ & \fbox{React 19} \\
+\end{tabular}
+\end{center}

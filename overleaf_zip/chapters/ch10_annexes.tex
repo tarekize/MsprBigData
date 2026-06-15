@@ -1,0 +1,109 @@
+%=============================================================
+% Annexes
+%=============================================================
+\chapter{Hyperparamètres des modèles ML}
+\label{ann:hyperparams}
+
+\begin{table}[H]
+\centering
+\caption{Hyperparamètres retenus pour chaque modèle}
+\label{tab:hyperparams}
+\begin{tabular}{lll}
+\toprule
+\textbf{Modèle} & \textbf{Paramètre} & \textbf{Valeur} \\
+\midrule
+\multirow{3}{*}{HistGradientBoosting}
+  & \texttt{max\_iter}     & 300  \\
+  & \texttt{learning\_rate} & 0,05 \\
+  & \texttt{max\_depth}    & 6    \\
+\midrule
+\multirow{3}{*}{XGBoost}
+  & \texttt{n\_estimators} & 200  \\
+  & \texttt{learning\_rate} & 0,05 \\
+  & \texttt{max\_depth}    & 5    \\
+\midrule
+\multirow{2}{*}{LogisticRegression}
+  & \texttt{C}             & 1,0  \\
+  & \texttt{max\_iter}     & 1000 \\
+\midrule
+\multirow{2}{*}{RandomForest}
+  & \texttt{n\_estimators} & 200  \\
+  & \texttt{max\_depth}    & 10   \\
+\midrule
+\multirow{2}{*}{LinearSVM}
+  & \texttt{C}             & 1,0  \\
+  & \texttt{max\_iter}     & 2000 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\chapter{Prédictions détaillées par département}
+\label{ann:dept_detail}
+
+\begin{table}[H]
+\centering
+\caption{Top 3 candidats prédits par département — HistGradientBoosting}
+\label{tab:dept_detail}
+\begin{tabular}{lllll}
+\toprule
+\textbf{Département} & \textbf{1\textsuperscript{er}} & \textbf{Score} & \textbf{2\textsuperscript{e}} & \textbf{3\textsuperscript{e}} \\
+\midrule
+Charente            & Macron    & 41,5\% & Mélenchon & Jadot \\
+Charente-Maritime   & Macron    & 64,6\% & Mélenchon & Pécresse \\
+Corrèze             & Macron    & 59,2\% & Mélenchon & Jadot \\
+Creuse              & Macron    & 71,8\% & Pécresse  & Lassalle \\
+Deux-Sèvres         & Macron    & 75,2\% & Pécresse  & Lassalle \\
+Dordogne            & Macron    & 72,5\% & Mélenchon & Pécresse \\
+Gironde             & Macron    & 67,4\% & Pécresse  & Lassalle \\
+Haute-Vienne        & Macron    & 52,9\% & Pécresse  & Lassalle \\
+Landes              & Macron    & 73,2\% & Pécresse  & Mélenchon \\
+Lot-et-Garonne      & Macron    & 67,7\% & Pécresse  & Lassalle \\
+Pyrénées-Atlantiques & Macron   & 53,0\% & Mélenchon & Pécresse \\
+Vienne              & Macron    & 67,0\% & Mélenchon & Pécresse \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\chapter{Structure des fichiers du projet}
+\label{ann:structure}
+
+\begin{verbatim}
+MsprBigData/
+  MSPR_Final/
+    .venv/                    (Environnement Python)
+    MSPR/
+      01_Donnees/
+        delta_lake_final/     (Parquet versionne)
+        final/                (CSV finaux)
+      02_Data_Engineering/
+        run_prep.py           (Pipeline ETL)
+      03_Data_Science/
+        notebooks/
+          Nouvelle_Aquitaine_Machine_Learning.ipynb
+        generate_visualisations.py
+        generate_tendances.py
+  public/data/
+    charts/                   (Images Python)
+    predictions.json          (Resultats JSON)
+  src/routes/
+    index.tsx                 (Dashboard principal)
+    visualisation.tsx         (Page visualisation)
+\end{verbatim}
+
+\chapter{Références bibliographiques}
+\label{ann:refs}
+
+Ce mémoire mobilise les ressources et travaux suivants :
+
+\begin{itemize}
+  \item INSEE — Fichiers détail du recensement de la population 2016 et 2022
+    (www.insee.fr, données libres de droits sous licence Etalab)
+  \item Ministère de l'Intérieur — Résultats du 1\textsuperscript{er} tour de
+    l'élection présidentielle 2022 (data.gouv.fr)
+  \item Pedregosa \textit{et al.}, \textit{Scikit-learn: Machine Learning in Python},
+    JMLR 12, 2011
+  \item Chen \& Guestrin, \textit{XGBoost: A Scalable Tree Boosting System},
+    KDD 2016
+  \item Ke \textit{et al.}, \textit{LightGBM: A Highly Efficient Gradient Boosting
+    Decision Tree}, NeurIPS 2017
+\end{itemize}

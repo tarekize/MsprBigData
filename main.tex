@@ -1,0 +1,181 @@
+%=============================================================
+% MSPR Big Data & BI — Electio-Analytics / Nouvelle-Aquitaine
+% Prédiction électorale par machine learning (2022)
+% EPSI – RNCP35584 Bloc 3 — 2024-2025
+%=============================================================
+\documentclass[12pt,a4paper,oneside]{report}
+
+% ---------- Encodage & langue ----------
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{lmodern}
+
+% ---------- Mise en page ----------
+\usepackage[top=2.5cm,bottom=2.5cm,left=3cm,right=2.5cm]{geometry}
+\usepackage{setspace}
+\onehalfspacing
+\usepackage{fancyhdr}
+\usepackage{emptypage}
+
+% ---------- Maths & tableaux ----------
+\usepackage{amsmath,amssymb,booktabs,multirow,longtable,array,tabularx}
+\usepackage{siunitx}
+\sisetup{output-decimal-marker={,}}
+
+% ---------- Figures ----------
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage[export]{adjustbox}
+
+% ---------- Couleurs & code ----------
+\usepackage{xcolor}
+\usepackage{listings}
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.97,0.97,0.97}
+\lstdefinestyle{mystyle}{
+  backgroundcolor=\color{backcolour},
+  commentstyle=\color{codegreen},
+  keywordstyle=\color{blue},
+  stringstyle=\color{codepurple},
+  basicstyle=\ttfamily\footnotesize,
+  breakatwhitespace=false, breaklines=true,
+  numbers=left, numberstyle=\tiny\color{codegray},
+  frame=single, tabsize=2
+}
+\lstset{style=mystyle}
+
+% ---------- Boîtes colorées ----------
+\usepackage{tcolorbox}
+\tcbuselibrary{skins,breakable}
+\newtcolorbox{infobox}[1][]{
+  colback=blue!5!white, colframe=blue!60!black,
+  fonttitle=\bfseries, title={#1}, breakable
+}
+\newtcolorbox{resultbox}[1][]{
+  colback=green!5!white, colframe=green!60!black,
+  fonttitle=\bfseries, title={#1}, breakable
+}
+\newtcolorbox{warnbox}[1][]{
+  colback=orange!5!white, colframe=orange!70!black,
+  fonttitle=\bfseries, title={#1}, breakable
+}
+
+% ---------- Liens & PDF ----------
+\usepackage[hidelinks,
+  pdftitle={MSPR Big Data -- Electio-Analytics},
+  pdfauthor={Équipe MSPR},
+  pdfsubject={Prédiction électorale ML -- Nouvelle-Aquitaine}
+]{hyperref}
+
+% ---------- Acronymes ----------
+\usepackage[acronym,toc]{glossaries}
+\makeglossaries
+\newacronym{ml}{ML}{Machine Learning}
+\newacronym{eda}{EDA}{Exploratory Data Analysis}
+\newacronym{hgb}{HGB}{HistGradientBoosting}
+\newacronym{lr}{LR}{Logistic Regression}
+\newacronym{rf}{RF}{Random Forest}
+\newacronym{xgb}{XGB}{XGBoost}
+\newacronym{svm}{SVM}{Support Vector Machine}
+\newacronym{etl}{ETL}{Extract Transform Load}
+\newacronym{mcd}{MCD}{Modèle Conceptuel de Données}
+\newacronym{api}{API}{Application Programming Interface}
+\newacronym{ui}{UI}{User Interface}
+\newacronym{cv}{CV}{Cross-Validation}
+\newacronym{na}{NA}{Nouvelle-Aquitaine}
+
+% ---------- En-têtes / pieds de page ----------
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\leftmark}
+\fancyhead[R]{\small Electio-Analytics — MSPR EPSI}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% ---------- Couleurs thématiques ----------
+\definecolor{epsiblue}{RGB}{0,73,144}
+\definecolor{epsigold}{RGB}{212,160,0}
+\definecolor{darkgray}{RGB}{64,64,64}
+
+%=============================================================
+\begin{document}
+%=============================================================
+
+% ----- Page de titre -----
+\begin{titlepage}
+  \centering
+  \vspace*{1cm}
+  {\Huge\bfseries\color{epsiblue} Mémoire MSPR\\[0.3cm]
+   Big Data \& Business Intelligence}\\[0.5cm]
+  \rule{\linewidth}{2pt}\\[0.4cm]
+  {\LARGE\bfseries Électio-Analytics}\\[0.2cm]
+  {\large Prédiction électorale par Machine Learning\\
+   Région Nouvelle-Aquitaine — Élection présidentielle 2022}\\[0.2cm]
+  \rule{\linewidth}{2pt}\\[1.5cm]
+
+  \begin{minipage}{0.48\textwidth}
+    \begin{flushleft}
+      {\large\bfseries Promotion}\\
+      RNCP 35584 — Bloc 3\\
+      Big Data \& BI\\[0.4cm]
+      {\large\bfseries Encadrant}\\
+      EPSI — Campus Bordeaux
+    \end{flushleft}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{0.48\textwidth}
+    \begin{flushright}
+      {\large\bfseries Équipe projet}\\
+      Tarek Mahraz\\
+      Oussama Mahraz\\[0.4cm]
+      {\large\bfseries Année}\\
+      2024 -- 2025
+    \end{flushright}
+  \end{minipage}
+
+  \vfill
+  {\large\color{darkgray}
+    \textit{« Relier les données économiques aux comportements électoraux\\
+    pour éclairer la stratégie politique en Nouvelle-Aquitaine »}
+  }\\[1cm]
+  \today
+\end{titlepage}
+
+% ----- Résumé & Abstract -----
+\input{chapters/resume}
+
+% ----- Tables des matières -----
+\tableofcontents
+\clearpage
+\listoffigures
+\clearpage
+\listoftables
+\clearpage
+\printglossary[type=\acronymtype,title=Liste des acronymes]
+\clearpage
+
+% ----- Chapitres -----
+\input{chapters/ch01_intro}
+\input{chapters/ch02_geo}
+\input{chapters/ch03_donnees}
+\input{chapters/ch04_pipeline}
+\input{chapters/ch05_eda}
+\input{chapters/ch06_ml}
+\input{chapters/ch07_resultats}
+\input{chapters/ch08_ui}
+\input{chapters/ch09_conclusion}
+
+% ----- Annexes -----
+\appendix
+\input{chapters/ch10_annexes}
+
+% ----- Bibliographie -----
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}

@@ -1,0 +1,86 @@
+%=============================================================
+% Résumé — Abstract — Remerciements
+%=============================================================
+\chapter*{Résumé}
+\addcontentsline{toc}{chapter}{Résumé}
+\thispagestyle{plain}
+
+\begin{infobox}[Résumé exécutif]
+Ce mémoire présente le projet MSPR \textit{Electio-Analytics}, réalisé dans le cadre du
+titre RNCP 35584 (Bloc 3 — Big Data \& BI). L'objectif est de prédire le comportement
+électoral de la région \textbf{Nouvelle-Aquitaine} (12 départements, 627 cantons) lors de
+l'élection présidentielle 2022, à partir d'indicateurs socio-économiques issues des
+recensements INSEE.
+\end{infobox}
+
+\vspace{0.5cm}
+
+Le projet mobilise un pipeline de traitement de données en \textbf{8 phases} centré
+sur \textbf{MongoDB} : collecte via internet (wget/Python), ingestion dans
+\texttt{raw\_data}, nettoyage et ingénierie des variables ($\Delta$) depuis MongoDB,
+stockage de la base finale dans \texttt{data\_final}, pipeline ML qui lit depuis
+\texttt{data\_final} et stocke prédictions et graphiques dans MongoDB, et restitution
+via une interface React 19 connectée à MongoDB.
+
+Le jeu de données final comprend \textbf{40 000 lignes $\times$ 171 colonnes}, avec une
+variable cible à 5 classes synthétiques (\textit{Crise, Déclin, Stable, Croissance, Boom})
+reflétant la dynamique socio-économique locale.
+
+Le modèle \textbf{HistGradientBoosting} obtient la meilleure performance avec une accuracy
+de \textbf{82,11\%} et un F1-score macro de \textbf{82,10\%}. Appliqué aux 12 départements,
+il prédit correctement le vainqueur dans \textbf{11 cas sur 12} (91,7\% de précision
+départementale), avec une probabilité régionale d'\textbf{Emmanuel Macron à 68,7\%}.
+
+\vspace{0.5cm}
+\noindent\textbf{Mots-clés :} Machine Learning, Prédiction électorale, Nouvelle-Aquitaine,
+HistGradientBoosting, Big Data, MongoDB, Pipeline ETL, React 19.
+
+\bigskip
+\hrule
+\bigskip
+
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+\thispagestyle{plain}
+
+This report presents the MSPR \textit{Electio-Analytics} project, developed as part of
+the RNCP 35584 certification (Block 3 — Big Data \& BI). The goal is to predict the
+electoral behavior of the \textbf{Nouvelle-Aquitaine} region (12 departments, 627 cantons)
+in the 2022 French presidential election, using socio-economic indicators from INSEE census data.
+
+The project implements an \textbf{8-phase data processing pipeline centred on MongoDB}:
+internet collection via wget/Python, raw ingestion into \texttt{raw\_data}, cleaning and
+delta feature engineering reading from MongoDB, final storage in \texttt{data\_final},
+ML pipeline loading from \texttt{data\_final} and storing predictions and charts back in
+MongoDB, and delivery through a React 19 dashboard connected to MongoDB.
+
+The final dataset contains \textbf{40,000 rows $\times$ 171 columns}, with a 5-class synthetic
+target variable (\textit{Crise, Déclin, Stable, Croissance, Boom}) reflecting local
+socio-economic dynamics.
+
+The \textbf{HistGradientBoosting} model achieves the best performance with \textbf{82.11\%}
+accuracy and \textbf{82.10\%} macro F1-score. Applied to the 12 departments, it correctly
+predicts the winner in \textbf{11 out of 12 cases} (91.7\% departmental accuracy), with
+a regional probability of \textbf{Emmanuel Macron at 68.7\%}.
+
+\vspace{0.5cm}
+\noindent\textbf{Keywords:} Machine Learning, Electoral Prediction, Nouvelle-Aquitaine,
+HistGradientBoosting, Big Data, MongoDB, ETL Pipeline, React 19.
+
+\bigskip
+\hrule
+\bigskip
+
+\chapter*{Remerciements}
+\addcontentsline{toc}{chapter}{Remerciements}
+\thispagestyle{plain}
+
+Nous tenons à remercier chaleureusement l'ensemble de l'équipe pédagogique d'EPSI
+Bordeaux pour l'encadrement et les conseils prodigués tout au long de ce projet MSPR.
+
+Nos remerciements vont également à l'équipe projet pour l'implication collective,
+la rigueur analytique et la créativité déployées pour mener à bien cette mission.
+
+Ce projet nous a permis de consolider des compétences transversales en ingénierie
+des données, en machine learning et en développement d'interfaces interactives,
+dans un contexte applicatif concret et socialement pertinent.

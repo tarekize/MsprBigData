@@ -1,0 +1,63 @@
+%=============================================================
+% Chapitre 0 — Introduction générale
+%=============================================================
+\chapter*{Introduction générale}
+\addcontentsline{toc}{chapter}{Introduction générale}
+\markboth{Introduction générale}{}
+
+\section*{Contexte}
+
+Dans un contexte de forte polarisation politique et de montée des incertitudes électorales,
+la capacité à anticiper le comportement des électeurs à partir de données socio-économiques
+représente un enjeu stratégique majeur pour les acteurs politiques, les instituts de sondage
+et les cabinets de conseil en stratégie.
+
+La startup fictive \textbf{Electio-Analytics} nous mandate pour concevoir un système de
+prédiction électorale appliqué à la région \textbf{Nouvelle-Aquitaine}, à partir des
+indicateurs des recensements INSEE 2016 et 2022. Cette région, avec ses 12 départements,
+ses dynamiques économiques contrastées et sa diversité sociologique, constitue un terrain
+d'étude riche et représentatif des fractures territoriales françaises.
+
+\section*{Problématique}
+
+\begin{center}
+\textit{« Dans quelle mesure les évolutions socio-économiques locales entre 2016 et 2022
+permettent-elles de prédire l'orientation politique des électeurs en Nouvelle-Aquitaine,
+et comment modéliser cette relation par des algorithmes de machine learning ? »}
+\end{center}
+
+\section*{Objectifs du projet}
+
+\begin{enumerate}
+  \item \textbf{Collecter et structurer} les données socio-économiques INSEE (emploi,
+        logement, population, chômage) pour les 627 cantons de Nouvelle-Aquitaine.
+  \item \textbf{Ingénierie des variables} : calculer les variations inter-recensements
+        ($\Delta$ features) pour capturer les dynamiques de changement.
+  \item \textbf{Construire un pipeline ETL} en 8 phases, avec \textbf{MongoDB} comme socle de stockage central : collecte brute, base préparée, résultats ML et prédictions.
+  \item \textbf{Entraîner et évaluer} cinq modèles de machine learning sur une variable
+        cible à 5 classes synthétiques.
+  \item \textbf{Prédire le comportement électoral} au niveau départemental et régional
+        pour la présidentielle 2022.
+  \item \textbf{Restituer les résultats} via une interface React 19 interactive.
+\end{enumerate}
+
+\section*{Plan du mémoire}
+
+Le présent mémoire s'organise en sept chapitres :
+
+\begin{description}
+  \item[Chapitre 1 — Cadre géographique :] présentation de la Nouvelle-Aquitaine,
+    ses 12 départements et le contexte électoral 2022.
+  \item[Chapitre 2 — Données et indicateurs :] sources, 171 variables,
+    construction des $\Delta$-features.
+  \item[Chapitre 3 — Architecture et pipeline :] les 8 phases du pipeline ETL,
+    MongoDB comme stockage central (collecte brute $\rightarrow$ \texttt{raw\_data},
+    base finale $\rightarrow$ \texttt{data\_final}, résultats ML $\rightarrow$ \texttt{predictions}).
+  \item[Chapitre 4 — Analyse exploratoire :] EDA, corrélations, distributions.
+  \item[Chapitre 5 — Modélisation ML :] cinq algorithmes, validation croisée,
+    sélection du meilleur modèle.
+  \item[Chapitre 6 — Résultats et interprétation :] prédictions départementales,
+    précision à 91,7\%, analyse des erreurs.
+  \item[Chapitre 7 — Interface applicative :] dashboard React 19, visualisations
+    interactives, architecture technique.
+\end{description}

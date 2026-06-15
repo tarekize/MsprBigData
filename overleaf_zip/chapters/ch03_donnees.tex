@@ -1,0 +1,137 @@
+%=============================================================
+% Chapitre 2 — Données et indicateurs
+%=============================================================
+\chapter{Données et indicateurs}
+\label{ch:donnees}
+
+\section{Sources de données}
+
+Les données proviennent exclusivement des fichiers de recensement publiés par l'INSEE :
+
+\begin{table}[H]
+\centering
+\caption{Sources de données utilisées dans le projet}
+\label{tab:sources}
+\begin{tabular}{llll}
+\toprule
+\textbf{Source} & \textbf{Année} & \textbf{Thème} & \textbf{Granularité} \\
+\midrule
+INSEE Filosofi / RP & 2016 & Population, emploi, logement & Canton \\
+INSEE Filosofi / RP & 2022 & Population, emploi, logement & Canton \\
+INSEE Filosofi & 2022 & Ménages, revenus & Canton \\
+Ministère Intérieur & 2022 & Résultats électoraux & Département \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Structure du jeu de données}
+
+Après le processus d'ETL et d'ingénierie des variables, le jeu de données final
+comprend :
+
+\begin{itemize}
+  \item \textbf{40 000 lignes} (cantons $\times$ tirages aléatoires pour équilibrer les classes)
+  \item \textbf{171 colonnes} : variables brutes 2016, variables brutes 2022,
+    variables delta, variable cible
+  \item \textbf{27 variables delta} ($\Delta$-features) issues du calcul inter-recensements
+  \item \textbf{5 classes} pour la variable cible, distribuées de façon synthétique
+\end{itemize}
+
+\section{Ingénierie des \texorpdfstring{$\Delta$}{Delta}-variables}
+
+La clé de l'approche réside dans le calcul de variables d'évolution entre les deux
+recensements (2016 et 2022). Pour chaque indicateur $X$, la variable delta est définie
+par :
+
+\begin{equation}
+\Delta_X = \frac{X_{2022} - X_{2016}}{|X_{2016}| + \varepsilon}
+\label{eq:delta}
+\end{equation}
+
+avec $\varepsilon = 10^{-8}$ pour éviter les divisions par zéro. Cette formulation
+normalise automatiquement l'amplitude du changement par rapport à la valeur initiale.
+
+\subsection{Variables delta principales}
+
+Les 27 variables delta couvrent plusieurs domaines :
+
+\begin{table}[H]
+\centering
+\caption{Variables delta principales (extrait)}
+\label{tab:delta}
+\begin{tabular}{lll}
+\toprule
+\textbf{Variable delta} & \textbf{Signification} & \textbf{Période} \\
+\midrule
+\texttt{delta\_P16\_POP}    & Évolution population totale     & 2016--2022 \\
+\texttt{delta\_P22\_POP}    & Population totale 2022          & 2022 \\
+\texttt{delta\_P22\_POP1564}& Pop. active (15--64 ans)        & 2016--2022 \\
+\texttt{delta\_P22\_ACT1564}& Actifs 15--64 ans               & 2016--2022 \\
+\texttt{delta\_P22\_CHOM1564}& Chômeurs 15--64 ans             & 2016--2022 \\
+\texttt{delta\_P22\_EMPLT}  & Emplois total                   & 2016--2022 \\
+\texttt{delta\_P22\_MEN}    & Ménages                         & 2016--2022 \\
+\texttt{delta\_P22\_LOG}    & Logements totaux                & 2016--2022 \\
+\texttt{delta\_P22\_LOGVAC} & Logements vacants               & 2016--2022 \\
+\texttt{delta\_P22\_POP0014}& Population 0--14 ans            & 2016--2022 \\
+\multicolumn{3}{c}{\textit{[17 autres variables delta de même nature]}} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Distribution de la variable cible}
+
+La variable cible est construite synthétiquement à partir d'un score composite
+socio-économique, puis discrétisée en 5 classes selon les quantiles imposés :
+
+\begin{table}[H]
+\centering
+\caption{Distribution de la variable cible dans le jeu de données final}
+\label{tab:distribution_cible}
+\begin{tabular}{lrr}
+\toprule
+\textbf{Classe} & \textbf{Effectif} & \textbf{Proportion} \\
+\midrule
+Crise      & 4 000 & 10,0\% \\
+Déclin     & 8 000 & 20,0\% \\
+Stable     & 16 000 & 40,0\% \\
+Croissance & 8 000 & 20,0\% \\
+Boom       & 4 000 & 10,0\% \\
+\midrule
+\textbf{Total} & \textbf{40 000} & \textbf{100\%} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{warnbox}[Note méthodologique]
+La variable cible est \textbf{synthétique} : elle ne provient pas de données d'enquête
+d'opinion mais est construite à partir d'un score composite basé sur les évolutions
+d'emploi, de chômage, de population et de logements. Cette approche permet d'entraîner
+les modèles ML sur un volume de données suffisant (40 000 observations) tout en
+ancrant la variable dans une réalité économique mesurable.
+\end{warnbox}
+
+\section{Stockage et flux des données}
+
+\textbf{MongoDB} constitue le socle de persistance unique de l'ensemble du projet.
+Les données transitent à travers quatre collections successives, chacune correspondant
+à une étape clé du pipeline :
+
+\begin{table}[H]
+\centering
+\caption{Collections MongoDB du projet Electio-Analytics}
+\label{tab:mongo_collections}
+\begin{tabular}{lll}
+\toprule
+\textbf{Collection} & \textbf{Contenu} & \textbf{Alimentée par} \\
+\midrule
+\texttt{raw\_data}    & CSV bruts INSEE (2016 + 2022)          & Phase 1--2 (wget + PyMongo) \\
+\texttt{data\_final}  & Features nettoyées + 27 delta-variables & Phase 3--5 (Pandas + PyMongo) \\
+\texttt{predictions}  & Scores par candidat, département, modèle & Phase 7 (pipeline ML) \\
+\texttt{models\_meta} & Hyperparamètres et métriques des modèles & Phase 7 (pipeline ML) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent Ce flux unidirectionnel garantit la traçabilité complète :
+aucune étape aval ne lit des fichiers locaux, toutes les lectures se font
+exclusivement via \texttt{PyMongo}.

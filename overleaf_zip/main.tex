@@ -1,0 +1,123 @@
+%=============================================================
+% MSPR Big Data & BI — Electio-Analytics / Nouvelle-Aquitaine
+% EPSI – RNCP35584 Bloc 3 — 2024-2025
+%=============================================================
+\documentclass[12pt,a4paper,oneside]{report}
+
+% ---- Encodage & langue ----
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{lmodern}
+
+% ---- Mise en page ----
+\usepackage[top=2.5cm,bottom=2.5cm,left=3cm,right=2.5cm]{geometry}
+\setlength{\headheight}{15pt}
+\usepackage{setspace}
+\onehalfspacing
+\usepackage{fancyhdr}
+
+% ---- Maths & tableaux ----
+\usepackage{amsmath,amssymb,booktabs,array,multirow}
+
+% ---- Figures ----
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{caption}
+
+% ---- Couleurs (rowcolor) ----
+\usepackage[table]{xcolor}
+\definecolor{epsiblue}{RGB}{0,73,144}
+\definecolor{darkgray}{RGB}{64,64,64}
+
+% ---- Boîtes colorées légères (framed, pas tcolorbox) ----
+\usepackage{framed}
+
+\newenvironment{infobox}[1][]{%
+  \colorlet{shadecolor}{blue!8}%
+  \begin{shaded}\noindent{\bfseries #1}\par\smallskip%
+}{\end{shaded}}
+
+\newenvironment{resultbox}[1][]{%
+  \colorlet{shadecolor}{green!8}%
+  \begin{shaded}\noindent{\bfseries #1}\par\smallskip%
+}{\end{shaded}}
+
+\newenvironment{warnbox}[1][]{%
+  \colorlet{shadecolor}{orange!8}%
+  \begin{shaded}\noindent{\bfseries #1}\par\smallskip%
+}{\end{shaded}}
+
+% ---- Liens PDF ----
+\usepackage[hidelinks]{hyperref}
+
+% ---- En-têtes ----
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\nouppercase{\leftmark}}
+\fancyhead[R]{\small Electio-Analytics --- MSPR EPSI}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+%=============================================================
+\begin{document}
+%=============================================================
+
+% ----- Page de titre -----
+\begin{titlepage}
+  \centering
+  \vspace*{1cm}
+  {\Huge\bfseries\color{epsiblue} Mémoire MSPR\\[0.3cm]
+   Big Data \& Business Intelligence}\\[0.5cm]
+  \rule{\linewidth}{2pt}\\[0.4cm]
+  {\LARGE\bfseries Électio-Analytics}\\[0.2cm]
+  {\large Prédiction électorale par Machine Learning\\
+   Région Nouvelle-Aquitaine --- Élection présidentielle 2022}\\[0.2cm]
+  \rule{\linewidth}{2pt}\\[1.5cm]
+  \begin{minipage}{0.48\textwidth}
+    \begin{flushleft}
+      {\large\bfseries Promotion}\\RNCP 35584 --- Bloc 3\\Big Data \& BI\\[0.4cm]
+      {\large\bfseries Encadrant}\\EPSI --- Campus Bordeaux
+    \end{flushleft}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{0.48\textwidth}
+    \begin{flushright}
+      {\large\bfseries Équipe projet}\\Tarek Mahraz\\Oussama Mahraz\\[0.4cm]
+      {\large\bfseries Année}\\2024 -- 2025
+    \end{flushright}
+  \end{minipage}
+  \vfill
+  {\large\color{darkgray}\textit{%
+    « Relier les données économiques aux comportements électoraux\\
+    pour éclairer la stratégie politique en Nouvelle-Aquitaine »}}\\[1cm]
+  \today
+\end{titlepage}
+
+% ----- Résumé / Abstract / Remerciements -----
+\input{chapters/resume}
+
+% ----- Table des matières -----
+\tableofcontents
+\clearpage
+
+% ----- Chapitres -----
+\input{chapters/ch01_intro}
+\input{chapters/ch02_geo}
+\input{chapters/ch03_donnees}
+\input{chapters/ch04_pipeline}
+\input{chapters/ch05_eda}
+\input{chapters/ch06_ml}
+\input{chapters/ch07_resultats}
+\input{chapters/ch08_ui}
+\input{chapters/ch09_conclusion}
+
+% ----- Annexes -----
+\appendix
+\input{chapters/ch10_annexes}
+
+% ----- Bibliographie -----
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}

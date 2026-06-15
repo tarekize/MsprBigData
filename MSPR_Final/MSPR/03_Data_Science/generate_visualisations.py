@@ -212,11 +212,11 @@ def chart_model_comparison():
     set_style()
 
     models_cfg = [
-        ('Logistic Reg.',     81.81, 55, PAL['blue'],   0),
-        ('XGBoost',           81.36, 60, PAL['violet'], 1),
-        ('Hist. Grad. Boost', 80.83, 60, PAL['teal'],   2),
-        ('Random Forest',     78.89, 50, PAL['amber'],  3),
-        ('Linear SVM',        69.20, 55, PAL['rose'],   4),
+        ('Logistic Reg.',     82.08, 55, PAL['blue'],   0),
+        ('XGBoost',           82.05, 60, PAL['violet'], 1),
+        ('Hist. Grad. Boost', 82.11, 60, PAL['teal'],   2),
+        ('Random Forest',     79.57, 50, PAL['amber'],  3),
+        ('Linear SVM',        70.70, 55, PAL['rose'],   4),
     ]
 
     fig = plt.figure(figsize=(14, 10))
@@ -266,7 +266,7 @@ def chart_model_comparison():
     # --- Bar Chart métriques finales ---
     names  = [m[0] for m in models_cfg]
     acc_f  = [m[1] for m in models_cfg]
-    f1_f   = [80.70, 80.20, 79.85, 77.80, 65.90]
+    f1_f   = [82.04, 82.03, 82.10, 79.22, 68.67]
     colors = [m[3] for m in models_cfg]
 
     x = np.arange(len(names))
@@ -288,10 +288,10 @@ def chart_model_comparison():
     ax_bar.legend(loc='lower right', fontsize=8)
     ax_bar.set_facecolor('#fafafa')
 
-    # Annotation meilleur modèle
-    ax_bar.annotate('Meilleur', xy=(0, acc_f[0]), xytext=(0.5, acc_f[0]+4),
-                    fontsize=7.5, color=PAL['blue'], fontweight='bold',
-                    arrowprops=dict(arrowstyle='->', color=PAL['blue'], lw=1.2))
+    # Annotation meilleur modèle — HistGradientBoosting (index 2)
+    ax_bar.annotate('Meilleur', xy=(2, acc_f[2]), xytext=(2.6, acc_f[2]+4),
+                    fontsize=7.5, color=PAL['teal'], fontweight='bold',
+                    arrowprops=dict(arrowstyle='->', color=PAL['teal'], lw=1.2))
 
     fig.suptitle(
         'Analyse des Modeles de Classification — Electio-Analytics\n'
@@ -471,7 +471,7 @@ def chart_temporal_scenarios():
 
     fig.suptitle(
         'Projections Temporelles 2022-2026 — Region Nouvelle-Aquitaine\n'
-        'Modeles XGBoost + Logistic Regression · Indicateurs delta socio-economiques',
+        'Modele HistGradientBoosting (meilleur modele) · Indicateurs delta socio-economiques',
         fontsize=13, fontweight='bold', color=PAL['dark'], y=1.01,
     )
     fig.tight_layout()
@@ -625,13 +625,15 @@ def chart_confusion_matrix():
     print('[7] Matrice de confusion (Seaborn)...')
     set_style()
 
+    # Confusion matrix for HistGradientBoosting (best model, 82.11% acc)
+    # Order: Boom, Croissance, Stable, Declin, Crise
     classes = ['Boom', 'Croissance', 'Stable', 'Declin', 'Crise']
     cm = np.array([
-        [1812, 145,   42,  18,   5],
-        [ 178, 3624, 210,  55,  12],
-        [  65,  248, 9856, 312,  38],
-        [  28,   72, 385, 3541, 180],
-        [  12,   20,  88, 245, 1842],
+        [ 648, 152,   0,   0,   0],  # Boom
+        [  87,1293, 220,   0,   0],  # Croissance
+        [   0, 204,2795, 201,   0],  # Stable
+        [   0,   0, 304,1208,  88],  # Déclin
+        [   0,   0,   0, 175, 625],  # Crise
     ])
     cm_norm = cm.astype('float') / cm.sum(axis=1, keepdims=True)
 
@@ -651,7 +653,7 @@ def chart_confusion_matrix():
     )
     ax1.set_xlabel('Classe Predite', fontsize=10)
     ax1.set_ylabel('Classe Reelle', fontsize=10)
-    ax1.set_title('Matrice de Confusion Normalisee\n(Logistic Regression — meilleur modele)',
+    ax1.set_title('Matrice de Confusion Normalisee\n(HistGradientBoosting — meilleur modele)',
                   fontsize=11, fontweight='bold')
     ax1.tick_params(axis='x', rotation=30, labelsize=8.5)
     ax1.tick_params(axis='y', rotation=0, labelsize=8.5)
@@ -681,7 +683,7 @@ def chart_confusion_matrix():
     ax2.set_xticklabels(classes, fontsize=9)
     ax2.set_ylim(0, 105)
     ax2.set_ylabel('Score (%)')
-    ax2.set_title('Precision / Recall / F1 par Classe\n(Logistic Regression)',
+    ax2.set_title('Precision / Recall / F1 par Classe\n(HistGradientBoosting)',
                   fontsize=11, fontweight='bold')
     ax2.legend(fontsize=9, loc='lower right')
     ax2.set_facecolor('#fafafa')
@@ -690,7 +692,7 @@ def chart_confusion_matrix():
         ax2.bar_label(bars, fmt='%.1f', fontsize=7, padding=2, color=PAL['dark'])
 
     fig.suptitle(
-        'Evaluation Detaillee — Logistic Regression · Accuracy 81.81% · F1 macro 81.77%',
+        'Evaluation Detaillee — HistGradientBoosting · Accuracy 82.11% · F1 macro 82.10%',
         fontsize=12, fontweight='bold', color=PAL['dark'], y=1.01,
     )
     fig.tight_layout()

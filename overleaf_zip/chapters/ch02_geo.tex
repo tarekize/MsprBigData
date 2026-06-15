@@ -1,0 +1,116 @@
+%=============================================================
+% Chapitre 1 — Cadre géographique et contexte électoral
+%=============================================================
+\chapter{Cadre géographique et contexte électoral}
+\label{ch:geo}
+
+\section{La Nouvelle-Aquitaine en chiffres}
+
+La \textbf{Nouvelle-Aquitaine} est la plus grande région métropolitaine française par
+superficie, avec environ \textbf{84 000 km²}. Elle regroupe 12 départements issus de la
+fusion en 2016 des anciennes régions Aquitaine, Limousin et Poitou-Charentes.
+
+\begin{table}[H]
+\centering
+\caption{Les 12 départements de Nouvelle-Aquitaine — caractéristiques clés}
+\label{tab:departements}
+\begin{tabular}{llrr}
+\toprule
+\textbf{Code} & \textbf{Département} & \textbf{Pop. (2022, k)} & \textbf{Cantons} \\
+\midrule
+16 & Charente           & 353  & 29 \\
+17 & Charente-Maritime  & 650  & 27 \\
+19 & Corrèze            & 242  & 19 \\
+23 & Creuse             & 115  & 16 \\
+24 & Dordogne           & 416  & 25 \\
+33 & Gironde            & 1 622 & 43 \\
+40 & Landes             & 415  & 16 \\
+47 & Lot-et-Garonne     & 335  & 17 \\
+64 & Pyrénées-Atlantiques & 693 & 34 \\
+79 & Deux-Sèvres        & 372  & 18 \\
+86 & Vienne             & 440  & 28 \\
+87 & Haute-Vienne       & 372  & 21 \\
+\midrule
+\multicolumn{2}{l}{\textbf{Total}} & \textbf{6 025} & \textbf{293} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Contexte socio-économique régional}
+
+La région présente des dynamiques contrastées :
+
+\begin{itemize}
+  \item \textbf{Gironde} (chef-lieu Bordeaux) : moteur économique régional, forte
+    croissance démographique, marché immobilier sous tension.
+  \item \textbf{Limousin} (Creuse, Corrèze, Haute-Vienne) : vieillissement démographique,
+    déclin industriel, rural profond.
+  \item \textbf{Charente, Lot-et-Garonne} : économies agricoles avec des poches
+    de fragilité économique, électoralement plus incertains.
+  \item \textbf{Pays Basque} (Pyrénées-Atlantiques) : dynamisme touristique et
+    identité régionale forte, profil électoral atypique.
+\end{itemize}
+
+Ces disparités territoriales font de la Nouvelle-Aquitaine un terrain idéal pour
+tester la capacité des modèles ML à capturer des signaux hétérogènes.
+
+\section{Résultats réels --- Présidentielle 2022 (1er tour)}
+
+Lors du premier tour de l'élection présidentielle du 10 avril 2022, les résultats
+régionaux placent \textbf{Emmanuel Macron} en tête dans \textbf{11 des 12 départements}
+de Nouvelle-Aquitaine. Le Lot-et-Garonne constitue l'exception notable, avec une
+victoire de \textbf{Marine Le Pen} (RN).
+
+\begin{table}[H]
+\centering
+\caption{Résultats réels du 1\textsuperscript{er} tour — présidentielle 2022 en Nouvelle-Aquitaine}
+\label{tab:resultats_reels}
+\begin{tabular}{lll}
+\toprule
+\textbf{Département} & \textbf{1\textsuperscript{er} (réel)} & \textbf{2\textsuperscript{e} (réel)} \\
+\midrule
+Charente            & Macron  & Mélenchon \\
+Charente-Maritime   & Macron  & Mélenchon \\
+Corrèze             & Macron  & Mélenchon \\
+Creuse              & Macron  & Le Pen \\
+Deux-Sèvres         & Macron  & Mélenchon \\
+Dordogne            & Macron  & Mélenchon \\
+Gironde             & Macron  & Mélenchon \\
+Haute-Vienne        & Macron  & Mélenchon \\
+Landes              & Macron  & Mélenchon \\
+\textbf{Lot-et-Garonne} & \textbf{Le Pen} & Macron \\
+Pyrénées-Atlantiques & Macron & Mélenchon \\
+Vienne              & Macron  & Mélenchon \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Variable cible et modèle d'orientation électorale}
+
+La variable cible du projet est \textbf{synthétique} et à 5 classes, reflétant la
+dynamique socio-économique d'un canton :
+
+\begin{table}[H]
+\centering
+\caption{Variable cible — 5 classes et orientation électorale associée}
+\label{tab:classes}
+\begin{tabular}{llll}
+\toprule
+\textbf{Classe} & \textbf{Signification} & \textbf{Proportion} & \textbf{Orientation} \\
+\midrule
+Boom        & Croissance forte  & 10\% & Extrême-Gauche \\
+Croissance  & Croissance modérée & 20\% & Gauche \\
+Stable      & Stabilité         & 40\% & Centre \\
+Déclin      & Déclin modéré     & 20\% & Droite \\
+Crise       & Crise économique  & 10\% & Extrême-Droite \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent La correspondance entre classe économique et orientation (\texttt{ECO\_TO\_ORIENTATION})
+permet, à partir de la distribution des prédictions sur les cantons d'un département,
+de calculer la probabilité de vote pour chacun des 12 candidats du 1\textsuperscript{er} tour.
+
+Le MCD comprend les entités principales : \texttt{Canton}, \texttt{Indicateur2016},
+\texttt{Indicateur2022}, \texttt{DeltaFeature}, \texttt{PredictionDept} et
+\texttt{Candidat}, reliées par des associations de type 1-N et N-M.

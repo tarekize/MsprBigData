@@ -22,26 +22,28 @@
     "methodology": "Projection annuelle des indicateurs delta (±σ dans l'espace normalisé). XGBoost predict_proba → P(Croissance|Stable|Déclin) par territoire. Mapping présidentiel calibré sur les résultats 2022 Nouvelle-Aquitaine."
   },
   "deltas": {
-    "exg": 0.3,
+    "exg": 0.31,
     "gauche": -0.05,
-    "centre": -0.46,
+    "centre": -0.48,
     "droite": -0.25,
-    "exd": 0.45
+    "exd": 0.46
   },
   "predictions": [
     {
       "annee": "2017 (Base)",
       "year": 2017,
       "is_base": true,
-      "exg": 26.34,
-      "gauche": 5.83,
-      "centre": 30.66,
-      "droite": 11.98,
-      "exd": 25.19,
+      "exg": 26.22,
+      "gauche": 5.79,
+      "centre": 30.94,
+      "droite": 11.69,
+      "exd": 25.37,
       "eco_states": {
-        "Croissance": 32.4,
-        "Declin": 31.5,
-        "Stable": 36.1
+        "Boom": 7.1,
+        "Crise": 4.2,
+        "Croissance": 17.3,
+        "Declin": 11.9,
+        "Stable": 59.6
       },
       "confidence": 81.4
     },
@@ -49,15 +51,17 @@
       "annee": "2018 (S+1)",
       "year": 2018,
       "is_base": false,
-      "exg": 26.07,
-      "gauche": 5.87,
-      "centre": 31.06,
-      "droite": 12.2,
-      "exd": 24.79,
+      "exg": 26.01,
+      "gauche": 5.83,
+      "centre": 31.25,
+      "droite": 11.88,
+      "exd": 25.04,
       "eco_states": {
-        "Croissance": 34.6,
-        "Declin": 29.7,
-        "Stable": 35.7
+        "Boom": 8.0,
+        "Crise": 3.5,
+        "Croissance": 20.6,
+        "Declin": 10.7,
+        "Stable": 57.2
       },
       "confidence": 76.5
     },
@@ -65,15 +69,17 @@
       "annee": "2019 (S+2)",
       "year": 2019,
       "is_base": false,
-      "exg": 26.01,
-      "gauche": 5.88,
-      "centre": 31.16,
-      "droite": 12.25,
-      "exd": 24.7,
+      "exg": 25.94,
+      "gauche": 5.84,
+      "centre": 31.35,
+      "droite": 11.93,
+      "exd": 24.94,
       "eco_states": {
-        "Croissance": 35.1,
-        "Declin": 29.1,
-        "Stable": 35.8
+        "Boom": 8.9,
+        "Crise": 2.8,
+        "Croissance": 21.4,
+        "Declin": 11.0,
+        "Stable": 55.9
       },
       "confidence": 71.6
     },
@@ -81,15 +87,17 @@
       "annee": "2020 (S+3)",
       "year": 2020,
       "is_base": false,
-      "exg": 26.64,
-      "gauche": 5.78,
-      "centre": 30.2,
-      "droite": 11.73,
-      "exd": 25.64,
+      "exg": 26.53,
+      "gauche": 5.74,
+      "centre": 30.46,
+      "droite": 11.44,
+      "exd": 25.83,
       "eco_states": {
-        "Croissance": 29.5,
-        "Declin": 34.7,
-        "Stable": 35.8
+        "Boom": 6.6,
+        "Crise": 4.4,
+        "Croissance": 15.4,
+        "Declin": 16.2,
+        "Stable": 57.4
       },
       "confidence": 65.1
     }

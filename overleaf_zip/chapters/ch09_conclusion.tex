@@ -1,0 +1,82 @@
+%=============================================================
+% Conclusion générale
+%=============================================================
+\chapter*{Conclusion générale}
+\addcontentsline{toc}{chapter}{Conclusion générale}
+\markboth{Conclusion générale}{}
+
+\section*{Bilan du projet}
+
+Le projet MSPR Electio-Analytics a démontré la faisabilité d'un système de prédiction
+électorale fondé sur des données socio-économiques ouvertes (INSEE), sans recours à
+des données d'opinion ou de sondage.
+
+\begin{resultbox}[Résultats clés]
+\begin{itemize}
+  \item \textbf{Accuracy ML} : 82,11\% (HistGradientBoosting, 6\,569/8\,000
+    prédictions correctes sur 5 classes)
+  \item \textbf{Précision départementale} : 91,7\% (11/12 départements correctement
+    prédits pour le vainqueur du 1\textsuperscript{er} tour)
+  \item \textbf{Prédiction régionale} : Macron 1\textsuperscript{er} (68,7\%),
+    Pécresse 2\textsuperscript{e} (10,0\%), Mélenchon 3\textsuperscript{e} (9,7\%)
+  \item \textbf{Feature la plus importante} : delta\_P16\_POP (évolution démographique
+    2016--2022, 18,2\% du gain XGBoost)
+  \item \textbf{Corrélation emploi--populisme} : $r = -0{,}73$ (forte relation négative)
+\end{itemize}
+\end{resultbox}
+
+\section*{Contributions techniques}
+
+Ce projet a produit plusieurs livrables réutilisables :
+\begin{enumerate}
+  \item Un \textbf{pipeline ETL en 8 phases} reproductible, centré sur \textbf{MongoDB}
+    comme socle de stockage unique (collecte $\to$ \texttt{raw\_data} $\to$
+    traitement $\to$ \texttt{data\_final} $\to$ ML $\to$ \texttt{predictions} $\to$ dashboard)
+  \item Un \textbf{benchmark de 5 algorithmes ML} sur une tâche de classification
+    multi-classes à déséquilibre contrôlé
+  \item Un \textbf{framework de scoring électoral} basé sur des classes économiques
+    et des poids intra-blocs calibrés
+  \item Une \textbf{interface React 19 interactive} avec visualisations dynamiques
+\end{enumerate}
+
+\section*{Limites identifiées}
+
+\begin{itemize}
+  \item \textbf{Variable cible synthétique} : la construction de la cible à partir
+    d'un score composite introduit un biais vers la classe \textit{Stable}, qui
+    écrase les nuances intra-classe et surestime le vote Centre.
+  \item \textbf{Absence de données historiques de vote} : les variables socio-économiques
+    seules ne capturent pas la composante identitaire ou historique du vote (ex : ancrage
+    RN structurel en Lot-et-Garonne).
+  \item \textbf{Granularité canton} : les données agrégées au canton masquent les
+    micro-dynamiques intra-urbaines.
+  \item \textbf{Portée temporelle} : le modèle est calibré sur 2016--2022 ; sa
+    performance sur d'autres cycles électoraux reste à valider.
+\end{itemize}
+
+\section*{Perspectives d'amélioration}
+
+\begin{itemize}
+  \item \textbf{Intégration de variables de vote historique} (2012, 2017) comme
+    features supplémentaires — attendu : +3 à +5 pts d'accuracy départementale.
+  \item \textbf{Modèle géospatial} : intégrer une autocorrélation spatiale (voisinage
+    des cantons) via un modèle LGBM spatial ou GNN.
+  \item \textbf{Variable cible réelle} : remplacer la cible synthétique par une
+    variable basée sur les résultats électoraux réels 2017 pour l'entraînement,
+    avec évaluation sur 2022.
+  \item \textbf{SHAP values} : calculer les valeurs SHAP pour une explication
+    locale des prédictions par canton.
+  \item \textbf{Monitoring en production} : pipeline de mise à jour automatique
+    dès publication des nouveaux recensements INSEE.
+\end{itemize}
+
+\section*{Compétences mobilisées (RNCP 35584 — Bloc 3)}
+
+Ce projet a permis de mobiliser et de valider les compétences suivantes :
+\begin{itemize}
+  \item \textbf{C3.1} — Concevoir et mettre en œuvre une architecture Big Data
+  \item \textbf{C3.2} — Implémenter un pipeline ETL scalable
+  \item \textbf{C3.3} — Appliquer des algorithmes de Machine Learning supervisé
+  \item \textbf{C3.4} — Visualiser et restituer des données analytiques
+  \item \textbf{C3.5} — Gérer un projet technique en équipe avec contrôle de version
+\end{itemize}
