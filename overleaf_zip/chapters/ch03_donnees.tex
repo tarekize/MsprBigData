@@ -135,3 +135,93 @@ Les données transitent à travers quatre collections successives, chacune corre
 \noindent Ce flux unidirectionnel garantit la traçabilité complète :
 aucune étape aval ne lit des fichiers locaux, toutes les lectures se font
 exclusivement via \texttt{PyMongo}.
+
+%=============================================================
+\section{Indicateurs absents du cahier des charges : justification}
+\label{sec:indicateurs_absents}
+%=============================================================
+
+Le cahier des charges initial mentionnait quatre familles d'indicateurs
+complémentaires : sécurité publique, vie associative, taux de pauvreté monétaire
+et nombre d'entreprises. Leur absence dans la version livrée ne résulte pas d'un
+oubli méthodologique, mais de contraintes objectives de granularité et de
+disponibilité des données publiques.
+
+\paragraph{Sécurité publique (SSMSI).}
+Les statistiques de criminalité publiées par le Service Statistique Ministériel de
+la Sécurité Intérieure sont disponibles par département ou par zone de ressort de
+groupement de gendarmerie. La maille cantonale n'est pas proposée dans les fichiers
+\texttt{data.gouv.fr} pour ces indicateurs. Intégrer des valeurs départementales
+dans un modèle entraîné au canton aurait introduit une ambiguïté statistique
+inacceptable : tous les cantons d'un même département auraient reçu la même valeur,
+réduisant l'indicateur à un simple effet-département sans pouvoir discriminant.
+
+\paragraph{Vie associative (RNA).}
+Le Répertoire National des Associations est disponible à l'échelle de la commune,
+non du canton. Une agrégation manuelle était techniquement envisageable mais aurait
+nécessité un référentiel de correspondance commune-canton exhaustif et à jour ---
+ce référentiel n'est pas fourni directement par l'INSEE et doit être reconstitué
+à partir de la table de passage COG, opération hors périmètre du projet compte tenu
+du calendrier imposé.
+
+\paragraph{Taux de pauvreté monétaire (Filosofi).}
+L'indicateur de pauvreté au seuil de 60\% du revenu médian est disponible dans
+Filosofi à la maille IRIS et commune, mais \textbf{non systématiquement au canton}
+pour les deux millésimes comparés (2016 et 2022). Les variables de ménages et
+d'emplois déjà intégrées constituent un proxy partiel de la fragilité économique
+sans nécessiter cette agrégation incertaine.
+
+\paragraph{Nombre d'entreprises (SIRENE).}
+Le répertoire SIRENE recense les établissements à la commune. L'agrégation au canton
+est possible en théorie mais imprécise : certaines communes historiques chevauchent
+plusieurs cantons dans les découpages antérieurs à 2015, créant des doublons ou
+des omissions selon le référentiel de correspondance utilisé.
+
+\begin{warnbox}[Perspectives d'enrichissement — version 2]
+Une version enrichie pourrait intégrer : (1)~les données SSMSI à la maille
+départementale comme variable contextuelle externe aux cantons ;
+(2)~le nombre d'associations par canton agrégé depuis le RNA via l'API
+\texttt{data.gouv.fr} et la table de passage COG ;
+(3)~le taux de pauvreté Filosofi disponible à l'IRIS, agrégé par pondération
+de population cantonale ;
+(4)~les établissements actifs SIRENE convertis au canton via la table de passage
+commune-canton publiée par l'INSEE depuis 2022.
+\end{warnbox}
+
+%=============================================================
+\section{Données historiques de vote : justification du périmètre temporel}
+\label{sec:vote_historique}
+%=============================================================
+
+Le cahier des charges demandait d'inclure les résultats électoraux des scrutins
+présidentiels de 2012 et 2017 comme variables d'entrée ou de validation. Le jeu
+de données final utilise uniquement les résultats de 2022 à des fins de validation
+externe. Ce choix résulte d'une contrainte de cohérence géographique.
+
+\paragraph{Problème d'agrégation commune-canton.}
+Les résultats du premier tour des présidentielles 2012 et 2017 sont mis à
+disposition par le Ministère de l'Intérieur à la maille \textbf{commune} sur
+\texttt{data.gouv.fr}. Or notre modèle opère à la maille \textbf{canton}, définie
+par le redécoupage territorial de 2015 qui regroupe en moyenne plusieurs communes.
+Agréger les résultats communaux au canton aurait nécessité une pondération par
+nombre d'inscrits sur les listes électorales --- opération techniquement réalisable
+mais introduisant une incertitude supplémentaire dans des données qui servent à
+\emph{valider} les prédictions, pas à les entraîner.
+
+\paragraph{Choix de prioriser la qualité spatiale.}
+Le projet vise à prédire le comportement électoral à partir d'indicateurs
+socio-économiques, et \textbf{non} à construire un modèle autorégressif qui
+prédirait 2022 à partir des votes 2017. Intégrer les résultats passés comme
+features aurait risqué de créer une dépendance temporelle masquant l'apport réel
+des indicateurs économiques --- ce qui aurait affaibli la démonstration centrale
+du projet. Nous avons donc délibérément choisi d'entraîner le modèle uniquement
+sur des indicateurs socio-économiques mesurables indépendamment du vote, et de
+réserver les résultats 2022 à la validation finale par département.
+
+\begin{infobox}[Perspective v2]
+La table de passage commune-canton officielle publiée par l'INSEE (référentiel COG
+2022) permettrait d'agréger les résultats 2017 avec une correspondance fiable.
+L'ajout d'un indicateur de \og stabilité électorale \fg{} (part du vote 2017
+reportée sur le même bloc politique en 2022) constituerait une feature pertinente
+sans compromettre la cohérence spatiale du modèle.
+\end{infobox}

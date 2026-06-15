@@ -36,6 +36,50 @@ fusion en 2016 des anciennes régions Aquitaine, Limousin et Poitou-Charentes.
 \end{tabular}
 \end{table}
 
+\section{Justification du choix de la Nouvelle-Aquitaine}
+
+Le choix de la Nouvelle-Aquitaine comme périmètre d'analyse repose sur quatre
+arguments complémentaires.
+
+\paragraph{Disponibilité des données à la maille canton.}
+L'INSEE publie ses fichiers de recensement (RP, Filosofi) à plusieurs niveaux de
+granularité : commune, intercommunalité, département, région. La maille cantonale ---
+intermédiaire entre la commune et le département --- est disponible pour les
+millésimes 2016 et 2022 dans les fichiers RP exploités dans ce projet. Cette double
+disponibilité temporelle est indispensable pour calculer les $\Delta$-variables qui
+constituent le cœur de l'approche prédictive : sans deux points de mesure cohérents
+sur la même unité spatiale, le calcul inter-recensements serait impossible ou non
+fiable.
+
+\paragraph{Volumétrie pertinente pour un projet Big Data.}
+La Nouvelle-Aquitaine compte \textbf{293 cantons} au sens du découpage en vigueur
+depuis 2015. Si ce volume semble modeste en données brutes, la stratégie d'augmentation
+synthétique (tirages aléatoires pour équilibrer les cinq classes cibles) porte le
+jeu d'entraînement à \textbf{40~000 observations avec 171 colonnes}, ce qui
+justifie pleinement le recours à des outils Big Data --- MongoDB, pipeline ETL par
+phases --- plutôt qu'à un simple tableur. La combinaison du nombre de cantons,
+de la profondeur temporelle (deux millésimes) et de la richesse des variables
+(plus de 80 indicateurs bruts) génère une volumétrie cohérente avec les objectifs
+du RNCP 35584 Bloc 3.
+
+\paragraph{Diversité socio-économique maximale.}
+La région est issue de la fusion de trois anciennes entités administratives ---
+Aquitaine, Limousin et Poitou-Charentes --- dont les profils territoriaux sont
+radicalement différents : métropole tertiaire dynamique (Bordeaux/Gironde), rural
+profond en déclin démographique (Creuse, Corrèze), économies agricoles fragilisées
+(Lot-et-Garonne, Charente) et dynamisme touristique atypique (Pays Basque).
+Cette hétérogénéité constitue un stress-test naturel pour les modèles ML : si un
+algorithme apprend à distinguer ces dynamiques contrastées au sein d'une même région,
+il capture des signaux généralisables à d'autres territoires français.
+
+\paragraph{Alternatives écartées.}
+L'Île-de-France, trop urbaine et sociologiquement homogène à l'échelle cantonale,
+aurait produit un modèle peu transposable aux régions mixtes. Les petites régions
+comme la Corse ou le Centre-Val de Loire n'auraient pas fourni la volumétrie
+nécessaire à l'entraînement des modèles d'ensemble. La Nouvelle-Aquitaine représente
+ainsi le meilleur compromis entre richesse des données, hétérogénéité territoriale
+et faisabilité opérationnelle dans le calendrier du projet.
+
 \section{Contexte socio-économique régional}
 
 La région présente des dynamiques contrastées :
@@ -111,6 +155,77 @@ Crise       & Crise économique  & 10\% & Extrême-Droite \\
 permet, à partir de la distribution des prédictions sur les cantons d'un département,
 de calculer la probabilité de vote pour chacun des 12 candidats du 1\textsuperscript{er} tour.
 
-Le MCD comprend les entités principales : \texttt{Canton}, \texttt{Indicateur2016},
-\texttt{Indicateur2022}, \texttt{DeltaFeature}, \texttt{PredictionDept} et
-\texttt{Candidat}, reliées par des associations de type 1-N et N-M.
+\section{Modèle Conceptuel des Données (MCD)}
+
+Le MCD du projet Electio-Analytics s'articule autour de six entités persistées dans
+MongoDB, dont les associations reflètent le flux de transformation des données brutes
+jusqu'aux prédictions électorales par département.
+
+\subsection*{Entités et attributs principaux}
+
+\begin{table}[H]
+\centering
+\caption{Entités du MCD — Electio-Analytics (clés primaires soulignées)}
+\label{tab:mcd_entites}
+\begin{tabular}{p{3cm}p{7.5cm}p{3.5cm}}
+\toprule
+\textbf{Entité} & \textbf{Attributs principaux} & \textbf{Rôle dans le système} \\
+\midrule
+\textbf{Canton}
+  & \underline{code\_canton}, nom\_canton, code\_dept, pop\_2022
+  & Unité spatiale de référence \\[4pt]
+\textbf{Indicateur2016}
+  & \underline{id\_ind16}, code\_canton\textsuperscript{FK},
+    P16\_POP, P16\_ACT1564, P16\_CHOM1564, P16\_EMPLT, P16\_MEN, P16\_LOG
+  & Snapshot socio-éco. INSEE 2016 \\[4pt]
+\textbf{Indicateur2022}
+  & \underline{id\_ind22}, code\_canton\textsuperscript{FK},
+    P22\_POP, P22\_ACT1564, P22\_CHOM1564, P22\_EMPLT, P22\_MEN, P22\_LOG
+  & Snapshot socio-éco. INSEE 2022 \\[4pt]
+\textbf{DeltaFeature}
+  & \underline{id\_delta}, code\_canton\textsuperscript{FK},
+    delta\_POP, delta\_ACT1564, delta\_CHOM1564, delta\_EMPLT,
+    delta\_LOG, classe\_cible
+  & Variables d'évolution + cible ML \\[4pt]
+\textbf{PredictionDept}
+  & \underline{id\_pred}, code\_dept\textsuperscript{FK}, modele,
+    date\_pred, nb\_cantons, scores\_candidats[]
+  & Résultat agrégé par département \\[4pt]
+\textbf{Candidat}
+  & \underline{id\_candidat}, nom\_candidat, parti, orientation,
+    seuil\_bas, seuil\_haut
+  & Candidat 2022 + mapping orientation \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection*{Relations et cardinalités}
+
+\begin{table}[H]
+\centering
+\caption{Relations du MCD — cardinalités (notation min,max)}
+\label{tab:mcd_relations}
+\begin{tabular}{lllll}
+\toprule
+\textbf{Nom de la relation} & \textbf{Entité A} & \textbf{Card. A} & \textbf{Card. B} & \textbf{Entité B} \\
+\midrule
+MESURE\_2016  & Canton          & (1,1) & (1,1) & Indicateur2016 \\
+MESURE\_2022  & Canton          & (1,1) & (1,1) & Indicateur2022 \\
+EVOLUE\_EN    & Canton          & (1,1) & (1,1) & DeltaFeature   \\
+APPARTIENT\_A & Canton          & (1,1) & (1,N) & PredictionDept \\
+PRONOSTIQUE   & PredictionDept  & (1,N) & (1,N) & Candidat       \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{infobox}[Lecture des cardinalités]
+La notation (min,max) indique le nombre minimum et maximum d'occurrences de
+l'association du côté de l'entité considérée.
+\textbf{APPARTIENT\_A} : un canton appartient à exactement un département (1,1) ;
+un département agrège au minimum un et au maximum $N$ cantons (1,N).
+\textbf{PRONOSTIQUE} est de type N--M : une prédiction départementale porte sur
+plusieurs candidats, et un candidat figure dans les prédictions de chacun des
+12 départements. Les trois premières relations sont de type 1--1 : chaque canton
+possède exactement un jeu d'indicateurs 2016, un jeu 2022 et un vecteur de
+$\Delta$-variables.
+\end{infobox}
