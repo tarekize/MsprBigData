@@ -1,0 +1,97 @@
+{
+  "metadata": {
+    "generated_by": "generate_tendances.py — ElectioAnalytics",
+    "model": "XGBoost",
+    "model_accuracy": 81.36,
+    "region": "Nouvelle-Aquitaine",
+    "base_year": 2017,
+    "forecast_years": [
+      2018,
+      2019,
+      2020
+    ],
+    "indicators": [
+      "emploi",
+      "chômage",
+      "population",
+      "ménages",
+      "entreprises (secteurs A-Q)",
+      "logement",
+      "activité 15-64 ans"
+    ],
+    "methodology": "Projection annuelle des indicateurs delta (±σ dans l'espace normalisé). XGBoost predict_proba → P(Croissance|Stable|Déclin) par territoire. Mapping présidentiel calibré sur les résultats 2022 Nouvelle-Aquitaine."
+  },
+  "deltas": {
+    "exg": 0.3,
+    "gauche": -0.05,
+    "centre": -0.46,
+    "droite": -0.25,
+    "exd": 0.45
+  },
+  "predictions": [
+    {
+      "annee": "2017 (Base)",
+      "year": 2017,
+      "is_base": true,
+      "exg": 26.34,
+      "gauche": 5.83,
+      "centre": 30.66,
+      "droite": 11.98,
+      "exd": 25.19,
+      "eco_states": {
+        "Croissance": 32.4,
+        "Declin": 31.5,
+        "Stable": 36.1
+      },
+      "confidence": 81.4
+    },
+    {
+      "annee": "2018 (S+1)",
+      "year": 2018,
+      "is_base": false,
+      "exg": 26.07,
+      "gauche": 5.87,
+      "centre": 31.06,
+      "droite": 12.2,
+      "exd": 24.79,
+      "eco_states": {
+        "Croissance": 34.6,
+        "Declin": 29.7,
+        "Stable": 35.7
+      },
+      "confidence": 76.5
+    },
+    {
+      "annee": "2019 (S+2)",
+      "year": 2019,
+      "is_base": false,
+      "exg": 26.01,
+      "gauche": 5.88,
+      "centre": 31.16,
+      "droite": 12.25,
+      "exd": 24.7,
+      "eco_states": {
+        "Croissance": 35.1,
+        "Declin": 29.1,
+        "Stable": 35.8
+      },
+      "confidence": 71.6
+    },
+    {
+      "annee": "2020 (S+3)",
+      "year": 2020,
+      "is_base": false,
+      "exg": 26.64,
+      "gauche": 5.78,
+      "centre": 30.2,
+      "droite": 11.73,
+      "exd": 25.64,
+      "eco_states": {
+        "Croissance": 29.5,
+        "Declin": 34.7,
+        "Stable": 35.8
+      },
+      "confidence": 65.1
+    }
+  ]
+}

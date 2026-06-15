@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-07T04:27:42.004542",
+  "generated_at": "2026-06-13T15:19:18.240880",
   "charts": [
     {
       "id": "correlation_heatmap",
@@ -49,6 +49,13 @@
       "title": "Matrice de Confusion — Logistic Regression (Seaborn)",
       "description": "Répartition réel/prédit pour les 5 classes économiques cibles.",
       "key_finding": "La classe 'Stable' représente ~55% des données et est la mieux prédite (98.4% recall)."
+    },
+    {
+      "id": "dashboard_overview",
+      "file": "dashboard_overview.png",
+      "title": "Tableau de Bord Prédictif GouvData (Matplotlib)",
+      "description": "Dashboard complet style GouvData : sidebar navigation, 5 cartes modèles ML, 3 KPIs, filtres géographiques.",
+      "key_finding": "Logistic Regression sélectionné comme modèle actif (81.81%). Vainqueur prédit : MACRON. État économique : STABLE (score 9.8)."
     }
   ]
 }
