@@ -2,7 +2,7 @@
   "summary": {
     "region_name": "Nouvelle-Aquitaine",
     "model_name": "Random Forest",
-    "model_accuracy": 66.36,
+    "model_accuracy": 79.57,
     "predicted_winner": "MACRON",
     "real_winner": "MACRON",
     "economic_state": "stable",

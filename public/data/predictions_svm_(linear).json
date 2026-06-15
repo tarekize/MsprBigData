@@ -2,7 +2,7 @@
   "summary": {
     "region_name": "Nouvelle-Aquitaine",
     "model_name": "SVM (Linear)",
-    "model_accuracy": 75.95,
+    "model_accuracy": 70.7,
     "predicted_winner": "MACRON",
     "real_winner": "MACRON",
     "economic_state": "stable",

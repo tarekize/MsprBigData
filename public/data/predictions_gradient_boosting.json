@@ -2,7 +2,7 @@
   "summary": {
     "region_name": "Nouvelle-Aquitaine",
     "model_name": "Gradient Boosting",
-    "model_accuracy": 67.26,
+    "model_accuracy": 82.11,
     "predicted_winner": "MACRON",
     "real_winner": "MACRON",
     "economic_state": "stable",

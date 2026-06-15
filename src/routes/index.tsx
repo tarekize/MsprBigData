@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { useState, useMemo, useEffect } from "react";
-import { fetchPredictions, type Level, type PredictionEntity } from "@/lib/predictions";
+import { type PredictionEntity } from "@/lib/predictions";
 import { KpiCard } from "@/components/dashboard/KpiCard";
 import { PoliticalSpectrum } from "@/components/dashboard/PoliticalSpectrum";
 import { PartyDonut } from "@/components/dashboard/PartyDonut";
@@ -108,6 +108,13 @@ function Index() {
             </div>
           </div>
           <div className="hidden items-center gap-2 md:flex">
+            <Link
+              to="/dashboard"
+              className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary/60 px-4 py-2 text-xs font-semibold text-foreground transition-all hover:border-primary/50 hover:scale-105"
+            >
+              <Activity className="h-3.5 w-3.5" />
+              Dashboard
+            </Link>
             <Link
               to="/visualisation"
               className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-primary to-accent px-4 py-2 text-xs font-semibold text-background transition-all hover:shadow-lg hover:shadow-primary/30 hover:scale-105"

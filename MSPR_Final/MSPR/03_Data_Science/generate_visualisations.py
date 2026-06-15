@@ -4,7 +4,7 @@ generate_visualisations.py
 Script Matplotlib / Seaborn — génération des visualisations MSPR
 Electio-Analytics · Région Nouvelle-Aquitaine
 
-Génère 7 graphiques sauvegardés dans public/data/charts/ :
+Génère 8 graphiques sauvegardés dans public/data/charts/ :
   1. correlation_heatmap.png        — Matrice de corrélation Pearson (Seaborn)
   2. model_comparison.png           — Comparaison multi-métriques des modèles (Matplotlib)
   3. feature_importance.png         — Importance des variables (XGBoost) (Matplotlib)
@@ -12,6 +12,7 @@ Génère 7 graphiques sauvegardés dans public/data/charts/ :
   5. orientation_distribution.png   — Distribution des orientations par département (Seaborn)
   6. scatter_emploi_lepen.png       — Emploi vs probabilité Le Pen (Seaborn)
   7. confusion_matrix.png           — Matrice de confusion (Logistic Regression) (Seaborn)
+  8. dashboard_overview.png         — Tableau de bord prédictif GouvData style (Matplotlib)
 
 Exécution :
     python generate_visualisations.py
@@ -614,6 +615,230 @@ def chart_confusion_matrix():
 
 
 # ══════════════════════════════════════════════════════════════════════════════
+# 8. TABLEAU DE BORD PRÉDICTIF — GouvData style
+# ══════════════════════════════════════════════════════════════════════════════
+def chart_dashboard_overview():
+    """Tableau de bord prédictif style GouvData (sidebar + cards + filtres)."""
+    print('[8] Tableau de bord prédictif — GouvData style (Matplotlib layout)...')
+
+    C = {
+        'sidebar':      '#0d1137',
+        'nav_act':      '#1e2a78',
+        'page_bg':      '#f0f2f8',
+        'white':        '#ffffff',
+        'border':       '#dde3f0',
+        'dark':         '#0d1137',
+        'mid':          '#4a5568',
+        'muted':        '#8896a8',
+        'faint':        '#9ca3af',
+        'sb_muted':     '#6b7d9a',
+        'sb_text':      '#a0b0d0',
+        'sb_sublabel':  '#8090b0',
+        'btn_primary':  '#1e2a78',
+        'model_active': '#1e2a78',
+    }
+
+    fig = plt.figure(figsize=(20, 12), facecolor=C['page_bg'])
+    ax = fig.add_axes([0, 0, 1, 1])
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1)
+    ax.axis('off')
+    ax.set_facecolor(C['page_bg'])
+
+    def box(x, y, w, h, fc='white', ec='#dde3f0', lw=0.8, r=0.0, z=2):
+        if r > 0:
+            try:
+                p = mpatches.FancyBboxPatch(
+                    (x, y), w, h,
+                    boxstyle=f'round,pad=0,rounding_size={r}',
+                    facecolor=fc, edgecolor=ec, linewidth=lw, zorder=z, clip_on=False)
+            except Exception:
+                p = mpatches.FancyBboxPatch(
+                    (x, y), w, h,
+                    boxstyle=f'round,pad={r}',
+                    facecolor=fc, edgecolor=ec, linewidth=lw, zorder=z, clip_on=False)
+        else:
+            p = mpatches.Rectangle(
+                (x, y), w, h,
+                facecolor=fc, edgecolor=ec, linewidth=lw, zorder=z, clip_on=False)
+        ax.add_patch(p)
+
+    def t(x, y, s, sz=9, c='black', ha='left', va='center', bold=False, z=4):
+        ax.text(x, y, s, fontsize=sz, color=c, ha=ha, va=va,
+                fontweight='bold' if bold else 'normal', zorder=z, clip_on=False)
+
+    # Full page background
+    box(0, 0, 1, 1, fc=C['page_bg'], ec='none')
+
+    # ── Sidebar ───────────────────────────────────────────────────────────────
+    SB = 0.17
+    box(0, 0, SB, 1.0, fc=C['sidebar'], ec='none', z=1)
+
+    # Logo
+    t(0.013, 0.944, 'GouvData',    sz=12, c='white', bold=True)
+    t(0.013, 0.927, 'ML ANALYTICS', sz=6.5, c=C['sb_muted'])
+    # Mini tricolore flag in sidebar header
+    fx, fy, fw, fh = SB - 0.055, 0.928, 0.013, 0.030
+    box(fx,       fy, fw, fh, fc='#002395', ec='none', z=4)
+    box(fx + fw,  fy, fw, fh, fc='white',   ec='none', z=4)
+    box(fx+2*fw,  fy, fw, fh, fc='#ED2939', ec='none', z=4)
+
+    # NAVIGATION label
+    t(0.013, 0.893, 'N A V I G A T I O N', sz=6.5, c=C['sb_muted'])
+
+    # Dashboard nav button (active)
+    box(0.010, 0.835, SB - 0.022, 0.060, fc=C['nav_act'], ec='none', r=0.012, z=2)
+    t(0.025, 0.878, '[D]',                    sz=8,   c='white')
+    t(0.048, 0.879, 'Dashboard',              sz=9.5, c='white', bold=True)
+    t(0.048, 0.857, 'Predictions geographiques', sz=6.5, c=C['sb_text'])
+
+    # Visualisation ML nav item
+    t(0.025, 0.818, '~',                      sz=10,  c=C['sb_muted'])
+    t(0.048, 0.820, 'Visualisation ML',       sz=9,   c=C['sb_text'])
+    t(0.048, 0.801, 'Graphiques & metriques', sz=6.5, c=C['sb_muted'])
+
+    # PERIMETRE label
+    t(0.013, 0.768, 'P E R I M E T R E', sz=6.5, c=C['sb_muted'])
+
+    t(0.016, 0.748, '[+]',                    sz=7,   c='#5b7ab8')
+    t(0.037, 0.752, 'Election',               sz=7,   c=C['sb_sublabel'])
+    t(0.037, 0.736, 'Presidentielle 2022',    sz=8.5, c='white', bold=True)
+
+    t(0.016, 0.710, '(@)',                    sz=7,   c='#5b7ab8')
+    t(0.037, 0.714, 'Region',                 sz=7,   c=C['sb_sublabel'])
+    t(0.037, 0.698, 'Nouvelle-Aquitaine',     sz=8.5, c='white', bold=True)
+
+    ax.plot([0.012, SB - 0.012], [0.675, 0.675], color='#2d3748', lw=0.8, zorder=3)
+
+    # MODELE ACTIF
+    t(0.013, 0.656, 'M O D E L E   A C T I F', sz=6.5, c=C['sb_muted'])
+    box(0.010, 0.588, SB - 0.022, 0.063, fc='#1e293b', ec='#334155', lw=0.8, r=0.010, z=2)
+    t(0.025, 0.631, '~',                     sz=9,   c='#6080e0')
+    t(0.044, 0.633, 'Logistic Regression',   sz=8.5, c='white', bold=True)
+    t(0.044, 0.614, 'Accuracy',              sz=7.5, c=C['sb_sublabel'])
+    t(SB - 0.014, 0.614, '81.8%',            sz=7.5, c='white', bold=True, ha='right')
+
+    # Tricolore flag bottom of sidebar
+    fbx, fby, fbw, fbh = SB/2 - 0.021, 0.062, 0.014, 0.038
+    box(fbx,       fby, fbw, fbh, fc='#002395', ec='none', z=3)
+    box(fbx + fbw, fby, fbw, fbh, fc='white',   ec='none', z=3)
+    box(fbx+2*fbw, fby, fbw, fbh, fc='#ED2939', ec='none', z=3)
+    t(SB/2, 0.045, 'FRANCE', sz=6.5, c=C['sb_muted'], ha='center')
+
+    # ── Main Content ──────────────────────────────────────────────────────────
+    MX = SB + 0.014
+    MW = 1.0 - MX - 0.010
+    CX = MX + MW / 2  # horizontal center of content area
+
+    # Header
+    t(CX, 0.959,
+      'PRESIDENTIELLE 2022  ·  NOUVELLE-AQUITAINE',
+      sz=8, c='#1e2a78', ha='center', bold=True)
+    t(CX, 0.928, 'Tableau de Bord Predictif',
+      sz=22, c=C['dark'], ha='center', bold=True)
+    t(CX, 0.902,
+      'Prediction du vote par indicateurs socio-economiques  ·  Region  ·  Departement  ·  Canton',
+      sz=8.5, c=C['mid'], ha='center')
+
+    # Primary button "Visualisation ML"
+    BW, BH = 0.155, 0.037
+    box(CX - BW/2, 0.857, BW, BH, fc=C['btn_primary'], ec='none', r=0.014, z=3)
+    t(CX, 0.876, '▤  Visualisation ML', sz=9.5, c='white', ha='center', bold=True)
+
+    # ── Section: Modele d'Intelligence Artificielle ───────────────────────────
+    S1Y, S1H = 0.625, 0.205
+    box(MX, S1Y, MW, S1H, fc=C['white'], ec=C['border'], lw=0.8, r=0.012, z=2)
+    t(MX + 0.014, S1Y + S1H - 0.021,
+      '⊕  Modele d\'Intelligence Artificielle', sz=10, c=C['dark'], bold=True)
+
+    MODELS = [
+        ('XGBoost',             '81.36%', False),
+        ('Random Forest',       '78.89%', False),
+        ('Gradient Boosting',   '80.83%', False),
+        ('Logistic Regression', '81.81%', True),
+        ('SVM (Linear)',        '69.2%',  False),
+    ]
+    cpad = 0.012
+    cw = (MW - cpad * 6) / 5
+    ch, cy = 0.128, S1Y + 0.020
+
+    for i, (mn, ma, active) in enumerate(MODELS):
+        cxi = MX + cpad + i * (cw + cpad)
+        fbg = C['model_active'] if active else C['white']
+        fec = C['model_active'] if active else '#c8d4e8'
+        flw = 1.5 if active else 0.8
+        box(cxi, cy, cw, ch, fc=fbg, ec=fec, lw=flw, r=0.010, z=3)
+        lc = 'white' if active else C['muted']
+        nc = 'white' if active else C['dark']
+        t(cxi + cw/2, cy + ch - 0.021, 'MODELE',  sz=6,   c=lc, ha='center')
+        t(cxi + cw/2, cy + ch/2 + 0.008, mn,       sz=8.5, c=nc, ha='center', bold=True)
+        t(cxi + cw/2, cy + 0.022, ma,              sz=14,  c=nc, ha='center', bold=True)
+
+    # ── KPI Cards ─────────────────────────────────────────────────────────────
+    KY, KH = 0.440, 0.160
+    KPI = [
+        ('VAINQUEUR PREDIT — NOUVELLE AQUITAINE', 'MACRON',
+         'Resultat reel : MACRON'),
+        ('ETAT ECONOMIQUE',
+         'STABLE',
+         'Score : 9.8'),
+        ('ACCURACY — LOGISTIC REGRESSION',
+         '81.8%',
+         "Sur l'ensemble d'entrainement socio-eco"),
+    ]
+    kpad = 0.012
+    kw = (MW - kpad * 4) / 3
+
+    for i, (kl, kv, ks) in enumerate(KPI):
+        kx = MX + kpad + i * (kw + kpad)
+        box(kx, KY, kw, KH, fc=C['white'], ec=C['border'], lw=0.8, r=0.010, z=3)
+        t(kx + kw/2, KY + KH - 0.022, kl,  sz=6.5, c=C['muted'], ha='center', bold=True)
+        t(kx + kw/2, KY + KH/2 + 0.010, kv, sz=18,  c=C['dark'],  ha='center', bold=True)
+        t(kx + kw/2, KY + 0.022, ks,         sz=7.5, c=C['faint'], ha='center')
+
+    # ── Geographic Filters ────────────────────────────────────────────────────
+    GY, GH = 0.250, 0.170
+    box(MX, GY, MW, GH, fc=C['white'], ec=C['border'], lw=0.8, r=0.012, z=2)
+    t(MX + 0.014, GY + GH - 0.022, '▼  Filtres geographiques',
+      sz=10, c=C['dark'], bold=True)
+
+    DROPDOWNS = [
+        ('REGION',       'Nouvelle-Aquitaine'),
+        ('DEPARTEMENT',  'Tous les departements'),
+        ('CANTON',       'Tous les cantons'),
+    ]
+    dpad = 0.012
+    dw = (MW - dpad * 4) / 3
+    dh, dy = 0.058, GY + 0.048
+
+    for i, (dl, dv) in enumerate(DROPDOWNS):
+        dx = MX + dpad + i * (dw + dpad)
+        t(dx, dy + dh + 0.011, dl, sz=7, c='#6b7c96', bold=True)
+        box(dx, dy, dw, dh, fc='#f8f9fc', ec='#c8d4e8', lw=0.8, r=0.008, z=3)
+        t(dx + 0.012, dy + dh/2, dv, sz=9, c=C['dark'])
+        t(dx + dw - 0.010, dy + dh/2, 'v', sz=9, c=C['muted'], ha='right')
+
+    # ── Department color badges ────────────────────────────────────────────────
+    DEPT_COLORS = [
+        '#6366f1', '#8b5cf6', '#a78bfa', '#06b6d4', '#10b981',
+        '#22c55e', '#84cc16', '#eab308', '#f97316', '#ef4444',
+        '#ec4899', '#14b8a6',
+    ]
+    bs, bgap = 0.022, 0.008
+    total_bw = len(DEPT_COLORS) * (bs + bgap) - bgap
+    bx0 = CX - total_bw / 2
+    BY = 0.178
+
+    for i, bc in enumerate(DEPT_COLORS):
+        box(bx0 + i * (bs + bgap), BY, bs, bs, fc=bc, ec='none', r=0.005, z=3)
+
+    t(CX, BY - 0.023, '12 departements  ·  Nouvelle-Aquitaine',
+      sz=7.5, c=C['faint'], ha='center')
+
+    return save(fig, 'dashboard_overview.png')
+
+
+# ══════════════════════════════════════════════════════════════════════════════
 # MANIFEST
 # ══════════════════════════════════════════════════════════════════════════════
 def write_manifest(chart_paths):
@@ -668,6 +893,13 @@ def write_manifest(chart_paths):
                 "title": "Matrice de Confusion — Logistic Regression (Seaborn)",
                 "description": "Répartition réel/prédit pour les 5 classes économiques cibles.",
                 "key_finding": "La classe 'Stable' représente ~55% des données et est la mieux prédite (98.4% recall)."
+            },
+            {
+                "id": "dashboard_overview",
+                "file": "dashboard_overview.png",
+                "title": "Tableau de Bord Prédictif GouvData (Matplotlib)",
+                "description": "Dashboard complet style GouvData : sidebar navigation, 5 cartes modèles ML, 3 KPIs, filtres géographiques.",
+                "key_finding": "Logistic Regression sélectionné comme modèle actif (81.81%). Vainqueur prédit : MACRON. État économique : STABLE (score 9.8)."
             }
         ]
     }
@@ -694,6 +926,7 @@ if __name__ == '__main__':
     paths.append(chart_orientation_distribution())
     paths.append(chart_scatter_emploi())
     paths.append(chart_confusion_matrix())
+    paths.append(chart_dashboard_overview())
     write_manifest(paths)
 
     print('\n' + '='*60)

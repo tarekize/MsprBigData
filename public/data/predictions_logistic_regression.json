@@ -2,7 +2,7 @@
   "summary": {
     "region_name": "Nouvelle-Aquitaine",
     "model_name": "Logistic Regression",
-    "model_accuracy": 82.29,
+    "model_accuracy": 82.1,
     "predicted_winner": "MACRON",
     "real_winner": "MACRON",
     "economic_state": "stable",

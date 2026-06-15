@@ -15,44 +15,44 @@
   },
   "models_metrics": {
     "LogisticRegression": {
-      "cv_accuracy": 82.29,
+      "cv_accuracy": 82.1,
       "cv_std": 0.0,
-      "test_accuracy": 82.29,
-      "test_precision": 83.23,
-      "test_recall": 82.29,
-      "test_f1": 82.55
+      "test_accuracy": 82.1,
+      "test_precision": 82.16,
+      "test_recall": 82.1,
+      "test_f1": 82.06
     },
     "RandomForest": {
-      "cv_accuracy": 66.36,
+      "cv_accuracy": 79.57,
       "cv_std": 0.0,
-      "test_accuracy": 66.36,
-      "test_precision": 67.55,
-      "test_recall": 66.36,
-      "test_f1": 66.79
+      "test_accuracy": 79.57,
+      "test_precision": 80.15,
+      "test_recall": 79.57,
+      "test_f1": 79.22
     },
     "GradientBoosting": {
-      "cv_accuracy": 67.26,
+      "cv_accuracy": 82.11,
       "cv_std": 0.0,
-      "test_accuracy": 67.26,
-      "test_precision": 69.21,
-      "test_recall": 67.26,
-      "test_f1": 67.82
+      "test_accuracy": 82.11,
+      "test_precision": 82.2,
+      "test_recall": 82.11,
+      "test_f1": 82.1
     },
     "SVM": {
-      "cv_accuracy": 75.95,
+      "cv_accuracy": 70.7,
       "cv_std": 0.0,
-      "test_accuracy": 75.95,
-      "test_precision": 78.73,
-      "test_recall": 75.95,
-      "test_f1": 76.51
+      "test_accuracy": 70.7,
+      "test_precision": 73.59,
+      "test_recall": 70.7,
+      "test_f1": 68.67
     },
     "XGBoost": {
-      "cv_accuracy": 69.96,
+      "cv_accuracy": 82.05,
       "cv_std": 0.0,
-      "test_accuracy": 69.96,
-      "test_precision": 71.53,
-      "test_recall": 69.96,
-      "test_f1": 70.45
+      "test_accuracy": 82.05,
+      "test_precision": 82.17,
+      "test_recall": 82.05,
+      "test_f1": 82.03
     }
   },
   "political_predicted": [

@@ -2,7 +2,7 @@
   "summary": {
     "region_name": "Nouvelle-Aquitaine",
     "model_name": "XGBoost",
-    "model_accuracy": 69.96,
+    "model_accuracy": 82.05,
     "predicted_winner": "MACRON",
     "real_winner": "MACRON",
     "economic_state": "stable",
