@@ -1,11 +1,6 @@
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import type { PoliticalCount } from "@/lib/predictions";
 
-const COLOR = {
-  MACRON: "var(--color-primary)",
-  "LE PEN": "var(--pol-far-right)",
-} as Record<string, string>;
-
 export function PartyDonut({ title, data }: { title: string; data: PoliticalCount[] }) {
   const total = data.reduce((s, d) => s + d.count, 0);
   const safeData = data.filter((d) => d.count > 0);
@@ -28,7 +23,7 @@ export function PartyDonut({ title, data }: { title: string; data: PoliticalCoun
               stroke="none"
             >
               {safeData.map((d) => (
-                <Cell key={d.party} fill={COLOR[d.party] ?? "var(--color-accent)"} />
+                <Cell key={d.party} fill={d.color ?? "var(--color-accent)"} />
               ))}
             </Pie>
             <Tooltip
@@ -50,7 +45,7 @@ export function PartyDonut({ title, data }: { title: string; data: PoliticalCoun
       <div className="mt-2 flex flex-wrap gap-3">
         {data.map((d) => (
           <div key={d.party} className="flex items-center gap-2 text-xs text-muted-foreground">
-            <span className="h-2.5 w-2.5 rounded-sm" style={{ background: COLOR[d.party] ?? "var(--color-accent)" }} />
+            <span className="h-2.5 w-2.5 rounded-sm" style={{ background: d.color ?? "var(--color-accent)" }} />
             {d.party} <span className="text-foreground">{d.count}</span>
           </div>
         ))}

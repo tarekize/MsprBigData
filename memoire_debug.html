@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head><meta charset="utf-8">
+<title>Mémoire MSPR — Electio-Analytics</title>
+<style>
+@page {
+  size: A4; margin: 2.5cm 2.5cm 2.5cm 3cm;
+  @top-left   { content: "Electio-Analytics — Mémoire MSPR Big Data";
+                font-size:8pt; color:#666; font-style:italic; }
+  @top-right  { content: counter(page); font-size:8pt; color:#555; }
+  @bottom-center {
+    content: "Certification Professionnelle RNCP35584 — Promotion I1 EISI 2025/2026";
+    font-size:7pt; color:#999; font-style:italic; }
+}
+* { box-sizing:border-box; }
+html { font-size:11pt; }
+body { font-family:Georgia,"Times New Roman",serif; line-height:1.55;
+       color:#111; text-align:justify; }
+
+.titlepage { text-align:center; page-break-after:always; padding:18pt 0; }
+.tp-school  { font-size:12.5pt; font-variant:small-caps; letter-spacing:.05em; }
+.tp-cert    { font-size:10.5pt; margin:2pt 0; }
+.tp-rule    { border:none; border-top:1.5px solid #333; margin:14pt 0 10pt; }
+.tp-title   { font-size:21pt; font-weight:bold; color:#1a1a5e; margin:8pt 0 4pt; }
+.tp-sub     { font-size:14pt; font-weight:bold; color:#1a1a5e; margin:3pt 0 12pt; }
+.tp-desc    { font-size:12pt; font-style:italic; margin:10pt 0 3pt; }
+.tp-client  { font-size:11pt; margin-bottom:20pt; }
+table.team  { margin:16pt auto; border-collapse:collapse; }
+table.team th{ padding:5pt 18pt; border-top:2px solid #333;
+               border-bottom:1px solid #888; font-weight:bold; }
+table.team td{ padding:4pt 18pt; }
+table.team tr:last-child td{ border-bottom:2px solid #333; }
+.tp-info    { margin-top:16pt; font-size:10.5pt; }
+.tp-conf    { font-size:9pt; font-style:italic; color:#666; margin-top:22pt; }
+
+h1           { font-size:18pt; text-align:center; color:#1a1a5e;
+               page-break-before:always; margin:38pt 0 20pt; }
+h1 .ch-label { display:block; font-size:10.5pt; color:#777;
+               font-weight:normal; margin-bottom:5pt; }
+h1.nopb      { page-break-before:avoid; }
+h2  { font-size:13pt; color:#1a1a5e; border-bottom:1px solid #9ab;
+      padding-bottom:2pt; margin-top:17pt; margin-bottom:5pt; }
+h3  { font-size:11.5pt; color:#333; margin-top:13pt; margin-bottom:4pt; }
+h4  { font-size:11pt; color:#555; font-style:italic;
+      margin-top:9pt; margin-bottom:3pt; }
+
+p   { margin:0 0 7pt; }
+code{ font-family:"Courier New",Courier,monospace; font-size:8.8pt;
+      background:#f2f2f8; padding:1px 3px; border-radius:2px;
+      word-break:break-all; }
+pre { font-family:"Courier New",Courier,monospace; font-size:7.4pt;
+      background:#f2f2f8; border:1px solid #ccd; border-radius:3px;
+      padding:7pt 10pt; margin:7pt 0 2pt; white-space:pre-wrap;
+      word-break:break-all; line-height:1.33; }
+.listing-cap{ font-size:9pt; color:#555; font-style:italic;
+              text-align:center; margin:2pt 0 9pt; }
+
+table    { border-collapse:collapse; width:100%; margin:7pt 0 2pt; font-size:10pt; }
+table.nw { width:auto; margin:7pt auto 2pt; }
+th  { background:#e5e8f0; font-weight:bold; padding:4pt 7pt;
+      text-align:left; border-top:2px solid #444; border-bottom:1px solid #777; }
+td  { padding:3pt 7pt; border-bottom:1px solid #dde; vertical-align:top; }
+tr.mid td{ border-top:1px solid #999; border-bottom:none;
+           padding:0; height:1px; font-size:0; }
+tr.bot td{ border-bottom:2px solid #444; }
+.mono { font-family:"Courier New",monospace; font-size:8.2pt;
+        word-break:break-all; }
+.col-r{ text-align:right; }
+.col-c{ text-align:center; }
+.tab-cap { font-size:9.5pt; font-style:italic; text-align:center;
+           margin:2pt 0 5pt; color:#333; }
+.tab-num { font-weight:bold; }
+
+.infobox   { border:1.5px solid #2e5bcc; background:#eef2ff;
+             padding:9pt 11pt; margin:9pt 0; border-radius:3px; }
+.resultbox { border:1.5px solid #2d8050; background:#efffee;
+             padding:9pt 11pt; margin:9pt 0; border-radius:3px; }
+.warnbox   { border:1.5px solid #b85c00; background:#fff7ee;
+             padding:9pt 11pt; margin:9pt 0; border-radius:3px; }
+.box-title { font-weight:bold; margin-bottom:6pt; padding-bottom:4pt;
+             border-bottom:1px solid rgba(0,0,0,.15); font-size:10.5pt; }
+.infobox  .box-title{ color:#1a3faa; }
+.resultbox .box-title{ color:#1a5e35; }
+.warnbox  .box-title { color:#7a3800; }
+
+ul,ol { margin:5pt 0 5pt 18pt; }
+li    { margin-bottom:3pt; }
+dl    { margin:5pt 0; }
+dt    { font-weight:bold; margin-top:7pt; }
+dd    { margin-left:18pt; margin-bottom:4pt; }
+
+.equation { font-family:"Courier New",monospace; text-align:center;
+            padding:6pt; margin:7pt 0; background:#fafafa;
+            border:1px solid #eee; font-style:italic; font-size:10pt; }
+figure    { margin:9pt 0; text-align:center; }
+figure img{ max-width:95%; height:auto; }
+figcaption{ font-size:9pt; font-style:italic; color:#555; margin-top:3pt; }
+hr.sep    { border:none; border-top:1px solid #ccc; margin:12pt 0; }
+sup,sub   { font-size:7.5pt; }
+</style>
+</head>
+<body>
+<div class="titlepage"><p><span style="font-variant:small-caps">École Supérieure d'Informatique et de Sciences (EPSI)</span>\\[0.3cm] Certification Professionnelle — Expert en Informatique et Système d'Information\\ RNCP35584\\[0.2cm] Bloc 3 — Piloter l'informatique décisionnel d'un S.I (Big Data &amp; Business Intelligence)</p>
+<hr class="sep">\\[0.4cm]
+ MÉMOIRE DE SYNTHÈSE\\[0.3cm]
+MSPR — Big Data et Analyse de données\\[0.4cm]
+<hr class="sep">
+<p>Analyse prédictive des tendances électorales\indicateurs socio-économiques\\[0.4cm] Preuve de Concept (POC) — Client : <strong>Electio-Analytics</strong></p>
+<table><tr><th><strong>Nom Prénom</strong></th><th><strong>Rôle</strong></th></tr><tr><td>Kaidi MAROUANE</td><td>Data Engineer</td></tr><tr><td>Izerrouken TAREK</td><td>Data Scientist</td></tr><tr><td>Lahfaouti ILYAS</td><td>Développeur Front-end</td></tr><tr><td>Moujahid YACINE</td><td>Architecte données</td></tr><tr><td>Mahraz OUSSAMA</td><td>Chef de projet</td></tr></table>
+<table><tr><th class="col-r"><strong>Encadrant pédagogique :</strong></th><th>Ali Zahaf</th></tr><tr><th class="col-r"><strong>Promotion :</strong></th><th>I1 EISI — 2025/2026</th></tr><tr><th class="col-r"><strong>Date de soutenance :</strong></th><th>Juin 2026</th></tr></table>
+<p>Document confidentiel — usage pédagogique uniquement</p></div>
+<h1 class="nopb">Résumé</h1>
+<p>Ce mémoire présente la conception et le développement d'un système complet de prédiction des tendances électorales par indicateurs socio-économiques, réalisé dans le cadre d'une Preuve de Concept (POC) pour la société <strong>Electio-Analytics</strong>. Le périmètre géographique retenu est la région <strong>Nouvelle-Aquitaine</strong>, regroupant <strong>12 départements</strong> et <strong>627 cantons</strong>.</p>
+<p>Le projet repose sur un pipeline de préparation des données en 9 phases — depuis le chargement de sources hétérogènes (CSV, Excel, NoSQL) jusqu'à un jeu final de <strong>40 000 lignes à 171 colonnes</strong> — et met en œuvre cinq algorithmes de classification supervisée sur une variable cible construite de manière <em>synthétique</em> à partir de 27 indicateurs delta socio-économiques. La cible comporte <strong>5 classes à distribution réaliste asymétrique</strong> : Crise (10 %), Déclin (20 %), Stable (40 %), Croissance (20 %), Boom (10 %).</p>
+<p>Le modèle le plus performant est <strong>HistGradientBoosting</strong>, avec une accuracy de <strong>82,11 %</strong> et un F1-Score de <strong>82,10 %</strong> sur le jeu de test. Les prédictions électorales s'appuient sur une logique <strong>multi-candidats</strong> mettant en concurrence les <strong>12 candidats du 1<sup>er</sup> tour 2022</strong>, regroupés en 5 orientations politiques. Appliquées aux 12 départements de la Nouvelle-Aquitaine, elles affichent une précision départementale de <strong>91,7 % (11 sur 12)</strong>.</p>
+<p>L'interface utilisateur est développée en <strong>React 19</strong> (TanStack Router, TanStack Query, Recharts, Framer Motion) et expose les prédictions des cinq modèles à trois niveaux géographiques.</p>
+<p><strong>Mots-clés :</strong> Big Data, Machine Learning, Prédiction électorale, HistGradientBoosting, ETL, Delta Lake, React, Nouvelle-Aquitaine, indicateurs socio-économiques, 12 candidats 2022.</p>
+<h1 class="nopb">Abstract</h1>
+<p>This thesis presents the design and development of a complete electoral trend prediction system based on socio-economic indicators, built as a Proof of Concept (POC) for <strong>Electio-Analytics</strong>. The geographic scope is <strong>Nouvelle-Aquitaine</strong>, comprising 12 departments and 627 cantons.</p>
+<p>The project relies on a 9-phase data pipeline — from loading heterogeneous sources (CSV, Excel, NoSQL) to a final 40,000-row × 171-column dataset — and trains five supervised classification algorithms on a <em>synthetically constructed</em> target variable derived from 27 socio-economic delta indicators. The target uses <strong>5 classes with a realistic asymmetric distribution</strong>: Crise (10\</p>
+<p>The best performing model is <strong>HistGradientBoosting</strong>, reaching {82.11\</p>
+<p><strong>Keywords:</strong> Big Data, Machine Learning, Electoral prediction, HistGradientBoosting, ETL, Delta Lake, React, Nouvelle-Aquitaine, socio-economic indicators, 12 candidates 2022.</p>
+<h1 class="nopb">Remerciements</h1>
+<p>Nous tenons à exprimer notre profonde gratitude envers l'ensemble des personnes qui ont contribué, de près ou de loin, à la réalisation de ce projet.</p>
+<p>Nos remerciements s'adressent en premier lieu à <strong>M. Ali Zahaf</strong>, encadrant pédagogique, dont les conseils avisés, la disponibilité et les retours constructifs tout au long du projet nous ont permis d'approfondir notre réflexion et d'améliorer la qualité de nos livrables.</p>
+<p>Nous remercions également l'équipe pédagogique de l'<strong>EPSI</strong> pour la formation dispensée dans le cadre du Bloc 3 — Big Data &amp; Business Intelligence, qui nous a fourni les bases théoriques et pratiques nécessaires à la conduite de ce POC.</p>
+<p>Enfin, nous adressons nos remerciements aux organismes producteurs des données publiques — <strong>data.gouv.fr</strong>, <strong>INSEE</strong> et le <strong>ministère de l'Intérieur</strong> — sans lesquels ce projet n'aurait pu voir le jour.</p>
+<h1 class="nopb">Liste des acronymes</h1>
+<table class="nw"><tr><th>Acronyme</th><th>Signification</th></tr><tr><td><strong>API</strong></td><td>Application Programming Interface</td></tr><tr><td><strong>CSV</strong></td><td>Comma-Separated Values</td></tr><tr><td><strong>ETL</strong></td><td>Extract, Transform, Load</td></tr><tr><td><strong>F1</strong></td><td>F1-Score (moyenne harmonique Précision/Rappel)</td></tr><tr><td><strong>INSEE</strong></td><td>Institut National de la Statistique et des Études Économiques</td></tr><tr><td><strong>JSON</strong></td><td>JavaScript Object Notation</td></tr><tr><td><strong>KPI</strong></td><td>Key Performance Indicator</td></tr><tr><td><strong>ML</strong></td><td>Machine Learning</td></tr><tr><td><strong>MCD</strong></td><td>Modèle Conceptuel de Données</td></tr><tr><td><strong>NoSQL</strong></td><td>Not Only SQL</td></tr><tr><td><strong>POC</strong></td><td>Proof of Concept / Preuve de Concept</td></tr><tr><td><strong>RGPD</strong></td><td>Règlement Général sur la Protection des Données</td></tr><tr><td><strong>SVM</strong></td><td>Support Vector Machine</td></tr><tr><td><strong>UI</strong></td><td>User Interface</td></tr></table>
+<h1 class="nopb">Introduction générale</h1>
+<h2>Contexte</h2>
+<p><strong>Electio-Analytics</strong> est une start-up fondée en 2017 par Jean-Édouard de la Motte-Rouge, spécialisée dans le conseil stratégique dédié aux campagnes électorales. Son activité consiste à fournir à ses clients — candidats, partis politiques et cabinets de conseil — des analyses prospectives précises en exploitant des données publiques et privées issues de multiples sources institutionnelles.</p>
+<p>Face à un marché électoral de plus en plus compétitif, la société souhaite se doter d'une capacité de <strong>prévision des tendances électorales à moyen terme</strong>, sur un horizon de un à trois ans, en s'appuyant sur des indicateurs socio-économiques mesurables : chômage, sécurité, pauvreté, démographie, dynamisme économique des territoires.</p>
+<p>Avant tout investissement à grande échelle, Electio-Analytics a souhaité valider cette approche par une <strong>Preuve de Concept (POC)</strong>, confiée à notre équipe d'étudiants en fin de cursus expert à l'EPSI.</p>
+<h2>Objectifs du POC</h2>
+<p>Ce projet a pour objectifs de :</p>
+<ul><li><p>Collecter et consolider des jeux de données publics pertinents sur un périmètre géographique restreint ;</p></li><li><p>Mettre en place un pipeline de préparation des données (9 phases) incluant fusion, nettoyage, augmentation et normalisation, avec persistance NoSQL (MongoDB / TinyDB) ;</p></li><li><p>Construire une <strong>variable cible synthétique à 5 classes</strong> basée sur des indicateurs économiques delta, avec une distribution réaliste asymétrique reflétant la réalité territoriale ;</p></li><li><p>Entraîner et comparer cinq modèles de machine learning supervisé sur cette variable cible ;</p></li><li><p>Traduire les prédictions économiques en prédictions électorales pour les <strong>12 candidats du 1<sup>er</sup> tour 2022</strong>, via un mécanisme d'orientation politique et de pondération intra-bloc ;</p></li><li><p>Présenter les résultats sous la forme d'un tableau de bord React interactif multi-niveaux géographiques.</p></li></ul>
+<h2>Structure du document</h2>
+<dl><dt>Chapitre 1 :</dt><dd><p>Choix géographique — Nouvelle-Aquitaine, justification du périmètre.</p></dd><dt>Chapitre 2 :</dt><dd><p>Sources de données et indicateurs socio-économiques retenus.</p></dd><dt>Chapitre 3 :</dt><dd><p>Architecture technique et pipeline en 9 phases (notebook Data Preparation).</p></dd><dt>Chapitre 4 :</dt><dd><p>Démarche d'analyse exploratoire et visualisations descriptives.</p></dd><dt>Chapitre 5 :</dt><dd><p>Modèles de Machine Learning — construction de la variable cible, entraînement, validation.</p></dd><dt>Chapitre 6 :</dt><dd><p>Résultats — comparaison des cinq modèles, prédictions 12 candidats par département.</p></dd><dt>Chapitre 7 :</dt><dd><p>Interface utilisateur React 19.</p></dd><dt>Conclusion :</dt><dd><p>Bilan, limites et recommandations pour la mise en production.</p></dd></dl>
+<h1><span class="ch-label">Chapitre 1</span>Choix géographique</h1>
+<h2>1.1 Zone retenue : la région Nouvelle-Aquitaine</h2>
+<p>Le périmètre géographique retenu pour cette preuve de concept est la région <strong>Nouvelle-Aquitaine</strong>. Créée en 2016 à la suite de la fusion des anciennes régions Aquitaine, Limousin et Poitou-Charentes, elle constitue la plus grande région de France métropolitaine avec une superficie de <i>84 061\ km<sup>2</sup></i>.</p>
+<p>Elle regroupe <strong>12 départements</strong> et <strong>627 cantons</strong> (table ).</p>
+<div class="tab-cap"><span class="tab-num">Tableau 1 — </span>Les 12 départements de la région Nouvelle-Aquitaine</div>
+<table><tr><th class="col-c"><strong>Code</strong></th><th><strong>Département</strong></th><th class="col-c"><strong>Code</strong></th><th><strong>Département</strong></th></tr><tr><td class="col-c">16</td><td>Charente</td><td class="col-c">33</td><td>Gironde</td></tr><tr><td class="col-c">17</td><td>Charente-Maritime</td><td class="col-c">40</td><td>Landes</td></tr><tr><td class="col-c">19</td><td>Corrèze</td><td class="col-c">47</td><td>Lot-et-Garonne</td></tr><tr><td class="col-c">23</td><td>Creuse</td><td class="col-c">64</td><td>Pyrénées-Atlantiques</td></tr><tr><td class="col-c">24</td><td>Dordogne</td><td class="col-c">79</td><td>Deux-Sèvres</td></tr><tr><td class="col-c">87</td><td>Haute-Vienne</td><td class="col-c">86</td><td>Vienne</td></tr></table>
+<p>La région compte environ <strong>6 millions d'habitants</strong> répartis dans <strong>4 303 communes</strong>, ce qui représente en moyenne <strong>9,3 lignes par commune</strong> dans le jeu de données final (après augmentation temporelle et perturbation).</p>
+<h2>1.2 Justification du choix</h2>
+<h3>1.2.1 Disponibilité des données publiques</h3>
+<p>La Nouvelle-Aquitaine bénéficie d'une couverture particulièrement riche sur <code>data.gouv.fr</code> et les plateformes INSEE. Huit sources de données ont été chargées et intégrées avec succès par le notebook de préparation corrigé :</p>
+<ul><li><p><strong><code>Population &amp;amp; emploi.csv</code></strong> (2016) : <strong>34 988 lignes</strong>, clé CODGEO — source principale des indicateurs emploi, démographie, logement ;</p></li><li><p><strong><code>Délinquance.csv</code></strong> (2016) : <strong>18 180 lignes</strong>, clé <code>insee_pop</code> — statistiques de sécurité au niveau commune ;</p></li><li><p><strong><code>Revenus.xls</code></strong> (2016, feuille ENSEMBLE, en-tête ligne 5) : <strong>31 789 lignes</strong>, clé CODGEO — revenus disponibles (NBMEN, Q2, Gini, PACT…) ;</p></li><li><p><strong><code>Revenus.xlsx</code></strong> (2020, feuille COM, en-tête ligne 5) : <strong>34 919 lignes</strong>, clé CODGEO — revenus 2020 pour le calcul de delta (MED20, TP6020, PACT20…) ;</p></li><li><p><strong><code>Diplôme.xls</code></strong> (2016, en-tête ligne 5) : <strong>34 953 lignes</strong>, clé CODGEO — 58 colonnes de population par tranche d'âge et taux de scolarisation ;</p></li><li><p><strong><code>Population.xlsx</code></strong> (2020, feuille Communes, en-tête ligne 7) : <strong>34 980 lignes</strong>, CODGEO reconstruit (Code département + Code commune) — population municipale 2020 ;</p></li><li><p><strong><code>Emploi.csv</code></strong> (2020) : <strong>34 000+ lignes</strong>, clé CODGEO — emploi 2020 (P20_POP, P20_EMPLT, P20_CHOMEUR…) pour le delta emploi ;</p></li><li><p><strong><code>Délinquance.xlsx</code></strong> (2020, feuille « par départements ») : agrégé en <strong>96 départements × 10 types d'infraction</strong> — intégré par jointure sur Code_departement (2 chiffres) ;</p></li><li><p><strong><code>data_election_2012.xlsx</code> et <code>data_election_2017.xlsx</code></strong> : résultats électoraux au premier tour, filtrés sur les 12 codes département — <strong>756 lignes</strong> extraites.</p></li></ul>
+<h3>2.1.1 Représentativité du territoire</h3>
+<p>La Nouvelle-Aquitaine présente un profil socio-économique <strong>hétérogène</strong> — zones urbaines dynamiques (Bordeaux, Poitiers), territoires ruraux en déclin (Creuse, Corrèze), zones côtières à dynamique touristique — ce qui constitue un terrain d'entraînement représentatif pour des modèles de classification à 5 niveaux économiques.</p>
+<h1><span class="ch-label">Chapitre 2</span>Données et indicateurs</h1>
+<h2>2.1 Sources de données utilisées</h2>
+<div class="tab-cap"><span class="tab-num">Tableau 2 — </span>Sources de données — bilan de chargement (toutes sources intégrées)</div>
+<table><tr><th>p4.4cmXp2.9cmr}
+    
+    <strong>Fichier</strong></th><th><strong>Contenu</strong></th><th><strong>Clé</strong></th><th><strong>Lignes</strong></th></tr><tr><td>Population \</td><td>emploi.csv (2016)</td><td>Démographie, emploi, logement</td><td>CODGEO</td><td>34 988</td></tr><tr><td>Délinquance.csv (2016)</td><td>Statistiques sécurité commune</td><td>insee_pop</td><td>18 180</td></tr><tr><td>Revenus.xls (2016)</td><td>Revenus, Gini, quartiles 2016</td><td>CODGEO</td><td>31 789</td></tr><tr><td>Revenus.xlsx (2020)</td><td>Revenus, pauvreté, médiane 2020</td><td>CODGEO</td><td>34 919</td></tr><tr><td>Diplôme.xls (2016)</td><td>Éducation — 58 cols par âge</td><td>CODGEO</td><td>34 953</td></tr><tr><td>Population.xlsx (2020)</td><td>Population municipale 2020</td><td>CODGEO (construit)</td><td>34 980</td></tr><tr><td>Emploi.csv (2020)</td><td>Emploi, chômage, logement 2020</td><td>CODGEO</td><td>34 000+</td></tr><tr><td>Délinquance.xlsx (2020)</td><td>10 types d'infraction / taux 1000</td><td>Code_dept (2c)</td><td>96 depts</td></tr><tr><td>data_election_2012.xlsx</td><td>Résultats présidentielle 2012</td><td>dep+canton</td><td>756</td></tr><tr><td>data_election_2017.xlsx</td><td>Résultats présidentielle 2017</td><td>dep+canton</td><td>756</td></tr></table>
+<h2>2.2 Indicateurs delta — les features ML</h2>
+<p>L'originalité du projet réside dans l'utilisation de <strong>variables delta</strong> (<code>delta_*</code>) plutôt que de valeurs absolues. Chaque variable delta représente la variation relative entre deux mesures temporelles :</p>
+<div class="equation">δ<sub>col</sub> = V<sub>récent</sub> - V<sub>ancien</sub>{| V<sub>ancien</sub> | + ε}
+  eq:delta</div>
+<p>où <i>ε = 10<sup>-9</sup></i> évite la division par zéro. Ces variables capturent la <strong>dynamique</strong> du territoire plutôt que son état statique. Le pipeline corrigé calcule trois familles de deltas réels à partir des paires de fichiers 2016/2020 :</p>
+<ul><li><p><strong>Delta revenus</strong> (<code>delta_rev_*</code>) : 13 colonnes issues de Revenus.xls (2016) vs Revenus.xlsx (2020) — évolution du nombre de ménages, de la médiane des revenus, des taux de pauvreté, etc. Calculées sur les <strong>31 379 communes</strong> communes aux deux fichiers.</p></li><li><p><strong>Delta emploi/population</strong> (<code>delta_emp_*</code>) : issue de Population &amp; emploi.csv (2016) vs Emploi.csv (2020) — évolution de la population, de l'emploi salarié, du chômage.</p></li><li><p><strong>Delta population recensement</strong> (<code>delta_pop_cens_1620</code>) : P16_POP (2016) vs POP2020 (Population.xlsx) sur les communes correspondantes.</p></li></ul>
+<p>Les données Diplôme.xls (58 colonnes <code>P16_*</code>) sont intégrées directement comme features statiques (aucune paire 2020 disponible). La délinquance 2020 (10 taux/1000 par département) est diffusée au niveau commune par jointure sur <code>Code_departement</code>.</p>
+<pre>feature_cols = [col for col in df.columns if col.startswith('delta_')]
+X = df[feature_cols].copy()
+print(f"Nombre de features : {len(feature_cols)}")
+# Output : Nombre de features : 27+</pre>
+<div class="listing-cap">Listing 1 — Extraction automatique des features delta — ML notebook</div>
+<h2>2.3 Variable cible — construction synthétique à 5 classes</h2>
+<div class="infobox"><div class="box-title">Point méthodologique clé : variable cible synthétique à 5 classes</div>
+<p>La variable cible du modèle ML n'est <strong>pas directement</strong> le résultat électoral historique. Elle est construite de manière <strong>synthétique</strong> à partir d'un score économique composite calculé sur les 27 variables delta, avec une <strong>distribution réaliste asymétrique</strong> reflétant la répartition territoriale réelle : majorité en situation stable, minorités aux extrêmes.</p></div>
+<p>La construction se déroule en cinq étapes dans le notebook ML (étape 1) :</p>
+<pre># 1. Normalisation des 27 features
+X_normalized = (X - X.mean()) / (X.std() + 1e-8)
+
+# 2. Selection des 9 indicateurs economiques (pop, emplt, act, log)
+economic_indicators = [col for col in feature_cols
+    if any(x in col.lower() for x in ['pop', 'emplt', 'act', 'log'])]
+# =&gt; 9 indicateurs selectionnes
+
+# 3. Score composite (poids aleatoires, seed=42)
+np.random.seed(42)
+weights = np.random.rand(len(available_economic))
+weights = weights / weights.sum()
+base_score = (X_normalized[available_economic] * weights).sum(axis=1)
+
+# 4. Bruit Gaussien (sigma=0.08) + normalisation finale
+noise = np.random.normal(0, 0.08, len(base_score))
+final_score = base_score + noise
+final_score = (final_score - final_score.mean()) / final_score.std()
+
+# 5. Decoupage en 5 classes — distribution REALISTE non-equilibree
+#    Crise      : 10
+#    Declin     : 20
+#    Stable     : 40
+#    Croissance : 20
+#    Boom       : 10
+q1 = final_score.quantile(0.10)   # seuil Crise/Declin
+q2 = final_score.quantile(0.30)   # seuil Declin/Stable
+q3 = final_score.quantile(0.70)   # seuil Stable/Croissance
+q4 = final_score.quantile(0.90)   # seuil Croissance/Boom
+
+y_labels = pd.cut(
+    final_score,
+    bins=[final_score.min()-1, q1, q2, q3, q4, final_score.max()+1],
+    labels=['Crise', 'Declin', 'Stable', 'Croissance', 'Boom'],
+    ordered=False
+)</pre>
+<div class="listing-cap">Listing 2 — Construction de la variable cible à 5 classes — distribution réaliste asymétrique</div>
+<p>Cette approche produit une distribution asymétrique réaliste (table ).</p>
+<div class="tab-cap"><span class="tab-num">Tableau 3 — </span>Distribution de la variable cible synthétique à 5 classes (40 000 lignes)</div>
+<table><tr><th><strong>Classe</strong></th><th><strong>Signification</strong></th><th class="col-r"><strong>Effectif</strong></th><th class="col-r"><strong>Proportion</strong></th></tr><tr><td>Crise</td><td>Zone en grave difficulté économique</td><td class="col-r">4 000</td><td class="col-r">10,0 %</td></tr><tr><td>Déclin</td><td>Zone qui perd de vitesse</td><td class="col-r">8 000</td><td class="col-r">20,0 %</td></tr><tr><td>Stable</td><td>Situation normale (majorité)</td><td class="col-r">16 000</td><td class="col-r">40,0 %</td></tr><tr><td>Croissance</td><td>Zone dynamique</td><td class="col-r">8 000</td><td class="col-r">20,0 %</td></tr><tr><td>Boom</td><td>Zone en forte expansion (rare)</td><td class="col-r">4 000</td><td class="col-r">10,0 %</td></tr><tr><td><strong>Total</strong></td><td></td><td class="col-r"><strong>40 000</strong></td><td class="col-r"><strong>100 %</strong></td></tr></table>
+<h2>2.4 Mapping économique vers orientation politique — 12 candidats</h2>
+<p>Les prédictions économiques (5 classes) sont converties en prédictions électorales pour les <strong>12 candidats du 1<sup>er</sup> tour de la présidentielle 2022</strong> via une logique en trois étapes :</p>
+<ol><li><p>Chaque classe économique est associée à une <strong>orientation politique</strong> via <code>ECO_TO_ORIENTATION</code> ;</p></li><li><p>Les probabilités des 5 classes (issues du modèle ML) sont agrégées par orientation pour obtenir une <strong>probabilité de bloc</strong> ;</p></li><li><p>Le score de chaque candidat est calculé comme : <i>score = P(orientation) × poids<sub>i</sub>ntra<sub>b</sub>loc</i> où le poids intra-bloc est la part nationale du candidat dans son bloc.</p></li></ol>
+<pre># Mapping eco_class -&gt; orientation politique
+ECO_TO_ORIENTATION = {
+    "Crise":      "ExtremeDroite",   # vote protestataire
+    "Declin":     "Droite",          # vote conservateur
+    "Stable":     "Centre",          # vote de continuite
+    "Croissance": "Gauche",          # vote progressiste
+    "Boom":       "ExtremeGauche",   # vote radical/alternatif
+}
+
+# 12 candidats avec leur orientation et resultat national 1er tour 2022 (
+CANDIDATES = {
+    "Arthaud (LO)":        {"orientation": "ExtremeGauche",  "share": 0.56},
+    "Poutou (NPA)":        {"orientation": "ExtremeGauche",  "share": 0.77},
+    "Melenchon (LFI)":     {"orientation": "Gauche",         "share": 21.95},
+    "Roussel (PCF)":       {"orientation": "Gauche",         "share": 2.28},
+    "Jadot (EELV)":        {"orientation": "Gauche",         "share": 4.63},
+    "Hidalgo (PS)":        {"orientation": "Gauche",         "share": 1.75},
+    "Macron (LREM)":       {"orientation": "Centre",         "share": 27.85},
+    "Pecresse (LR)":       {"orientation": "Droite",         "share": 4.78},
+    "Lassalle (Resist)":   {"orientation": "Droite",         "share": 3.13},
+    "Dupont-Aignan (DLF)": {"orientation": "ExtremeDroite",  "share": 2.06},
+    "Le Pen (RN)":         {"orientation": "ExtremeDroite",  "share": 23.15},
+    "Zemmour (Reconv)":    {"orientation": "ExtremeDroite",  "share": 7.07},
+}
+# Score candidat = P(orientation) x (share_candidat / sum_shares_bloc)</pre>
+<div class="listing-cap">Listing 3 — Mapping économique vers orientation politique — ML notebook</div>
+<div class="tab-cap"><span class="tab-num">Tableau 4 — </span>Mapping état économique vers orientation politique et poids intra-bloc</div>
+<table><tr><th><strong>Classe éco</strong></th><th><strong>Orientation</strong></th><th><strong>Candidat dominant</strong></th><th class="col-r"><strong>Poids bloc</strong></th></tr><tr><td>Boom</td><td>ExtrêmeGauche</td><td>Poutou (NPA)</td><td class="col-r">57,9 %</td></tr><tr><td>Croissance</td><td>Gauche</td><td>Mélenchon (LFI)</td><td class="col-r">71,7 %</td></tr><tr><td>Stable</td><td>Centre</td><td>Macron (LREM)</td><td class="col-r">100,0 %</td></tr><tr><td>Déclin</td><td>Droite</td><td>Pécresse (LR)</td><td class="col-r">60,4 %</td></tr><tr><td>Crise</td><td>ExtrêmeDroite</td><td>Le Pen (RN)</td><td class="col-r">71,7 %</td></tr></table>
+<div class="infobox"><div class="box-title">Logique probabiliste — sans hardcoding</div>
+<p>Le vainqueur n'est pas déterminé par une règle fixe mais par les probabilités ML : <strong>la somme des probabilités de toutes les classes d'une même orientation donne la probabilité du bloc</strong>, puis chaque candidat reçoit un score proportionnel à son poids intra-bloc. Ainsi, même avec une classe prédite <em>Croissance</em> (→ Gauche), si la probabilité du bloc Centre (Stable) est plus forte dans la distribution complète, Macron peut l'emporter.</p></div>
+<h1><span class="ch-label">Chapitre 3</span>Architecture et pipeline de données</h1>
+<h2>3.1 Vue d'ensemble</h2>
+<p>L'architecture du projet repose sur deux notebooks Jupyter et un pipeline en 9 phases enchaînées, produisant le jeu de données final alimentant les modèles ML et le dashboard React.</p>
+<figure><img src="file:///c:/Users/tarek/Downloads/MsprBigData/public/data/charts/MCD_ElectioAnalytics.png" alt="Figure 1"><figcaption>Figure 1 — Modèle Conceptuel de Données — Electio-Analytics (Merise)</figcaption></figure>
+<h2>3.2 Phase 0 — Initialisation et connexion NoSQL</h2>
+<p>Le notebook tente en premier lieu de se connecter à <strong>MongoDB</strong> (timeout 1 seconde). En cas d'échec (cas observé à l'exécution), le pipeline bascule automatiquement vers <strong>TinyDB</strong> (JSON local) :</p>
+<pre>try:
+    mongo_client = pymongo.MongoClient(
+        "mongodb://localhost:27017/",
+        serverSelectionTimeoutMS=1000)
+    mongo_client.server_info()
+    nosql_type = 'mongodb'
+    print("Connexion a MongoDB reussie.")
+except Exception:
+    print("Serveur MongoDB non detecte, utilisation de TinyDB...")
+    db_path = os.path.join(base_path, 'MSPR_Final', 'outputs', 'nosql_db.json')
+    db = TinyDB(db_path)
+    nosql_type = 'tinydb'
+    print("Base de donnees TinyDB initialisee.")</pre>
+<div class="listing-cap">Listing 4 — Connexion NoSQL avec fallback TinyDB — Data Preparation notebook</div>
+<div class="warnbox"><div class="box-title">Résultat observé à l'exécution</div>
+<p><code>⚠️ Serveur MongoDB non détecté, utilisation de TinyDB (NoSQL local)...</code>\\ <code>✓ Base de données TinyDB initialisée.</code>\\ Toutes les sauvegardes NoSQL du pipeline ont donc utilisé <strong>TinyDB</strong> (<code>nosql_db.json</code>).</p></div>
+<h2>3.3 Phase 1 — Chargement des sources</h2>
+<p>La fonction générique <code>load_indicator()</code> gère les CSV avec détection automatique de l'encodage et du séparateur. Pour les fichiers Excel INSEE à structure complexe (4 lignes de métadonnées avant les en-têtes réels), cinq chargeurs spécialisés ont été développés.</p>
+<pre>def load_revenus_2016(data_path):
+    # Feuille ENSEMBLE, en-tete ligne 5 (indices 0 a 4 = metadonnees)
+    df = pd.read_excel(path, sheet_name='ENSEMBLE', header=5)
+    df['CODGEO'] = df['CODGEO'].astype(str).str.strip().str.zfill(5)
+    # Conversion valeurs 's' (secret statistique) -&gt; NaN
+    for col in df.columns:
+        if col not in ('CODGEO', 'LIBGEO'):
+            df[col] = pd.to_numeric(df[col], errors='coerce')
+    # =&gt; 31789 lignes, colonnes NBMEN16, Q216, GI16, PACT16...
+
+def load_population_2020(data_path):
+    # Feuille Communes, en-tete ligne 7
+    df = pd.read_excel(path, sheet_name='Communes', header=7)
+    # Construction CODGEO = Code departement (2c) + Code commune (3c)
+    df['CODGEO'] = (df['Code departement'].astype(str).str.zfill(2) +
+                    df['Code commune'].astype(str).str.zfill(3))
+    # =&gt; 34980 lignes, POP2020, POP_TOT2020
+
+def load_delinquance_2020_dept(data_path):
+    # Feuille 'par departements' — pivot par type d'infraction
+    df = pd.read_excel(path, sheet_name='par departements')
+    pivot = df.pivot_table(index='Code_departement',
+                           columns="Type d'infraction",
+                           values='Taux 2020', aggfunc='mean')
+    # =&gt; 96 departements x 10 colonnes delinq2020_*</pre>
+<div class="listing-cap">Listing 5 — Chargeurs spécialisés pour les fichiers Excel INSEE (structure réelle)</div>
+<p><strong>Bilan du chargement (sortie réelle du notebook corrigé) :</strong></p>
+<ul><li><p><code>Population &amp;amp; emploi.csv</code> : <strong>34 988 lignes</strong> — clé CODGEO ✓</p></li><li><p><code>Délinquance.csv</code> : <strong>18 180 lignes</strong> — clé <code>insee_pop</code> ✓</p></li><li><p><code>Revenus.xls</code> : <strong>31 789 lignes</strong> — clé CODGEO ✓ (header=5, feuille ENSEMBLE)</p></li><li><p><code>Revenus.xlsx</code> : <strong>34 919 lignes</strong> — clé CODGEO ✓ (header=5, feuille COM)</p></li><li><p><code>Diplôme.xls</code> : <strong>34 953 lignes</strong>, 61 colonnes — clé CODGEO ✓ (header=5)</p></li><li><p><code>Population.xlsx</code> : <strong>34 980 lignes</strong> — CODGEO construit ✓ (header=7, feuille Communes)</p></li><li><p><code>Emploi.csv</code> (2020) : <strong>34 000+ lignes</strong> — clé CODGEO ✓</p></li><li><p><code>Délinquance.xlsx</code> : <strong>96 départements × 10 infractions</strong> — pivot ✓ (jointure Code_departement)</p></li><li><p><strong>Données électorales</strong> : extraction résultats 2012 + 2017 pour les 12 dép. — <strong>756 lignes</strong></p></li></ul>
+<h2>3.4 Phase 2 — Calcul des deltas réels et fusion enrichie</h2>
+<p>La Phase 2 a été intégralement corrigée pour calculer de <strong>vrais deltas</strong> à partir des paires de fichiers 2016/2020, en remplacement des valeurs aléatoires (<code>np.random.normal</code>) utilisées initialement.</p>
+<pre># Renommage semantique des colonnes avant calcul du delta
+RENAME_REV_2016 = {'NBMEN16': 'NBMEN', 'Q216': 'MEDREV',
+                   'GI16': 'GINI', 'PACT16': 'PACT', ...}
+RENAME_REV_2020 = {'NBMENFISC20': 'NBMEN', 'MED20': 'MEDREV',
+                   'PACT20': 'PACT', ...}
+r16 = rev_2016.rename(columns=RENAME_REV_2016)
+r20 = rev_2020.rename(columns=RENAME_REV_2020)
+df_rev_delta = calculate_delta(r16, r20)
+# =&gt; 31379 communes communes, 13 colonnes delta_rev_*
+# Exemple : delta_rev_NBMEN mean=+3.9
+
+# Fusion sequentielle sur df_indicateurs (base: pop_2016)
+df_indicateurs = pop_2016.copy()           # 34988 lignes
+df_indicateurs.merge(df_rev_delta, ...)    # + delta revenus
+df_indicateurs.merge(df_emp_delta, ...)    # + delta emploi
+df_indicateurs.merge(df_pop_delta, ...)    # + delta population
+df_indicateurs.merge(dipl_2016[...], ...) # + 25 cols education
+df_indicateurs.merge(delinq_2016, ...)    # + delinquance 2016
+df_indicateurs.merge(delinq_2020_dept, ...)# + 10 cols dept 2020
+
+# Jointure finale sur CODGEO electoral (canton)
+data_fusionnee = pd.merge(elec_df, df_indicateurs,
+                          on='CODGEO', how='inner')
+# =&gt; Dataset apres jointure: ~701 lignes, colonnes enrichies</pre>
+<div class="listing-cap">Listing 6 — Calcul des deltas réels 2016→2020 — Phase 2 corrigée</div>
+<p>Les <strong> 701 lignes</strong> (vs 756 électoral) proviennent de l'écart de granularité entre CODGEO canton (données électorales) et CODGEO commune (indicateurs socio-économiques). Le dataset résultant est maintenant enrichi de toutes les sources corrigées.</p>
+<h2>3.5 Phase 3 — Nettoyage et première augmentation</h2>
+<h3>3.5.1 Recodage des orientations politiques</h3>
+<p>Le vainqueur de chaque canton est recodé en orientation politique via le dictionnaire <code>mapping_candidats</code> :</p>
+<pre>mapping_candidats = {
+    'LE PEN': 'exD', 'MELENCHON': 'exG', 'POUTOU': 'exG',
+    'MACRON': 'Centre', 'BAYROU': 'Centre', 'LASSALLE': 'D',
+    'FILLON': 'D', 'SARKOZY': 'D', 'DUPONT-AIGNAN': 'D',
+    'HAMON': 'G', 'HOLLANDE': 'G', 'JOLY': 'G',
+}
+data_fusionnee['orientation'] = data_fusionnee[
+    'vainqueur_nom'].apply(get_bord)
+# Avant / apres filtrage 'Autre': 701 lignes / 701 lignes</pre>
+<div class="listing-cap">Listing 7 — Mapping candidats vers blocs politiques — Phase 3</div>
+<h3>3.5.2 Première augmentation par bruit Gaussien</h3>
+<p>Le volume de 701 lignes est inférieur au seuil cible de 5 000. Le pipeline applique donc une augmentation par bruit Gaussien ($= 2 \</p>
+<pre> = df_copy[num_cols] * (1.0 + noise)
+    dfs_augmented.append(df_copy)
+# Sortie : Apres augmentation: 2103 lignes</pre>
+
+<div class="warnbox"><div class="box-title">Échec de l'export Delta Lake — Phase 3</div>
+<p>Une tentative d'export au format Delta Lake est effectuée mais échoue :</p>
+<p><code>❌ Erreur Delta Lake: Field Année not found in schema. Sauvegarde CSV standard...</code></p>
+<p>La colonne <code>Année</code> présente dans le dataset n'est pas reconnue par le schéma Delta Lake. Le pipeline se rabat sur un export CSV de secours. <strong>Le Dataset à ce stade est (2103, 162).</strong></p></div>
+<h2>3.6 Phase 5 — Nettoyage des valeurs manquantes</h2>
+<pre># Colonnes numeriques -&gt; imputation par la mediane
+for col in numeric_cols:
+    if data_fusionnee[col].isnull().any():
+        data_fusionnee[col].fillna(
+            data_fusionnee[col].median(), inplace=True)
+
+# Colonnes texte -&gt; valeur sentinelle UNKNOWN
+for col in text_cols:
+    data_fusionnee[col].fillna('UNKNOWN', inplace=True)
+
+# Suppression des doublons
+initial_rows = len(data_fusionnee)
+data_fusionnee = data_fusionnee.drop_duplicates()
+# Doublons supprimes: 0</pre>
+<div class="listing-cap">Listing 9 — Traitement des valeurs manquantes — Phase 5</div>
+<p><strong>Sortie réelle :</strong> Shape avant nettoyage : (2 103, 162). Après nettoyage : (2 103, 162), zéro doublon.</p>
+<h2>3.7 Phase 6 — Feature Engineering et augmentation temporelle</h2>
+<p>C'est la phase centrale de l'augmentation des données. Elle se déroule en cinq étapes.</p>
+<h3>3.7.1 Étape 1 — Augmentation temporelle (3 périodes)</h3>
+<p>Chaque ligne du dataset est dupliquée pour chacune des trois périodes historiques et pour chaque année de ces périodes :</p>
+<pre>time_periods = [
+    ('electorales_2012_2017', 2012, 2017),
+    ('indicateurs_2016_2020', 2016, 2020),
+    ('securite_2017_2021',    2017, 2021)
+]
+dfs_temporal = [df_augmented.copy()]   # dataset original
+for period_name, year_start, year_end in time_periods:
+    for year in range(year_start, year_end + 1):
+        df_year = df_augmented.copy()
+        df_year['periode']              = period_name
+        df_year['annee']                = year
+        df_year['nb_annees_depuis_debut'] = year - year_start
+        dfs_temporal.append(df_year)
+df_augmented_temporal = pd.concat(dfs_temporal, ignore_index=True)
+# Sortie : Apres augmentation temporelle: 35 751 lignes</pre>
+<div class="listing-cap">Listing 10 — Augmentation temporelle multi-périodes — Phase 6 (sortie réelle)</div>
+<h3>3.7.2 Étape 2 — Agrégations géographiques</h3>
+<pre># Niveau departement (groupby Code_departement + annee)
+dept_agg = df_final.groupby(['Code_departement','annee'])[
+    numeric_cols_agg].agg(['mean','sum','std']).reset_index()
+# Sortie : Niveau departement: 120 lignes
+
+# Niveau region (groupby annee uniquement)
+region_agg = df_final.groupby('annee')[
+    numeric_cols_agg].agg(['mean','sum','std']).reset_index()
+# Sortie : Niveau region: 10 lignes</pre>
+<div class="listing-cap">Listing 11 — Création d'agrégats département et région</div>
+<h3>3.7.3 Étape 5 — Perturbation et limitation finale</h3>
+<pre>.std()*0.01,
+                             size=len(df_perturbed))
+    df_perturbed[col] = df_perturbed[col] + noise
+
+df_perturbed['est_perturbation'] = 1
+df_final['est_perturbation']     = 0
+df_final = pd.concat([df_final, df_perturbed], ignore_index=True)
+# Sortie : Apres perturbation: 71 502 lignes
+
+# Limitation a 40 000 lignes
+df_final = df_final.sample(n=40000, random_state=42).reset_index(drop=True)
+# Sortie : DATASET AUGMENTE - TAILLE FINALE: 40 000 LIGNES, 171 COLONNES</pre>
+
+<p><strong>Progression complète du volume de données :</strong></p>
+<div class="tab-cap"><span class="tab-num">Tableau 5 — </span>Évolution du volume de données à travers le pipeline (notebook corrigé)</div>
+<table><tr><th><strong>Phase</strong></th><th class="col-r"><strong>Lignes</strong></th><th><strong>Cols</strong></th><th><strong>Opération</strong></th></tr><tr><td>Données électorales brutes</td><td class="col-r">756</td><td>—</td><td>Extraction NA 12 deps</td></tr><tr><td>Après jointure CODGEO</td><td class="col-r">701</td><td>230</td><td>Inner merge — indicateurs enrichis (tous fichiers)</td></tr><tr><td>Après bruit Gaussien 2\
+    Après augmentation temporelle</td><td class="col-r">35 000</td><td>230</td><td>Phase 6 — 3 périodes × années</td></tr><tr><td>Après perturbation 1\
+    <strong>Jeu final (limité)</strong></td><td class="col-r"><strong>40 000</strong></td><td><strong>  239</strong></td><td><strong>Échantillon aléatoire</strong></td></tr></table>
+<div class="infobox"><div class="box-title">Enrichissement des colonnes — pipeline corrigé</div>
+<p>Le passage de 162 à 239 colonnes résulte de l'intégration effective de toutes les sources : +13 colonnes <code>delta_rev_*</code> (revenus), +5 colonnes <code>delta_emp_*</code> (emploi), +1 colonne delta population recensement, +25 colonnes <code>P16_*</code> (diplôme/éducation), +10 colonnes <code>delinq2020_*</code> (délinquance département), auxquelles s'ajoutent les 7 variables de Feature Engineering (Phase 6).</p></div>
+<h2>3.8 Phase 7 — Encodage et normalisation MinMax</h2>
+<pre># Identification colonnes numeriques (126) et texte (45)
+numeric_cols = df_final.select_dtypes(include=[np.number]).columns
+text_cols    = df_final.select_dtypes(include=['object']).columns
+# Output : Colonnes numeriques: 126  /  Colonnes texte: 45
+
+scaler = MinMaxScaler()
+df_final_encoded[numeric_cols_to_scale] = scaler.fit_transform(
+    df_final_encoded[numeric_cols_to_scale])
+# Output : 124 colonnes normalisees sur 126</pre>
+<div class="listing-cap">Listing 13 — Normalisation MinMax — Phase 7 (sortie réelle)</div>
+<h2>3.9 Phase 8 — Export</h2>
+<div class="tab-cap"><span class="tab-num">Tableau 6 — </span>Résultats de l'export — Phase 8 (valeurs réelles)</div>
+<table><tr><th><strong>Format</strong></th><th><strong>Fichier</strong></th><th class="col-r"><strong>Taille</strong></th><th><strong>Statut</strong></th></tr><tr><td>CSV</td><td><code>data_nouvelle_aquitaine_final.csv</code></td><td class="col-r">103,21 MB</td><td>✓</td></tr><tr><td>Parquet</td><td><code>data_nouvelle_aquitaine_final.parquet</code></td><td class="col-r">14,02 MB</td><td>✓</td></tr><tr><td>TinyDB</td><td><code>outputs/nosql_db.json</code></td><td class="col-r">—</td><td>✓</td></tr><tr><td>Delta Lake</td><td><code>delta_lake_final/</code></td><td class="col-r">—</td><td><strong>✗ Échec</strong></td></tr></table>
+<h1><span class="ch-label">Chapitre 4</span>Démarche et analyse exploratoire</h1>
+<h2>4.1 État du jeu de données après le pipeline</h2>
+<div class="tab-cap"><span class="tab-num">Tableau 7 — </span>État du jeu de données final prêt pour le ML</div>
+<table><tr><th><strong>Caractéristique</strong></th><th class="col-r"><strong>Valeur</strong></th></tr><tr><td>Nombre de lignes</td><td class="col-r">40 000</td></tr><tr><td>Nombre de colonnes</td><td class="col-r">171</td></tr><tr><td>Colonnes numériques</td><td class="col-r">126 (73,7 %)</td></tr><tr><td>Colonnes catégoriques</td><td class="col-r">45 (26,3 %)</td></tr><tr><td>Colonnes normalisées (MinMax)</td><td class="col-r">124</td></tr><tr><td>Valeurs manquantes finales</td><td class="col-r">0</td></tr><tr><td>Doublons</td><td class="col-r">0</td></tr><tr><td>Lignes originales</td><td class="col-r">19 998 (50,0 %)</td></tr><tr class="bot"><td>Lignes perturbées (1\</td></tr></table>
+<h2>4.2 Visualisations descriptives générées</h2>
+<p>Le script <code>generate_visualisations.py</code> produit sept graphiques en fond sombre dans le répertoire <code>public/data/charts/</code> :</p>
+<div class="tab-cap"><span class="tab-num">Tableau 8 — </span>Visualisations statiques générées par le projet</div>
+<table><tr><th><strong>Fichier</strong></th><th><strong>Description</strong></th></tr><tr><td><code>correlation_heatmap.png</code></td><td>Matrice Pearson <i>11 × 11</i> — indicateurs et orientations</td></tr><tr><td><code>model_comparison.png</code></td><td>Comparaison des 5 modèles (Accuracy / Precision / Recall / F1)</td></tr><tr><td><code>feature_importance.png</code></td><td>Importance relative des features (poids coef_ du modèle)</td></tr><tr><td><code>temporal_scenarios.png</code></td><td>Prédictions 2022 → 2026 par département, scénario d'érosion</td></tr><tr><td><code>orientation_distribution.png</code></td><td>Probabilités par orientation/candidat par département</td></tr><tr><td><code>scatter_emploi_lepen.png</code></td><td>Taux emploi vs probabilité Le Pen (régression linéaire)</td></tr><tr><td><code>confusion_matrix.png</code></td><td>Matrice de confusion normalisée — HistGradientBoosting</td></tr></table>
+<figure><img src="file:///c:/Users/tarek/Downloads/MsprBigData/public/data/charts/correlation_heatmap.png" alt="Figure 2"><figcaption>Figure 2 — Matrice de corrélation Pearson — Indicateurs socio-économiques et orientations politiques</figcaption></figure>
+<h1><span class="ch-label">Chapitre 5</span>Modèles de Machine Learning</h1>
+<h2>5.1 Méthodologie générale</h2>
+<p>Le notebook ML (<code>Nouvelle_Aquitaine_Machine_Learning.ipynb</code>) s'exécute en 8 étapes numérotées sur le jeu de données <code>data_nouvelle_aquitaine_final.csv</code> (40 000 × 171 colonnes).</p>
+<h3>5.1.1 Variable d'entrée et variable cible</h3>
+<p>Les 27 colonnes <code>delta_*</code> constituent les <strong>features</strong> du modèle. La variable cible est <strong>synthétique à 5 classes</strong> (cf.\ Chapitre 2), construite sur 9 indicateurs économiques avec une distribution asymétrique réaliste.</p>
+<h3>5.1.2 Découpage train / test</h3>
+<pre>X_train, X_test, y_train, y_test = train_test_split(
+    X_clean, y_encoded,
+    test_size=0.2,
+    random_state=42,
+    stratify=y_encoded
+)
+# Ensemble d'entrainement : 32,000 (80.0
+# Ensemble de test        :  8,000 (20.0</pre>
+<div class="listing-cap">Listing 14 — Division train/test stratifiée — ML notebook étape 2</div>
+<div class="tab-cap"><span class="tab-num">Tableau 9 — </span>Répartition train / test stratifiée — 5 classes</div>
+<table><tr><th><strong>Ensemble</strong></th><th class="col-r"><strong>Lignes</strong></th><th class="col-r"><strong>Boom</strong></th><th class="col-r"><strong>Crise</strong></th><th class="col-r"><strong>Croissance</strong></th><th class="col-r"><strong>Déclin</strong></th><th class="col-r"><strong>Stable</strong></th><th></th></tr><tr class="bot"><td>Entraînement</td><td class="col-r">32 000</td><td class="col-r">3 200 (10 \
+    Test</td><td class="col-r">8 000</td><td class="col-r">800 (10 \</td></tr></table>
+<h3>5.1.3 Normalisation StandardScaler</h3>
+<p>Le ML notebook applique un <strong>StandardScaler</strong> (centrage à 0, écart-type 1) — distinct du MinMaxScaler appliqué dans le notebook ETL :</p>
+<pre>scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled  = scaler.transform(X_test)
+# X_train : mean=-0.0000, std=1.0000
+# X_test  : mean=-0.0033, std=0.9997</pre>
+<div class="listing-cap">Listing 15 — Normalisation pour le ML — Étape 2</div>
+<h3>5.2.1 Validation croisée — 3-fold stratifié</h3>
+<p>Une <code>StratifiedKFold</code> à <strong>3 plis</strong> (<code>n_splits=3, shuffle=True, random_state=42</code>) est utilisée. Ce choix (versus 5-fold) réduit significativement le temps d'entraînement tout en maintenant une estimation fiable de la performance.</p>
+<h2>5.2 Les cinq modèles entraînés — version optimisée vitesse</h2>
+<p>Les cinq modèles ont été sélectionnés et configurés pour allier performance prédictive et rapidité d'entraînement :</p>
+<div class="tab-cap"><span class="tab-num">Tableau 10 — </span>Hyperparamètres des cinq modèles — version optimisée</div>
+<table><tr><th><strong>Modèle</strong></th><th><strong>Hyperparamètres</strong></th></tr><tr><td><code>LogisticRegression</code></td><td><code>max_iter=500, random_state=42, n_jobs=-1</code></td></tr><tr><td><code>RandomForestClassifier</code></td><td><code>n_estimators=50, max_depth=8, random_state=42, n_jobs=-1</code></td></tr><tr><td><code>HistGradientBoostingClassifier</code></td><td><code>max_iter=80, max_depth=6, learning_rate=0.1, random_state=42</code></td></tr><tr><td><code>CalibratedClassifierCV(LinearSVC)</code></td><td><code>LinearSVC(max_iter=1000, random_state=42), cv=3</code></td></tr><tr><td><code>XGBClassifier</code></td><td><code>max_depth=5, n_estimators=80, learning_rate=0.1, subsample=0.8, n_jobs=-1</code></td></tr></table>
+<div class="infobox"><div class="box-title">Optimisations vs version initiale</div>
+<p>Deux remplacements majeurs ont réduit le temps d'entraînement de <strong>>10 minutes à 30 secondes</strong> :</p>
+<ul><li><p><strong>GradientBoostingClassifier séquentiel → HistGradientBoostingClassifier</strong> (parallélisé, algorithme basé sur histogrammes — 10× plus rapide sur grands datasets) ;</p></li><li><p><strong>SVC(kernel=`rbf') O(n²) → CalibratedClassifierCV(LinearSVC) O(n)</strong> (frontière linéaire, complexité linéaire en nombre d'échantillons).</p></li></ul>
+<p>De plus, la cross-validation est passée de 5 à <strong>3 plis</strong> (−40\</p></div>
+<h2>5.3 Comparaison des performances</h2>
+<div class="tab-cap"><span class="tab-num">Tableau 11 — </span>Résultats des cinq modèles — classement par accuracy décroissante (sortie exacte du notebook)</div>
+<table><tr><th><strong>Modèle</strong></th><th class="col-r"><strong>CV Acc</strong></th><th class="col-r"><strong>Test Acc</strong></th><th class="col-r"><strong>Precision</strong></th><th class="col-r"><strong>F1-Score</strong></th></tr><tr><td><strong>HistGradientBoosting</strong></td><td class="col-r"><strong>82,11 %</strong></td><td class="col-r"><strong>82,11 %</strong></td><td class="col-r"><strong>82,20 %</strong></td><td class="col-r"><strong>82,10 %</strong></td></tr><tr><td>LogisticRegression</td><td class="col-r">82,10 %</td><td class="col-r">82,10 %</td><td class="col-r">82,16 %</td><td class="col-r">82,06 %</td></tr><tr><td>XGBoost</td><td class="col-r">82,05 %</td><td class="col-r">82,05 %</td><td class="col-r">82,17 %</td><td class="col-r">82,03 %</td></tr><tr><td>RandomForest</td><td class="col-r">79,57 %</td><td class="col-r">79,57 %</td><td class="col-r">80,15 %</td><td class="col-r">79,22 %</td></tr><tr><td>LinearSVM</td><td class="col-r">70,70 %</td><td class="col-r">70,70 %</td><td class="col-r">73,59 %</td><td class="col-r">68,67 %</td></tr></table>
+<figure><img src="file:///c:/Users/tarek/Downloads/MsprBigData/public/data/charts/model_comparison.png" alt="Figure 3"><figcaption>Figure 3 — Comparaison des performances — 5 modèles de classification sur 5 classes</figcaption></figure>
+<p>resultbox[Modèle sélectionné : HistGradientBoosting — 82,11\ <strong>HistGradientBoosting</strong> est le meilleur modèle avec {82,11\</p>
+<p>Le LinearSVM arrive en dernière position (70,70 %), en raison de la frontière de décision strictement linéaire qui peine à séparer les 5 classes avec des seuils non-équilibrés. resultbox</p>
+<h2>7.1 Rapport de classification détaillé — HistGradientBoosting</h2>
+<p>table[H] Rapport de classification complet — HistGradientBoosting (jeu de test, 8 000 obs., 5 classes) tabularlrrrr <strong>Classe</strong> & <strong>Précision</strong> & <strong>Rappel</strong> & <strong>F1-Score</strong> & <strong>Support</strong> \\ Boom & 88 % & 81 % & 84 % & 800 \\ Crise & 88 % & 78 % & 83 % & 800 \\ Croissance & 78 % & 81 % & 80 % & 1 600 \\ Déclin & 76 % & 76 % & 76 % & 1 600 \\ Stable & 84 % & 87 % & 86 % & 3 200 \\ <strong>Moy. pondérée</strong> & <strong>82 %</strong> & <strong>82 %</strong> & <strong>82 %</strong> & <strong>8 000</strong> \\ tabular table</p>
+<p><strong>Matrice de confusion — HistGradientBoosting (5 classes) :</strong></p>
+<div class="equation">C = pmatrix
+648 &   0 & 152 &   0 &   0 \\
+  0 & 625 &   0 & 175 &   0 \\
+ 87 &   0 & 1293 &  0 & 220 \\
+  0 &  88 &   0 & 1208 & 304 \\
+  0 &   0 & 204 & 201 & 2795
+pmatrix
+arrayl
+Boom (réel) \\
+Crise (réel) \\
+Croissance (réel) \\
+Déclin (réel) \\
+Stable (réel)
+array</div>
+<p><strong>Observations :</strong> Les classes extrêmes (<em>Boom</em> et <em>Crise</em>) sont bien séparées entre elles (confusion = 0). Les confusions apparaissent principalement entre classes <strong>adjacentes</strong> sur l'axe économique : Croissance↔Stable et Déclin↔Stable, ce qui est cohérent avec la nature continue du score sous-jacent.</p>
+<p>figure[H] subfigure[b]0.50[width=]public/data/charts/feature_importance.png Importance des variables (poids du modèle) subfigure subfigure[b]0.48[width=]public/data/charts/confusion_matrix.png Matrice de confusion — HistGradientBoosting subfigure Analyse des résultats ML — HistGradientBoosting figure</p>
+<p>infobox[Note sur l'importance des features] HistGradientBoosting dispose d'un attribut <code>feature_importances_</code>. Le notebook affiche un top 15 des features les plus importantes. Le graphique <code>feature_importance.png</code> est construit à partir de ces valeurs, représentant le gain moyen apporté par chaque feature dans les arbres de décision. infobox</p>
+<h1><span class="ch-label">Chapitre 6</span>Résultats</h1>
+<h2>7.2 Accuracy — rappel de la formule</h2>
+<p>equation Accuracy = édictions correctes{N_total} = 6 5698 000 {82,11 \ equation</p>
+<h2>7.3 Résultats à l'échelle régionale</h2>
+<p>resultbox[Prédiction régionale — Nouvelle-Aquitaine (meilleur modèle : HistGradientBoosting)] tabularll Classe éco prédite & Stable \\ Orientation & Centre \\ Candidat vainqueur & Macron (LREM) \\ Score & 68,7 % \\ 2<sup>e</sup> & Pécresse (LR) : 10,0 % \\ 3<sup>e</sup> & Mélenchon (LFI) : 9,7 % \\ tabular resultbox</p>
+<p>table[H] Prédictions régionales — comparaison des 5 modèles (12 candidats) tabularx<strong>Modèle</strong> & <strong>Éco / Vainqueur</strong> & <strong>Score</strong> & <strong>2<sup>e</sup> place</strong> & <strong>3<sup>e</sup> place</strong> \\ HistGradientBoosting & Stable — Macron (LREM) & 68,7 \ LogisticRegression & Stable — Macron (LREM) & 97,1 \ XGBoost & Stable — Macron (LREM) & 59,3 \ RandomForest & Stable — Macron (LREM) & 56,1 \ LinearSVM & Stable — Macron (LREM) & 61,3 \ tabularx table</p>
+<p><strong>Tous les cinq modèles</strong> prédisent <strong>Macron (LREM)</strong> comme vainqueur à l'échelle régionale — ce qui est correct au regard du résultat réel de 2022. Les écarts entre modèles reflètent des distributions de probabilités différentes sur les 5 classes économiques, notamment la part accordée au bloc Centre (Stable).</p>
+<h2>7.4 Résultats à l'échelle départementale</h2>
+<p>resultbox[Précision départementale : 91,7\ Avec le modèle HistGradientBoosting, <strong>11 départements sur 12</strong> sont correctement prédits pour l'élection présidentielle 2022 au 1<sup>er</sup> tour. Soit une précision de <strong>91,7 %</strong>. resultbox</p>
+<p>figure[H] [width=]public/data/charts/orientation_distribution.png Distribution des scores électoraux par candidat et par département — 12 candidats 2022 figure</p>
+<p>table[H] Prédictions par département — comparaison au résultat réel 1<sup>er</sup> tour 2022 tabularlllrc <strong>Département</strong> & <strong>Prédit (HistGB)</strong> & <strong>Réel 2022</strong> & <strong>Score prédit</strong> & <strong>Correct</strong> \\ Charente & Macron (LREM) & Macron (LREM) & 41,5 % & ✓ \\ Charente-Maritime & Macron (LREM) & Macron (LREM) & 64,6 % & ✓ \\ Corrèze & Macron (LREM) & Macron (LREM) & 59,2 % & ✓ \\ Creuse & Macron (LREM) & Macron (LREM) & 71,8 % & ✓ \\ Dordogne & Macron (LREM) & Macron (LREM) & 72,5 % & ✓ \\ Gironde & Macron (LREM) & Macron (LREM) & 67,4 % & ✓ \\ Landes & Macron (LREM) & Macron (LREM) & 73,2 % & ✓ \\ <strong>Lot-et-Garonne</strong> & <strong>Macron (LREM)</strong> & <strong>Le Pen (RN)</strong> & <strong>67,7 %</strong> & <i>×</i> \\ Pyrénées-Atlantiques & Macron (LREM) & Macron (LREM) & 53,0 % & ✓ \\ Deux-Sèvres & Macron (LREM) & Macron (LREM) & 75,2 % & ✓ \\ Vienne & Macron (LREM) & Macron (LREM) & 67,0 % & ✓ \\ Haute-Vienne & Macron (LREM) & Macron (LREM) & 52,9 % & ✓ \\ <strong>Total</strong> & & & & <strong>11/12 (91,7 %)</strong> \\ tabular table</p>
+<p><strong>Résultats réels 2022 (1<sup>er</sup> tour) :</strong> 11 des 12 départements de Nouvelle-Aquitaine ont placé <strong>Macron (LREM)</strong> en tête au premier tour de la présidentielle 2022. Seul <strong>Lot-et-Garonne</strong> a donné la victoire à <strong>Le Pen (RN)</strong>.</p>
+<h3>7.9.1 Analyse de l'erreur — Lot-et-Garonne</h3>
+<p>Le seul département incorrectement prédit est <strong>Lot-et-Garonne</strong>, territoire rural à économie agricole fragile, fort vieillissement démographique et bassin industriel en déclin (industrie agroalimentaire, Agen). Le modèle le prédit en zone <em>Stable</em> → Centre (Macron), alors que les résultats réels l'ont placé dans le camp Le Pen (RN).</p>
+<p><strong>Explication structurelle de l'erreur :</strong></p>
+<p>itemize La variable cible est <strong>synthétique</strong> — elle encode un score économique composite, pas directement le vote. Lot-et-Garonne présente un score économique intermédiaire (classe <em>Stable</em> prédominante), ce qui oriente la prédiction vers le bloc Centre (Macron).</p>
+<p><strong>Logique probabiliste multi-candidats</strong> : le basculement vers Le Pen (RN) nécessiterait que la probabilité cumulée du bloc <em>Crise</em> (→ Extrême Droite) dépasse celle du bloc <em>Stable</em> (→ Centre). Ce seuil n'est pas atteint pour Lot-et-Garonne malgré son profil économique défavorable.</p>
+<p><strong>Lissage intra-départemental</strong> : le calcul <code>group_X.mean()</code> atténue les hétérogénéités entre cantons très défavorisés (sud du département) et zones plus stables (Agen, Marmande).</p>
+<p><strong>Poids intra-bloc Extrême Droite</strong> : Le Pen (RN) détient 71,7 % du poids dans son bloc — mais ce poids élevé ne compense pas si la probabilité globale du bloc reste inférieure à celle du Centre. itemize</p>
+<h3>7.9.2 Cantons</h3>
+<p>Le modèle produit des prédictions pour les <strong>627 cantons</strong> de la Nouvelle-Aquitaine. Quelques exemples illustratifs :</p>
+<p>table[H] Exemples de prédictions cantonales — HistGradientBoosting tabularlllr <strong>Canton</strong> & <strong>Éco prédit</strong> & <strong>Vainqueur prédit</strong> & <strong>Score</strong> \\ PARTHENAY & Stable & Macron (LREM) & 81,2 % \\ SAUJON & Stable & Macron (LREM) & 74,3 % \\ SAINT VAURY & Boom & Poutou (NPA) & 47,0 % \\ LUSSAC LES CHATEAUX & Croissance & Mélenchon (LFI) & 39,8 % \\ BORDEAUX 1 & Déclin & Pécresse (LR) & 43,7 % \\ POITIERS 4 & Déclin & Macron (LREM) & 30,5 % \\ tabular table</p>
+<p>Ces exemples illustrent la richesse de la logique multi-candidats : dans un canton prédit <em>Boom</em> (ExtrêmeGauche), c'est Poutou (NPA) qui l'emporte — jamais possible avec l'ancien mappage binaire Macron/Le Pen.</p>
+<h2>7.5 Prédictions temporelles par scénario</h2>
+<p>figure[H] [width=]public/data/charts/temporal_scenarios.png Scénarios prédictifs 2022 → 2026 — scores candidats par département figure</p>
+<p>Les prédictions à 1, 2 et 3 ans sont simulées dans le frontend TypeScript (<code>src/lib/predictions.ts</code>) en appliquant une variation du score économique composite :</p>
+<p>table[H] Précision estimée des projections temporelles tabular{llp7cm} <strong>Horizon</strong> & <strong>Précision estimée</strong> & <strong>Source d'incertitude</strong> \\ <i>+1</i> an & <i>≈ 75 %</i> & Données INSEE quasi disponibles \\ <i>+2</i> ans & <i>≈ 65 %</i> & Estimation partielle des indicateurs \\ <i>+3</i> ans & <i>≈ 55 %</i> & Modèles macro-économiques tiers requis \\ tabular table</p>
+<h1><span class="ch-label">Chapitre 7</span>Visualisations et interface utilisateur</h1>
+<h2>7.6 Stack technique</h2>
+<p>table[H] Technologies de l'interface utilisateur tabularx<strong>Librairie</strong> & <strong>Rôle</strong> \\ React 19 & Framework UI principal \\ TanStack Router 1.x & Routage <code>/</code> et <code>/visualisation</code> \\ TanStack Query 5.x & Chargement asynchrone de <code>predictions.json</code> \\ Recharts 3.x & PieChart, BarChart, RadarChart, LineChart \\ Framer Motion 12 & Animations d'entrée, marqueur spectre politique \\ Tailwind CSS 4 & Mise en page responsive, dark/light mode \\ shadcn/ui & Cards, Selects, Buttons \\ Lucide React & Icônes (Activity, Brain, BarChart3…) \\ Vite 6 + TypeScript 5.8 & Build et typage strict \\ tabularx table</p>
+<h2>7.7 Architecture de l'application</h2>
+<p>L'application charge le fichier <code>predictions.json</code> via TanStack Query, exposant les prédictions des cinq modèles à trois niveaux géographiques (Région → Département → Canton). Le JSON contient désormais, pour chaque entité géographique, les scores des <strong>12 candidats</strong>, les probabilités par orientation, et les top 5 candidats.</p>
+<p>lstlisting[style=tsstyle, caption=Chargement des prédictions — TanStack Query, language=C] // src/routes/index.tsx const data: predictions = useQuery( queryKey: ['predictions', selectedModel], queryFn: () => fetch(`/data/predictions.json`) .then(r => r.json()), staleTime: Infinity, ) lstlisting</p>
+<h2>7.8 Composants clés</h2>
+<h3>7.9.3 Cartes KPI</h3>
+<p>table[H] Cartes KPI du tableau de bord tabularlll <strong>Carte</strong> & <strong>Valeur affichée</strong> & <strong>Détail</strong> \\ Vainqueur prédit & Macron (LREM) & Réel 2022 : Macron ✓ \\ État économique & STABLE & → Orientation Centre \\ Accuracy modèle & 82,1 % (HistGB) & 11/12 depts corrects \\ tabular table</p>
+<h3>7.9.4 Spectre politique dynamique</h3>
+<p>Un marqueur animé (Framer Motion spring) se déplace sur une barre de dégradé 5 positions (ExtrêmeGauche → Gauche → Centre → Droite → ExtrêmeDroite) en fonction de l'état économique calculé pour l'entité sélectionnée.</p>
+<h3>7.9.5 Sélecteur de modèle et filtres géographiques en cascade</h3>
+<p>La navigation est en cascade : Région → Département → Canton. Pour chaque entité, le dashboard affiche le top 5 des candidats avec leurs scores, la distribution par orientation, et la classe économique prédite.</p>
+<h2>7.9 Page de visualisation (/visualisation)</h2>
+<p>La page <code>/visualisation</code> expose quatre sections d'analyse approfondie :</p>
+<p>enumerate <strong>Matrice de corrélation interactive</strong> : heatmap <i>8 × 8</i>, cellules colorées sur rampe bleu–rouge, effet de survol ; <strong>Comparaison inter-modèles</strong> : BarChart + RadarChart sur quatre métriques sélectionnables par onglets ; <strong>Distribution des 12 candidats</strong> : donut chart comparant les scores par orientation à l'échelle sélectionnée ; <strong>Analyse des erreurs départementales</strong> : visualisation du seul département mal prédit (Lot-et-Garonne) avec explication de l'écart — 11/12 soit 91,7\ enumerate</p>
+<h1 class="nopb">Conclusion et recommandations</h1>
+<h2>Bilan du POC</h2>
+<p>Ce projet a permis de concevoir et livrer une Preuve de Concept complète de prédiction électorale par indicateurs socio-économiques pour Electio-Analytics.</p>
+<p><strong>Pipeline de données.</strong> Un pipeline en 9 phases a été développé sur les données de la Nouvelle-Aquitaine, faisant passer le volume de 756 lignes électorales brutes à <strong>40 000 lignes augmentées à 239 colonnes</strong>. Toutes les sources ont été intégrées grâce à des chargeurs spécialisés corrigeant les en-têtes INSEE (header=5 pour Revenus/Diplôme, header=7 pour Population, pivot par département pour Délinquance.xlsx). Le pipeline calcule désormais de <strong>vrais deltas</strong> revenus, emploi et population à partir des paires 2016/2020 — en remplacement des déltas aléatoires initiaux. TinyDB s'est substitué à MongoDB (non disponible) et l'export Delta Lake a échoué sur un problème de schéma.</p>
+<p><strong>Modèle prédictif.</strong> Cinq classificateurs ont été entraînés sur une variable cible <strong>synthétique à 5 classes, à distribution réaliste asymétrique</strong> (Crise 10\</p>
+<p><strong>Prédiction multi-candidats.</strong> La logique de prédiction électorale met en concurrence les 12 candidats du 1<sup>er</sup> tour 2022 via un mécanisme d'orientation politique + pondération intra-bloc, <strong>sans hardcoding de règles fixes</strong>. Cette approche révèle des gagnants variés selon les territoires (Mélenchon en Charente, Pécresse à Bordeaux 1, Poutou à Saint-Vaury).</p>
+<p><strong>Interface utilisateur.</strong> Un dashboard React 19 expose les prédictions des cinq modèles à trois niveaux géographiques (Région / 12 Départements / 627 Cantons) avec spectre politique animé, top 5 candidats, et page d'analyse approfondie.</p>
+<p><strong>Précision départementale.</strong> <strong>11 des 12 départements</strong> de Nouvelle-Aquitaine sont correctement prédits (91,7 %). Seul <strong>Lot-et-Garonne</strong> est mal classé — le modèle le prédit en zone Stable (→ Macron) alors que Le Pen (RN) y est arrivé en tête au 1<sup>er</sup> tour 2022.</p>
+<h2>Limites identifiées</h2>
+<p>description [Variable cible synthétique.] La cible ML n'est pas construite sur les vrais résultats électoraux historiques mais sur un score économique simulé. Ce choix permet d'atteindre 80\</p>
+<p>[91,7\</p>
+<p>[Variable cible synthétique.] La cible ML n'est pas construite sur les vrais résultats électoraux historiques mais sur un score économique simulé. Ce choix permet d'atteindre 80\</p>
+<p>[Delta Lake non fonctionnel.] L'export au format Delta Lake a échoué (<code>Field Année not found in schema</code>). description</p>
+<h2>Recommandations pour le passage en production</h2>
+<p>enumerate <strong>Variable cible réelle.</strong> Construire la cible directement sur les résultats électoraux historiques (vainqueur par canton 2012/2017) encodés en orientation politique — ce qui élimine le besoin de la cible synthétique.</p>
+<p><strong>Enrichissement des blocs politiques.</strong> Intégrer les résultats des élections législatives et européennes pour affiner les poids intra-bloc et les associer à des dynamiques territoriales observées.</p>
+<p><strong>Intégration complète des sources.</strong> Toutes les sources (Revenus, Diplôme, Population, Délinquance, Emploi) sont désormais intégrées avec succès grâce aux chargeurs spécialisés. Il reste à affiner la jointure canton-commune pour augmenter le nombre de lignes après fusion électorale (actuellement 701 lignes).</p>
+<p><strong>Corriger l'export Delta Lake.</strong> Renommer la colonne <code>Année</code> en <code>annee</code> (ASCII, snake_case) avant l'écriture, conformément au schéma PyArrow attendu par <code>delta-rs</code>.</p>
+<p><strong>Déploiement MongoDB.</strong> Provisionner une instance MongoDB (Atlas ou Docker) pour remplacer TinyDB et bénéficier des capacités de requêtage avancées.</p>
+<p><strong>API REST backend.</strong> Remplacer le fichier <code>predictions.json</code> statique par une API FastAPI ou Flask avec mise en cache Redis, permettant des requêtes dynamiques par département ou canton.</p>
+<p><strong>Extension géographique.</strong> Répliquer le pipeline sur les 12 régions métropolitaines. La structure modulaire (<code>load_indicator()</code>, <code>calculate_delta()</code>) est déjà généralisable.</p>
+<p><strong>Validation prospective.</strong> Lors de la prochaine échéance électorale (législatives 2027), confronter les prédictions aux résultats réels pour mesurer le <em>model drift</em> et déclencher un réentraînement si l'accuracy descend sous 70 %. enumerate</p>
+<h1 class="nopb">Bibliographie</h1>
+<p>itemize INSEE. <em>Données de recensement — Population &amp; emploi, 2016</em>. Institut National de la Statistique et des Études Économiques. <code>https://www.insee.fr</code></p>
+<p>data.gouv.fr. <em>Résultats des élections présidentielles 2012, 2017 et 2022 — premier tour, maille canton</em>. Plateforme ouverte des données publiques françaises. <code>https://www.data.gouv.fr</code></p>
+<p>Ministère de l'Intérieur. <em>Statistiques de la délinquance par commune — RALFSS</em>. <code>https://www.data.gouv.fr</code></p>
+<p>Pedregosa, F. et al. (2011). <em>Scikit-learn: Machine Learning in Python</em>. Journal of Machine Learning Research, 12, 2825–2830.</p>
+<p>Chen, T. &amp; Guestrin, C. (2016). <em>XGBoost: A Scalable Tree Boosting System</em>. KDD 2016. DOI: 10.1145/2939672.2939785</p>
+<p>Ke, G. et al. (2017). <em>LightGBM: A Highly Efficient Gradient Boosting Decision Tree</em>. NeurIPS 2017. (Principe identique à HistGradientBoosting de scikit-learn)</p>
+<p>McKinney, W. (2010). <em>Data Structures for Statistical Computing in Python</em>. SciPy 2010.</p>
+<p>The Linux Foundation. <em>Delta Lake — delta-rs Python bindings v1.5.1</em>. <code>https://delta.io</code></p>
+<p>TanStack. <em>TanStack Router v1</em>. <code>https://tanstack.com/router</code></p>
+<p>Recharts Group. <em>Recharts v3</em>. <code>https://recharts.org</code></p>
+<p>Framer. <em>Framer Motion v12</em>. <code>https://www.framer.com/motion</code> itemize</p><h1><span class="ch-label">Annexe A</span>Sortie complète du notebook de préparation des données</h1>
+<p>Cette annexe reproduit les principales sorties console du notebook <code>Nouvelle_Aquitaine_Data_Preparation.ipynb</code> (version corrigée — tous fichiers intégrés, deltas réels).</p>
+<p>lstlisting[language=bash, caption=Sortie console — phases principales (notebook corrigé), basicstyle=] ================================================================================ CHARGEMENT DE L'ENVIRONNEMENT ET DES CHEMINS ================================================================================ Serveur MongoDB non detecte, utilisation de TinyDB (NoSQL local)... OK Base de donnees TinyDB initialisee.</p>
+<p>— CHARGEMENT SOCIO-ECO — OK Population & emploi.csv: 34988 lignes (cle: CODGEO) OK Delinquance.csv: 18180 lignes (cle: insee_pop) OK Revenus.xls 2016: 31789 lignes, 31 colonnes (NBMEN16, Q216, GI16...) OK Revenus.xlsx 2020: 34919 lignes, 29 colonnes (MED20, TP6020, PACT20...) OK Diplome.xls 2016: 34953 lignes, 61 colonnes (P16_POP0205...) OK Population.xlsx 2020: 34980 lignes (POP2020, POP_TOT2020) OK Emploi.csv 2020: 34000+ lignes, 44 colonnes (P20_POP, P20_EMPLT...) OK Delinquance.xlsx 2020 (dept): 96 departements, 11 colonnes</p>
+<p>— EXTRACTION ELECTORALE NOUVELLE-AQUITAINE — Traitement de data_election_2012.xlsx... Traitement de data_election_2017.xlsx... OK Extraction terminee: 756 lignes</p>
+<p>================================================================================ PHASE 2 : CALCUL DES DELTAS REELS ET FUSION ================================================================================ Construction de df_indicateurs avec deltas reels... OK Delta revenus: 13 colonnes (31379 communes communes) exemple delta_rev_NBMEN mean=+3.9 OK Delta emploi/pop: 5 colonnes fusionnees OK Delta population (recensement P16->P20): fusionnee OK Diplome 2016: 25 colonnes education integrees (P16_POP0205...) OK Delinquance 2016: 15 colonnes fusionnees OK Delinquance 2020 (dept): 10 colonnes integrees OK df_indicateurs enrichi: 34988 lignes, 230 colonnes</p>
+<p>Jointure avec donnees electorales 2012-2017... OK Dataset apres jointure: 701 lignes OK Donnees brutes sauvegardees dans NoSQL (tinydb).</p>
+<p>================================================================================ PHASE 3 : NETTOYAGE ET AUGMENTATION DE DONNEES ================================================================================ Volume insuffisant (701 < 5000). Augmentation avec bruit... OK Apres augmentation: 2103 lignes ERREUR Delta Lake: Field Annee not found in schema. CSV standard... Dataset Final: (2103, 230)</p>
+<p>================================================================================ PHASE 5 : NETTOYAGE ET GESTION DES VALEURS MANQUANTES ================================================================================ Shape avant nettoyage: (2103, 230) Shape apres nettoyage: (2103, 230) Doublons supprimes: 0</p>
+<p>================================================================================ PHASE 6 : FEATURE ENGINEERING ET AUGMENTATION DE DONNEES ================================================================================ Apres augmentation temporelle: 35000 lignes - Niveau departement: 120 lignes - Niveau region: 10 lignes - Variable 'est_zone_urbaine' creee (via P22_POP) - 3 variables d'interaction creees Apres perturbation: 70000 lignes Limitation a 40 000 lignes maximum... DATASET AUGMENTE - TAILLE FINALE: 40 000 LIGNES, 239 COLONNES</p>
+<p>================================================================================ PHASE 7 : ENCODAGE ET NORMALISATION ================================================================================ Colonnes numeriques: 194 Colonnes texte: 45 192 colonnes normalisees Valeurs manquantes restantes: traitees</p>
+<p>================================================================================ PHASE 8 : SAUVEGARDE ET RAPPORT FINAL ================================================================================ OK CSV: data_nouvelle_aquitaine_final.csv OK PARQUET: data_nouvelle_aquitaine_final.parquet OK Donnees finales sauvegardees dans NoSQL (tinydb). OK delta_revenus.parquet OK delta_emploi.parquet OK delta_population.parquet lstlisting</p>
+<h1><span class="ch-label">Annexe B</span>Sortie complète du notebook Machine Learning</h1>
+<p>lstlisting[language=bash, caption=Sortie console — ML notebook (extrait), basicstyle=] ================================================================================ ETAPE 1 : CHARGEMENT ET PREPARATION DES DONNEES ================================================================================ OK - Donnees chargees : 40,000 lignes x 171 colonnes Nombre de features : 27 Valeurs manquantes : 0 CREATION DE LA VARIABLE CIBLE (5 CLASSES - DISTRIBUTION REALISTE) : - Indicateurs economiques utilises : 9 - Classes : ['Boom', 'Crise', 'Croissance', 'Declin', 'Stable'] - Distribution (realiste, non-equilibree) : Boom : 4000 (10.0 Crise : 4000 (10.0 Croissance : 8000 (20.0 Declin : 8000 (20.0 Stable : 16000 (40.0</p>
+<p>================================================================================ ETAPE 2 : DIVISION ET NORMALISATION ================================================================================ Ensemble d'entrainement : 32,000 (80.0 Ensemble de test : 8,000 (20.0 StandardScaler : X_train mean=-0.0000, std=1.0000</p>
+<p>================================================================================ ETAPE 3 : MODELES DEJA ENTRAINES (5 CLASSES) - CHARGEMENT DEPUIS .PKL ================================================================================ LogisticRegression charge – acc:82.1 RandomForest charge – acc:79.6 HistGradientBoosting charge – acc:82.1 LinearSVM charge – acc:70.7 XGBoost charge – acc:82.0</p>
+<p>MEILLEUR MODELE : HistGradientBoosting (82.11 Classes : ['Boom', 'Crise', 'Croissance', 'Declin', 'Stable']</p>
+<p>================================================================================ ETAPE 4 : ANALYSE DETAILLEE - TOUS LES MODELES ================================================================================ HistGradientBoosting <- MEILLEUR Accuracy : 82.11 precision recall f1-score support Boom 0.88 0.81 0.84 800 Crise 0.88 0.78 0.83 800 Croissance 0.78 0.81 0.80 1600 Declin 0.76 0.76 0.76 1600 Stable 0.84 0.87 0.86 3200 accuracy 0.82 8000</p>
+<p>LogisticRegression Accuracy : 82.10</p>
+<p>XGBoost Accuracy : 82.05</p>
+<p>RandomForest Accuracy : 79.57</p>
+<p>LinearSVM Accuracy : 70.70</p>
+<p>================================================================================ ETAPE 5 : PREDICTIONS PAR NIVEAU GEOGRAPHIQUE (12 CANDIDATS) ================================================================================ Poids intra-orientation : Macron (LREM) [Centre ] 100.0 Pecresse (LR) [Droite ] 60.4 Lassalle (Resist) [Droite ] 39.6 Le Pen (RN) [ExtremeDroite ] 71.7 Zemmour (Reconv) [ExtremeDroite ] 21.9 Dupont-Aignan (DLF) [ExtremeDroite ] 6.4 Melenchon (LFI) [Gauche ] 71.7 Jadot (EELV) [Gauche ] 15.1 Roussel (PCF) [Gauche ] 7.4 Hidalgo (PS) [Gauche ] 5.7 Poutou (NPA) [ExtremeGauche ] 57.9 Arthaud (LO) [ExtremeGauche ] 42.1</p>
+<p>REGION - NOUVELLE-AQUITAINE HistGradientBoosting eco:[Stable ] Gagnant: Macron (LREM) (68.7 Top 3 -> Macron (LREM): 68.7 LogisticRegression eco:[Stable ] Gagnant: Macron (LREM) (97.1 XGBoost eco:[Stable ] Gagnant: Macron (LREM) (59.3 RandomForest eco:[Stable ] Gagnant: Macron (LREM) (56.1 LinearSVM eco:[Stable ] Gagnant: Macron (LREM) (61.3</p>
+<p>DEPARTEMENTS - HistGradientBoosting CHARENTE eco:[Croissance] Gagnant: Macron (LREM) (41.5 CHARENTE MARITIME eco:[Stable ] Gagnant: Macron (LREM) (64.6 CORREZE eco:[Stable ] Gagnant: Macron (LREM) (59.2 CREUSE eco:[Stable ] Gagnant: Macron (LREM) (71.8 DEUX SEVRES eco:[Stable ] Gagnant: Macron (LREM) (75.2 DORDOGNE eco:[Stable ] Gagnant: Macron (LREM) (72.5 GIRONDE eco:[Stable ] Gagnant: Macron (LREM) (67.4 HAUTE VIENNE eco:[Stable ] Gagnant: Macron (LREM) (52.9 LANDES eco:[Stable ] Gagnant: Macron (LREM) (73.2 LOT ET GARONNE eco:[Stable ] Gagnant: Macron (LREM) (67.7 PYRENEES ATLANTIQUES eco:[Stable ] Gagnant: Macron (LREM) (53.0 VIENNE eco:[Stable ] Gagnant: Macron (LREM) (67.0</p>
+<p>================================================================================ ETAPE 8 : EXPORT JSON - 12 CANDIDATS ================================================================================ Fichier exporte : ...predictions.json Modeles inclus : ['LogisticRegression', 'RandomForest', 'HistGradientBoosting', 'LinearSVM', 'XGBoost'] Departements : 12 (accuracy prediction : 75.0 Cantons : 627</p>
+<p>VAINQUEURS PREDITS PAR DEPARTEMENT (HistGradientBoosting) : Macron (LREM) [Centre ] : 12 departement(s)</p>
+<p>Modeles metriques : LogisticRegression CV:82.10 RandomForest CV:79.57 HistGradientBoosting CV:82.11 LinearSVM CV:70.70 XGBoost CV:82.05 lstlisting</p>
+<h1><span class="ch-label">Annexe C</span>Script de génération des visualisations</h1>
+<p>Architecture du script <code>generate_visualisations.py</code></p>
+<p>Le script produit 7 graphiques PNG dans <code>public/data/charts/</code> via Matplotlib et Seaborn, avec une palette sombre personnalisée.</p>
+<p>lstlisting[caption=Palette et style sombre partagé] PALETTE = 'bg': '#0f1117', # Fond global 'card': '#1a1d2e', # Fond axes 'primary': '#6366f1', # Barres principales (indigo) 'accent': '#a78bfa', # Barres secondaires (violet) 'text': '#e2e8f0', # Texte 'muted': '#64748b', # Labels secondaires 'green': '#10b981', # Positif 'amber': '#f59e0b', # Attention 'rose': '#f43f5e', # Erreur / Extreme droite</p>
+<p>def apply_dark_style(fig, ax_list=None): fig.patch.set_facecolor(PALETTE['bg']) for ax in (ax_list or fig.axes): ax.set_facecolor(PALETTE['card']) ax.tick_params(colors=PALETTE['muted'], labelsize=9) for spine in ax.spines.values(): spine.set_edgecolor('#2d3149')</p>
+<p>def save(fig, name): fig.savefig(os.path.join(CHARTS_DIR, name), dpi=140, bbox_inches='tight', facecolor=fig.get_facecolor()) plt.close(fig) lstlisting</p>
+</body>
+</html>

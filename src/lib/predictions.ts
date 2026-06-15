@@ -3,13 +3,16 @@ export type Level = "region" | "departement" | "canton" | "commune";
 export interface PredictionEntity {
   entity: string;
   parent?: string;
-  predicted_candidate: string;
+  predicted: string;
   political_side: PoliticalSide;
   economic_state: EcoState;
   economic_score: number;
   real: string;
   is_correct: boolean;
-  proba: { MACRON: number; "LE PEN": number };
+  winner_pct: number;
+  top5: [string, number][];
+  orient_proba: Record<string, number>;
+  proba: Record<string, number>;
 }
 
 export interface PoliticalCount {

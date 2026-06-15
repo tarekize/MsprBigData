@@ -65,3 +65,6 @@ MSPR_Final/outputs/nosql_db.json
 MSPR_Final/MSPR/01_Donnees/delta_lake_final/
 MSPR_Final/**/*.parquet
 MSPR_Final/**/*.snappy.parquet
+# Fichiers CSV volumineux (>100MB)
+MSPR_Final/MSPR/01_Donnees/data_nouvelle_aquitaine_final.csv
+MSPR_Final/MSPR/01_Donnees/final/data_nouvelle_aquitaine_final_2022.csv
