@@ -9,60 +9,58 @@ interface Props {
 
 export function PredictionTable({ data, levelLabel }: Props) {
   return (
-    <section className="rounded-3xl border border-border bg-card/50 p-6 md:p-8 backdrop-blur-xl shadow-[var(--shadow-card)]">
-      <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-        <div>
-          <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-accent">Prédictions XGBoost</p>
-          <h2 className="mt-1 text-2xl md:text-3xl font-semibold text-foreground">Détail {levelLabel}</h2>
-        </div>
-      </header>
+    <section className="rounded-2xl border border-border bg-card shadow-[var(--shadow-card)] overflow-hidden">
+      <div className="px-6 py-4 border-b border-border">
+        <p className="text-[10px] font-bold uppercase tracking-widest text-primary mb-0.5">Prédictions XGBoost</p>
+        <h2 className="text-xl font-bold text-foreground tracking-tight">Détail {levelLabel}</h2>
+      </div>
 
       {data.length === 0 ? (
-        <p className="mt-8 text-sm text-muted-foreground">Aucune donnée à ce niveau.</p>
+        <p className="px-6 py-8 text-sm text-muted-foreground">Aucune donnée à ce niveau.</p>
       ) : (
-        <div className="mt-6 overflow-hidden rounded-2xl border border-border">
+        <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-secondary/60 text-left text-[11px] uppercase tracking-widest text-muted-foreground">
-                <th className="px-4 py-3">Entité</th>
-                <th className="px-4 py-3">Bord & Gagnant</th>
-                <th className="px-4 py-3">État Économique</th>
-                <th className="px-4 py-3">Réel</th>
-                <th className="px-4 py-3 w-[30%]">Probabilités</th>
-                <th className="px-4 py-3 text-center">✓</th>
+              <tr className="bg-secondary text-left text-[10px] uppercase tracking-widest text-muted-foreground border-b border-border">
+                <th className="px-5 py-3 font-bold">Entité</th>
+                <th className="px-5 py-3 font-bold">Bord & Gagnant</th>
+                <th className="px-5 py-3 font-bold">État Éco.</th>
+                <th className="px-5 py-3 font-bold">Réel</th>
+                <th className="px-5 py-3 font-bold w-[28%]">Probabilités</th>
+                <th className="px-5 py-3 font-bold text-center">Correct</th>
               </tr>
             </thead>
             <tbody>
               {data.map((r, i) => (
                 <motion.tr
                   key={r.entity}
-                  initial={{ opacity: 0, x: -8 }}
+                  initial={{ opacity: 0, x: -6 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.025 }}
-                  className="border-t border-border/60 hover:bg-secondary/30"
+                  transition={{ delay: i * 0.022 }}
+                  className="border-t border-border/50 hover:bg-secondary/50 transition-colors cursor-default"
                 >
-                  <td className="px-4 py-3 font-medium text-foreground">{r.entity}</td>
-                  <td className="px-4 py-3">
-                    <Pill candidate={r.predicted} side={r.political_side} />
+                  <td className="px-5 py-3 font-semibold text-foreground">{r.entity}</td>
+                  <td className="px-5 py-3">
+                    <Pill candidate={r.predicted_candidate} side={r.political_side} />
                   </td>
-                  <td className="px-4 py-3">
-                    <span className="text-xs uppercase font-medium tracking-wider text-muted-foreground">
+                  <td className="px-5 py-3">
+                    <span className="text-[11px] uppercase font-semibold tracking-wider text-muted-foreground">
                       {r.economic_state}
                     </span>
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-5 py-3">
                     <Pill candidate={r.real} side="unknown" />
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-5 py-3">
                     <ProbBar macron={r.proba?.MACRON ?? 0} lepen={r.proba?.['LE PEN'] ?? 0} />
                   </td>
-                  <td className="px-4 py-3 text-center">
+                  <td className="px-5 py-3 text-center">
                     {r.is_correct ? (
-                      <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-400">
+                      <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
                         <Check className="h-3.5 w-3.5" />
                       </span>
                     ) : (
-                      <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-rose-500/20 text-rose-400">
+                      <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-red-100 text-red-500">
                         <X className="h-3.5 w-3.5" />
                       </span>
                     )}
@@ -79,17 +77,21 @@ export function PredictionTable({ data, levelLabel }: Props) {
 
 function Pill({ candidate, side }: { candidate: string; side: string }) {
   const isMacron = candidate === "MACRON";
-  const color = isMacron ? "var(--color-primary)" : candidate === "LE PEN" ? "var(--pol-far-right)" : "var(--pol-left)";
-  
+  const color = isMacron
+    ? "var(--color-primary)"
+    : candidate === "LE PEN"
+    ? "var(--pol-far-right)"
+    : "var(--pol-left)";
+
   return (
-    <div className="flex flex-col gap-1">
-      <span className="text-[10px] uppercase tracking-tighter text-muted-foreground font-semibold">
+    <div className="flex flex-col gap-0.5">
+      <span className="text-[9px] uppercase tracking-tight text-muted-foreground font-semibold">
         {side?.replace('-', ' ')}
       </span>
       <span
-        className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium w-fit"
+        className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-semibold w-fit"
         style={{
-          background: `color-mix(in oklab, ${color} 18%, transparent)`,
+          background: `color-mix(in oklab, ${color} 12%, transparent)`,
           color: color,
         }}
       >

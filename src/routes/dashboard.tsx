@@ -7,15 +7,15 @@ import {
   // eslint-disable-next-line @typescript-eslint/no-deprecated
   CartesianGrid, Cell, PieChart, Pie, Legend,
 } from "recharts";
-import { BarChart3, Brain, MapPin, ChevronDown, CheckCircle2, XCircle, TrendingUp } from "lucide-react";
+import {
+  BarChart3, Brain, MapPin, CheckCircle2, XCircle,
+  TrendingUp, Activity, Home,
+} from "lucide-react";
 
 export const Route = createFileRoute("/dashboard")({
   component: DashboardPage,
 });
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   CONSTANTS
-═══════════════════════════════════════════════════════════════════════════ */
 const MODELS = [
   { id: "xgboost",             name: "XGBoost",             key: "XGBoost" },
   { id: "random_forest",       name: "Random Forest",       key: "RandomForest" },
@@ -25,40 +25,9 @@ const MODELS = [
 ];
 
 const DEPT_COLORS = [
-  "#6366f1","#8b5cf6","#a78bfa","#06b6d4","#10b981",
-  "#22c55e","#84cc16","#eab308","#f97316","#ef4444","#ec4899","#14b8a6",
+  "#6366f1", "#8b5cf6", "#a78bfa", "#06b6d4", "#10b981",
+  "#22c55e", "#84cc16", "#eab308", "#f97316", "#ef4444", "#ec4899", "#14b8a6",
 ];
-
-/* ── Light palette ── */
-const L = {
-  pageBg:     "#eef1f8",
-  white:      "#ffffff",
-  border:     "#e2e8f4",
-  dark:       "#0a0f2e",
-  mid:        "#3d4f6a",
-  muted:      "#7a8ea8",
-  faint:      "#a0aec0",
-  inputBg:    "#f5f7fc",
-  inputBdr:   "#c5d3e8",
-  active:     "#2a3d9e",
-  activeLt:   "#dbeafe",
-  activeDk:   "#1e3a8a",
-  wrongLt:    "#fee2e2",
-  wrongDk:    "#991b1b",
-  labelUp:    "#64748b",
-  accent:     "#4f6ef7",
-  accentGlow: "rgba(79,110,247,0.15)",
-};
-
-/* ── Sidebar palette ── */
-const SB = {
-  bg:       "#080d28",
-  navAct:   "#1a2870",
-  subText:  "#94afd0",
-  muted:    "#5d7090",
-  sublabel: "#7080a8",
-  divider:  "#131d3e",
-};
 
 type Entity = {
   entity: string;
@@ -73,40 +42,78 @@ type Entity = {
   parent?: string;
 };
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   SMALL COMPONENTS
-═══════════════════════════════════════════════════════════════════════════ */
-function FrenchFlag({ w = 10, h = 22 }: { w?: number; h?: number }) {
+function FrenchFlag() {
   return (
-    <div style={{ display: "flex", flexShrink: 0 }}>
-      <div style={{ width: w, height: h, background: "#002395", borderRadius: "3px 0 0 3px" }} />
-      <div style={{ width: w, height: h, background: "#ffffff" }} />
-      <div style={{ width: w, height: h, background: "#ED2939", borderRadius: "0 3px 3px 0" }} />
+    <div className="flex shrink-0">
+      <div className="h-[18px] w-[8px] rounded-l-sm" style={{ background: "#002395" }} />
+      <div className="h-[18px] w-[8px] bg-white" />
+      <div className="h-[18px] w-[8px] rounded-r-sm" style={{ background: "#ED2939" }} />
     </div>
   );
 }
 
-function SectionCard({ title, children, style }: { title: string; children: React.ReactNode; style?: React.CSSProperties }) {
+function Card({ title, children, className = "" }: { title?: string; children: React.ReactNode; className?: string }) {
   return (
-    <div style={{ background: L.white, borderRadius: 18, border: `1px solid ${L.border}`, padding: 22, marginBottom: 20, boxShadow: "0 2px 12px rgba(10,15,46,0.06)", ...style }}>
-      <p style={{ color: L.dark, fontWeight: 700, fontSize: 14, margin: "0 0 16px", display: "flex", alignItems: "center", gap: 8, letterSpacing: "0.01em" }}>
-        {title}
-      </p>
-      {children}
+    <div className={`bg-card rounded-2xl border border-border shadow-[var(--shadow-card)] ${className}`}>
+      {title && (
+        <div className="px-5 pt-5 pb-0">
+          <p className="text-[13px] font-semibold text-foreground">{title}</p>
+        </div>
+      )}
+      <div className={title ? "p-5 pt-4" : "p-5"}>{children}</div>
     </div>
   );
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   MAIN PAGE
-═══════════════════════════════════════════════════════════════════════════ */
+function NavItem({
+  icon: Icon,
+  label,
+  sub,
+  active = false,
+  href,
+  onClick,
+}: {
+  icon: React.ElementType;
+  label: string;
+  sub: string;
+  active?: boolean;
+  href?: string;
+  onClick?: () => void;
+}) {
+  const content = (
+    <div
+      onClick={onClick}
+      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl mb-1 cursor-pointer transition-all ${
+        active
+          ? "bg-primary/10 border border-primary/20"
+          : "hover:bg-secondary border border-transparent"
+      }`}
+    >
+      <Icon className={`w-4 h-4 shrink-0 ${active ? "text-primary" : "text-muted-foreground"}`} />
+      <div>
+        <p className={`text-[13px] font-semibold leading-tight ${active ? "text-primary" : "text-foreground/75"}`}>
+          {label}
+        </p>
+        <p className={`text-[10px] ${active ? "text-primary/60" : "text-muted-foreground"}`}>{sub}</p>
+      </div>
+    </div>
+  );
+
+  if (href) {
+    return (
+      <Link to={href} className="block no-underline">
+        {content}
+      </Link>
+    );
+  }
+  return content;
+}
+
 function DashboardPage() {
   const [selectedModel, setSelectedModel] = useState("logistic_regression");
-  const [selectedDept, setSelectedDept]   = useState("ALL");
+  const [selectedDept, setSelectedDept] = useState("ALL");
   const [selectedCanton, setSelectedCanton] = useState("ALL");
 
-  /* ── Data fetching ─────────────────────────────────────────────────── */
-  /* Base file → models_metrics for the comparison cards */
   const { data: baseData } = useQuery({
     queryKey: ["base_predictions"],
     queryFn: async () => {
@@ -117,7 +124,6 @@ function DashboardPage() {
     staleTime: Infinity,
   });
 
-  /* Per-model file → geographic levels + summary */
   const { data, isLoading } = useQuery({
     queryKey: ["predictions", selectedModel],
     queryFn: async () => {
@@ -128,7 +134,6 @@ function DashboardPage() {
     staleTime: 30_000,
   });
 
-  /* ── Active entity ──────────────────────────────────────────────────── */
   const activeEntity = useMemo<Entity | null>(() => {
     if (!data) return null;
     if (selectedDept === "ALL") return data.levels?.region?.[0] ?? null;
@@ -137,7 +142,6 @@ function DashboardPage() {
     return data.levels?.canton?.find((c: Entity) => c.entity === selectedCanton) ?? dept;
   }, [data, selectedDept, selectedCanton]);
 
-  /* ── Table rows ─────────────────────────────────────────────────────── */
   const tableData = useMemo<Entity[]>(() => {
     if (!data) return [];
     if (selectedDept === "ALL") return data.levels?.departement ?? [];
@@ -146,7 +150,6 @@ function DashboardPage() {
     return cantons.filter((c: Entity) => c.entity === selectedCanton);
   }, [data, selectedDept, selectedCanton]);
 
-  /* ── Derived values ─────────────────────────────────────────────────── */
   const selectedModelDef = MODELS.find(m => m.id === selectedModel)!;
   const metrics = baseData?.models_metrics ?? {};
 
@@ -155,220 +158,144 @@ function DashboardPage() {
     data?.summary?.model_accuracy ??
     null;
 
-  const ecoState = (
-    activeEntity?.economic_state?.toUpperCase() ?? "—"
-  );
+  const ecoState = activeEntity?.economic_state?.toUpperCase() ?? "—";
   const ecoScore = activeEntity?.economic_score?.toFixed(1) ?? "—";
 
-  /* ── Chart data ─────────────────────────────────────────────────────── */
   const barData = MODELS.map(m => ({
     name: m.name,
     accuracy: metrics[m.key]?.test_accuracy ?? 0,
     active: m.id === selectedModel,
-    fill: m.id === selectedModel ? L.accent : "#6366f1",
+    fill: m.id === selectedModel ? "#4f46e5" : "#a5b4fc",
   }));
 
   const donutData = activeEntity
     ? [
-        { name: "Macron", value: +(activeEntity.proba_macron ?? 0).toFixed(1), fill: "#1e2a78" },
-        { name: "Le Pen", value: +(activeEntity.proba_lepen  ?? 0).toFixed(1), fill: "#ef4444" },
+        { name: "Macron", value: +(activeEntity.proba_macron ?? 0).toFixed(1), fill: "#3b82f6" },
+        { name: "Le Pen",  value: +(activeEntity.proba_lepen  ?? 0).toFixed(1), fill: "#ef4444" },
       ]
     : [];
 
-  /* ─────────────────────────────────────────────────────────────────────── */
   return (
-    <div style={{ display: "flex", height: "100vh", overflow: "hidden", fontFamily: "'Space Grotesk', 'Sora', sans-serif" }}>
+    <div className="flex h-screen overflow-hidden">
 
-      {/* ════════════════════ SIDEBAR ════════════════════ */}
-      <aside style={{
-        width: 260, flexShrink: 0,
-        background: `linear-gradient(180deg, #0b1030 0%, #080d28 100%)`,
-        display: "flex", flexDirection: "column", overflowY: "auto",
-        boxShadow: "2px 0 20px rgba(0,0,0,0.25)",
-      }}>
+      {/* Sidebar */}
+      <aside className="w-60 shrink-0 flex flex-col bg-card border-r border-border overflow-y-auto">
 
-        {/* Logo */}
-        <div style={{ padding: "24px 20px 20px", borderBottom: `1px solid ${SB.divider}` }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <FrenchFlag w={10} h={22} />
+        {/* Brand */}
+        <div className="px-5 py-5 border-b border-border">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center">
+              <FrenchFlag />
+            </div>
             <div>
-              <p style={{ color: "#fff", fontWeight: 700, fontSize: 14, margin: 0 }}>GouvData</p>
-              <p style={{ color: SB.muted, fontSize: 10, margin: 0, textTransform: "uppercase", letterSpacing: "0.1em" }}>ML Analytics</p>
+              <p className="text-foreground font-bold text-[14px] leading-tight">GouvData</p>
+              <p className="text-muted-foreground text-[10px] uppercase tracking-widest">ML Analytics</p>
             </div>
           </div>
         </div>
 
-        {/* Navigation */}
-        <div style={{ padding: "20px 14px 0" }}>
-          <p style={{ color: SB.muted, fontSize: 10, fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", margin: "0 0 10px", paddingLeft: 4 }}>
+        {/* Nav */}
+        <div className="px-3 pt-5 flex-1">
+          <p className="text-muted-foreground text-[9px] font-bold uppercase tracking-[0.18em] mb-2 px-2">
             Navigation
           </p>
-
-          {/* Dashboard — actif */}
-          <div style={{
-            background: "linear-gradient(135deg, #1e3080 0%, #2a3d9e 100%)",
-            borderRadius: 10, padding: "10px 14px",
-            marginBottom: 4, display: "flex", alignItems: "center", gap: 10, cursor: "default",
-            boxShadow: "0 2px 12px rgba(79,110,247,0.25)",
-            border: "1px solid rgba(100,130,255,0.2)",
-          }}>
-            <BarChart3 style={{ color: "#fff", width: 16, height: 16, flexShrink: 0 }} />
-            <div>
-              <p style={{ color: "#fff", fontWeight: 700, fontSize: 13, margin: 0 }}>Dashboard</p>
-              <p style={{ color: SB.subText, fontSize: 10, margin: 0 }}>Prédictions géographiques</p>
-            </div>
-          </div>
-
-          {/* Visualisation ML */}
-          <Link to="/visualisation" style={{ textDecoration: "none", display: "block" }}>
-            <div
-              className="group"
-              style={{ borderRadius: 10, padding: "10px 14px", marginBottom: 4, display: "flex", alignItems: "center", gap: 10, cursor: "pointer", transition: "background 0.15s" }}
-              onMouseEnter={e => (e.currentTarget.style.background = "#1a2340")}
-              onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
-            >
-              <Brain style={{ color: SB.muted, width: 16, height: 16, flexShrink: 0 }} />
-              <div>
-                <p style={{ color: SB.subText, fontWeight: 500, fontSize: 13, margin: 0 }}>Visualisation ML</p>
-                <p style={{ color: SB.muted, fontSize: 10, margin: 0 }}>Graphiques & métriques</p>
-              </div>
-            </div>
-          </Link>
+          <NavItem icon={BarChart3} label="Dashboard" sub="Prédictions géographiques" active />
+          <NavItem icon={Brain}     label="Visualisation ML" sub="Graphiques & métriques"       href="/visualisation" />
+          <NavItem icon={Home}      label="Accueil"          sub="Vue d'ensemble"                href="/" />
         </div>
 
-        <div style={{ margin: "16px 16px", borderTop: `1px solid ${SB.divider}` }} />
-
-        {/* Périmètre */}
-        <div style={{ padding: "0 16px" }}>
-          <p style={{ color: SB.muted, fontSize: 10, fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", margin: "0 0 12px" }}>
-            Périmètre
-          </p>
-          <div style={{ display: "flex", alignItems: "flex-start", gap: 10, marginBottom: 12 }}>
-            <span style={{ color: "#5b7ab8", fontSize: 14, marginTop: 1 }}>📅</span>
+        {/* Context */}
+        <div className="px-5 py-4 border-t border-border space-y-3">
+          <p className="text-muted-foreground text-[9px] font-bold uppercase tracking-[0.18em]">Périmètre</p>
+          <div className="flex items-start gap-2.5">
+            <Activity className="text-muted-foreground w-3.5 h-3.5 mt-0.5 shrink-0" />
             <div>
-              <p style={{ color: SB.sublabel, fontSize: 10, margin: "0 0 2px" }}>Élection</p>
-              <p style={{ color: "#fff", fontWeight: 600, fontSize: 12, margin: 0 }}>Présidentielle 2022</p>
+              <p className="text-muted-foreground text-[10px]">Élection</p>
+              <p className="text-foreground font-semibold text-[12px]">Présidentielle 2022</p>
             </div>
           </div>
-          <div style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
-            <MapPin style={{ color: "#5b7ab8", width: 14, height: 14, marginTop: 1, flexShrink: 0 }} />
+          <div className="flex items-start gap-2.5">
+            <MapPin className="text-muted-foreground w-3.5 h-3.5 mt-0.5 shrink-0" />
             <div>
-              <p style={{ color: SB.sublabel, fontSize: 10, margin: "0 0 2px" }}>Région</p>
-              <p style={{ color: "#fff", fontWeight: 600, fontSize: 12, margin: 0 }}>Nouvelle-Aquitaine</p>
+              <p className="text-muted-foreground text-[10px]">Région</p>
+              <p className="text-foreground font-semibold text-[12px]">Nouvelle-Aquitaine</p>
             </div>
           </div>
         </div>
 
-        <div style={{ margin: "16px 16px", borderTop: `1px solid ${SB.divider}` }} />
-
-        {/* Modèle actif */}
-        <div style={{ padding: "0 16px" }}>
-          <p style={{ color: SB.muted, fontSize: 10, fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", margin: "0 0 10px" }}>
-            Modèle actif
-          </p>
+        {/* Active model */}
+        <div className="px-5 pb-4">
+          <p className="text-muted-foreground text-[9px] font-bold uppercase tracking-[0.18em] mb-2">Modèle actif</p>
           <motion.div
             key={selectedModel}
-            initial={{ opacity: 0, y: 6 }}
+            initial={{ opacity: 0, y: 4 }}
             animate={{ opacity: 1, y: 0 }}
-            style={{ background: "#1e293b", border: "1px solid #334155", borderRadius: 10, padding: "12px 14px" }}
+            className="bg-secondary rounded-xl p-3 border border-border"
           >
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-              <Brain style={{ color: "#6080e0", width: 15, height: 15, flexShrink: 0 }} />
-              <p style={{ color: "#fff", fontWeight: 700, fontSize: 12, margin: 0 }}>{selectedModelDef.name}</p>
+            <div className="flex items-center gap-2 mb-2">
+              <Brain className="text-primary w-3.5 h-3.5 shrink-0" />
+              <p className="text-foreground font-semibold text-[12px] leading-tight">{selectedModelDef.name}</p>
             </div>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <p style={{ color: SB.sublabel, fontSize: 11, margin: 0 }}>Accuracy</p>
-              <p style={{ color: "#fff", fontWeight: 700, fontSize: 12, margin: 0 }}>
+            <div className="flex justify-between items-center">
+              <span className="text-muted-foreground text-[11px]">Accuracy</span>
+              <span className="text-foreground font-bold text-[13px]">
                 {activeAcc != null ? `${activeAcc.toFixed(1)}%` : "—"}
-              </p>
+              </span>
             </div>
           </motion.div>
         </div>
 
-        {/* Filtre résumé dans la sidebar */}
+        {/* Active filter summary */}
         {selectedDept !== "ALL" && (
-          <>
-            <div style={{ margin: "16px 16px", borderTop: `1px solid ${SB.divider}` }} />
-            <div style={{ padding: "0 16px" }}>
-              <p style={{ color: SB.muted, fontSize: 10, fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", margin: "0 0 8px" }}>
-                Vue active
-              </p>
-              <p style={{ color: "#fff", fontSize: 12, fontWeight: 600, margin: "0 0 2px" }}>{selectedDept}</p>
-              {selectedCanton !== "ALL" && (
-                <p style={{ color: SB.subText, fontSize: 11, margin: 0 }}>Canton : {selectedCanton}</p>
-              )}
-              <button
-                onClick={() => { setSelectedDept("ALL"); setSelectedCanton("ALL"); }}
-                style={{ marginTop: 8, color: "#6080e0", fontSize: 11, background: "none", border: "none", cursor: "pointer", padding: 0, textDecoration: "underline" }}
-              >
-                Réinitialiser →
-              </button>
-            </div>
-          </>
-        )}
-
-        {/* Spacer + Flag */}
-        <div style={{ flex: 1 }} />
-        <div style={{ padding: "20px", textAlign: "center", borderTop: `1px solid ${SB.divider}` }}>
-          <div style={{ display: "flex", justifyContent: "center", marginBottom: 6 }}>
-            <FrenchFlag w={14} h={38} />
+          <div className="px-5 pb-5 border-t border-border pt-4">
+            <p className="text-muted-foreground text-[9px] font-bold uppercase tracking-[0.18em] mb-1.5">Vue active</p>
+            <p className="text-foreground font-semibold text-[12px]">{selectedDept}</p>
+            {selectedCanton !== "ALL" && (
+              <p className="text-muted-foreground text-[11px] mt-0.5">Canton : {selectedCanton}</p>
+            )}
+            <button
+              onClick={() => { setSelectedDept("ALL"); setSelectedCanton("ALL"); }}
+              className="mt-2 text-primary text-[11px] hover:underline bg-transparent border-none cursor-pointer p-0"
+            >
+              Réinitialiser →
+            </button>
           </div>
-          <p style={{ color: SB.muted, fontSize: 10, textTransform: "uppercase", letterSpacing: "0.12em", margin: 0 }}>France</p>
-        </div>
+        )}
       </aside>
 
-      {/* ════════════════════ MAIN ════════════════════ */}
-      <main style={{ flex: 1, overflowY: "auto", background: L.pageBg }}>
+      {/* Main */}
+      <main className="flex-1 overflow-y-auto bg-background">
 
-        {/* ── Header ───────────────────────────────────────────────────── */}
-        <div style={{
-          textAlign: "center", padding: "32px 32px 24px",
-          background: "linear-gradient(135deg, #ffffff 0%, #f5f7ff 100%)",
-          borderBottom: `1px solid ${L.border}`,
-          position: "relative", overflow: "hidden",
-        }}>
-          <div style={{
-            position: "absolute", top: -60, right: -60, width: 200, height: 200,
-            borderRadius: "50%", background: "radial-gradient(circle, rgba(79,110,247,0.08) 0%, transparent 70%)",
-            pointerEvents: "none",
-          }} />
-          <span style={{
-            display: "inline-block", background: "linear-gradient(135deg, #eef1ff, #dbeafe)",
-            color: L.accent, fontWeight: 700, fontSize: 10, letterSpacing: "0.22em",
-            textTransform: "uppercase", borderRadius: 20, padding: "4px 14px",
-            border: `1px solid rgba(79,110,247,0.2)`, marginBottom: 12,
-          }}>
-            Présidentielle 2022 · Nouvelle-Aquitaine
-          </span>
-          <h1 style={{ color: L.dark, fontWeight: 800, fontSize: 28, margin: "0 0 8px", letterSpacing: "-0.02em" }}>
-            Tableau de Bord Prédictif
-          </h1>
-          <p style={{ color: L.mid, fontSize: 13, margin: "0 0 20px" }}>
-            Prédiction du vote par indicateurs socio-économiques · Région · Département · Canton
-          </p>
-          <Link
-            to="/visualisation"
-            style={{
-              display: "inline-flex", alignItems: "center", gap: 8,
-              background: "linear-gradient(135deg, #2a3d9e, #4f6ef7)",
-              color: "#fff", borderRadius: 12, padding: "10px 24px", fontSize: 13,
-              fontWeight: 600, textDecoration: "none", transition: "all 0.2s",
-              boxShadow: "0 4px 14px rgba(79,110,247,0.35)",
-            }}
-            onMouseEnter={e => ((e.currentTarget as HTMLElement).style.transform = "translateY(-1px)")}
-            onMouseLeave={e => ((e.currentTarget as HTMLElement).style.transform = "translateY(0)")}
-          >
-            <BarChart3 style={{ width: 16, height: 16 }} />
-            Visualisation ML
-          </Link>
+        {/* Top header */}
+        <div className="px-8 py-5 bg-card border-b border-border">
+          <div className="flex items-center justify-between">
+            <div>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-widest px-3 py-1 border border-primary/20 mb-2">
+                Présidentielle 2022 · Nouvelle-Aquitaine
+              </span>
+              <h1 className="text-foreground font-bold text-[22px] tracking-tight leading-tight">
+                Tableau de Bord Prédictif
+              </h1>
+              <p className="text-muted-foreground text-[13px] mt-0.5">
+                Prédiction du vote par indicateurs socio-économiques · Région · Département · Canton
+              </p>
+            </div>
+            <Link
+              to="/visualisation"
+              className="inline-flex items-center gap-2 bg-primary text-primary-foreground rounded-xl px-5 py-2.5 text-[13px] font-semibold shadow-md shadow-primary/20 hover:bg-primary/90 hover:shadow-lg transition-all no-underline"
+            >
+              <BarChart3 className="w-4 h-4" />
+              Visualisation ML
+            </Link>
+          </div>
         </div>
 
-        {/* ── Content ──────────────────────────────────────────────────── */}
-        <div style={{ padding: "24px 28px", maxWidth: 1300, margin: "0 auto" }}>
+        {/* Content */}
+        <div className="px-8 py-6 space-y-5 max-w-[1280px]">
 
-          {/* ── 5 Model Cards ─────────────────────────────────────────── */}
-          <SectionCard title="⊕  Modèle d'Intelligence Artificielle">
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 12 }}>
+          {/* Model selector */}
+          <Card title="Modèle d'Intelligence Artificielle">
+            <div className="grid grid-cols-5 gap-3 mt-1">
               {MODELS.map(m => {
                 const acc = metrics[m.key]?.test_accuracy ?? null;
                 const active = m.id === selectedModel;
@@ -376,42 +303,42 @@ function DashboardPage() {
                   <motion.button
                     key={m.id}
                     onClick={() => { setSelectedModel(m.id); setSelectedDept("ALL"); setSelectedCanton("ALL"); }}
-                    whileHover={{ scale: 1.04, y: -2 }}
+                    whileHover={{ scale: 1.03, y: -1 }}
                     whileTap={{ scale: 0.97 }}
-                    style={{
-                      background: active
-                        ? "linear-gradient(135deg, #2a3d9e 0%, #4f6ef7 100%)"
-                        : L.white,
-                      border: `1px solid ${active ? "transparent" : L.border}`,
-                      borderRadius: 14, padding: "18px 10px",
-                      cursor: "pointer", textAlign: "center", transition: "all 0.18s",
-                      boxShadow: active
-                        ? "0 6px 24px rgba(79,110,247,0.35)"
-                        : "0 1px 4px rgba(10,15,46,0.06)",
-                    }}
+                    className={`rounded-xl p-4 text-center border cursor-pointer transition-all ${
+                      active
+                        ? "bg-primary border-primary/0 shadow-lg shadow-primary/20 text-primary-foreground"
+                        : "bg-card border-border hover:border-primary/30 hover:shadow-sm"
+                    }`}
                   >
-                    <p style={{ color: active ? "rgba(255,255,255,0.65)" : L.labelUp, fontSize: 9, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.14em", margin: "0 0 6px" }}>
+                    <p className={`text-[9px] font-bold uppercase tracking-widest mb-1.5 ${
+                      active ? "text-primary-foreground/70" : "text-muted-foreground"
+                    }`}>
                       Modèle
                     </p>
-                    <p style={{ color: active ? "#fff" : L.dark, fontWeight: 700, fontSize: 12, margin: "0 0 10px", lineHeight: 1.3 }}>
+                    <p className={`font-semibold text-[12px] mb-3 leading-tight ${
+                      active ? "text-primary-foreground" : "text-foreground"
+                    }`}>
                       {m.name}
                     </p>
-                    <p style={{ color: active ? "#fff" : L.accent, fontWeight: 800, fontSize: 22, margin: 0, letterSpacing: "-0.02em" }}>
+                    <p className={`font-bold text-[22px] tracking-tight ${
+                      active ? "text-primary-foreground" : "text-primary"
+                    }`}>
                       {acc != null ? `${acc.toFixed(1)}%` : "—"}
                     </p>
                   </motion.button>
                 );
               })}
             </div>
-          </SectionCard>
+          </Card>
 
-          {/* ── 3 KPI Cards ────────────────────────────────────────────── */}
+          {/* KPI cards */}
           <AnimatePresence mode="wait">
             <motion.div
               key={`${selectedModel}-${selectedDept}-${selectedCanton}`}
-              initial={{ opacity: 0, y: 8 }}
+              initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
-              style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16, marginBottom: 20 }}
+              className="grid grid-cols-3 gap-4"
             >
               {[
                 {
@@ -419,88 +346,84 @@ function DashboardPage() {
                   value: activeEntity?.predicted ?? (isLoading ? "…" : "—"),
                   sub:   `Résultat réel : ${activeEntity?.real ?? "—"}`,
                   correct: activeEntity ? activeEntity.is_correct : null,
+                  accent: "border-l-primary",
+                  bg: "bg-card",
                 },
                 {
                   label: "État Économique",
                   value: isLoading ? "…" : ecoState,
                   sub:   `Score : ${ecoScore}`,
                   correct: null,
+                  accent: "border-l-amber-400",
+                  bg: "bg-card",
                 },
                 {
                   label: `Accuracy — ${selectedModelDef.name}`,
                   value: activeAcc != null ? `${activeAcc.toFixed(1)}%` : (isLoading ? "…" : "—"),
                   sub:   "Sur l'ensemble d'entraînement socio-éco",
                   correct: null,
+                  accent: "border-l-emerald-500",
+                  bg: "bg-card",
                 },
               ].map((kpi, i) => (
                 <motion.div
                   key={i}
                   transition={{ delay: i * 0.06 }}
-                  style={{ background: L.white, borderRadius: 12, border: `1px solid ${L.border}`, padding: 20 }}
+                  className={`${kpi.bg} rounded-2xl border border-border border-l-4 ${kpi.accent} p-5 shadow-[var(--shadow-card)]`}
                 >
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-                    <p style={{ color: L.muted, fontSize: 9, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.14em", margin: 0 }}>
+                  <div className="flex items-start justify-between mb-3 gap-2">
+                    <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest leading-snug">
                       {kpi.label}
                     </p>
-                    {kpi.correct === true  && <CheckCircle2 style={{ color: "#059669", width: 16, height: 16, flexShrink: 0 }} />}
-                    {kpi.correct === false && <XCircle      style={{ color: "#dc2626", width: 16, height: 16, flexShrink: 0 }} />}
+                    {kpi.correct === true  && <CheckCircle2 className="text-emerald-500 w-4 h-4 shrink-0 mt-0.5" />}
+                    {kpi.correct === false && <XCircle      className="text-destructive w-4 h-4 shrink-0 mt-0.5" />}
                   </div>
-                  <p style={{ color: L.dark, fontWeight: 700, fontSize: 28, margin: "0 0 6px" }}>
+                  <p className="text-foreground font-bold text-[32px] tracking-tight leading-none mb-2">
                     {kpi.value}
                   </p>
-                  <p style={{ color: L.faint, fontSize: 12, margin: 0 }}>{kpi.sub}</p>
+                  <p className="text-muted-foreground text-[12px]">{kpi.sub}</p>
                 </motion.div>
               ))}
             </motion.div>
           </AnimatePresence>
 
-          {/* ── Geographic Filters ────────────────────────────────────── */}
-          <SectionCard title="▼  Filtres géographiques">
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
-
-              {/* Région (fixe) */}
+          {/* Geographic filters */}
+          <Card title="Filtres géographiques">
+            <div className="grid grid-cols-3 gap-4 mt-1">
               <div>
-                <p style={{ color: L.labelUp, fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", margin: "0 0 8px" }}>Région</p>
-                <div style={{ background: L.inputBg, border: `1px solid ${L.inputBdr}`, borderRadius: 8, padding: "10px 14px", color: L.mid, fontSize: 13, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <span>Nouvelle-Aquitaine</span>
-                  <ChevronDown style={{ width: 14, height: 14, color: L.muted, opacity: 0.4 }} />
+                <label className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest block mb-2">
+                  Région
+                </label>
+                <div className="bg-secondary border border-border rounded-lg px-3 py-2.5 text-foreground/50 text-[13px] flex justify-between items-center select-none">
+                  Nouvelle-Aquitaine
                 </div>
               </div>
 
-              {/* Département */}
               <div>
-                <p style={{ color: L.labelUp, fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", margin: "0 0 8px" }}>Département</p>
-                <div style={{ position: "relative" }}>
-                  <select
-                    value={selectedDept}
-                    onChange={e => { setSelectedDept(e.target.value); setSelectedCanton("ALL"); }}
-                    style={{
-                      width: "100%", background: L.inputBg, border: `1px solid ${L.inputBdr}`,
-                      borderRadius: 8, padding: "10px 14px", color: L.dark,
-                      fontSize: 13, cursor: "pointer", appearance: "auto", outline: "none",
-                    }}
-                  >
-                    <option value="ALL">Tous les départements</option>
-                    {data?.levels?.departement?.map((d: Entity) => (
-                      <option key={d.entity} value={d.entity}>{d.entity}</option>
-                    ))}
-                  </select>
-                </div>
+                <label className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest block mb-2">
+                  Département
+                </label>
+                <select
+                  value={selectedDept}
+                  onChange={e => { setSelectedDept(e.target.value); setSelectedCanton("ALL"); }}
+                  className="w-full bg-card border border-border rounded-lg px-3 py-2.5 text-foreground text-[13px] cursor-pointer outline-none focus:border-primary transition-colors appearance-auto"
+                >
+                  <option value="ALL">Tous les départements</option>
+                  {data?.levels?.departement?.map((d: Entity) => (
+                    <option key={d.entity} value={d.entity}>{d.entity}</option>
+                  ))}
+                </select>
               </div>
 
-              {/* Canton */}
               <div>
-                <p style={{ color: L.labelUp, fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", margin: "0 0 8px" }}>Canton</p>
+                <label className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest block mb-2">
+                  Canton
+                </label>
                 <select
                   value={selectedCanton}
                   onChange={e => setSelectedCanton(e.target.value)}
                   disabled={selectedDept === "ALL"}
-                  style={{
-                    width: "100%", background: L.inputBg, border: `1px solid ${L.inputBdr}`,
-                    borderRadius: 8, padding: "10px 14px", color: L.dark,
-                    fontSize: 13, cursor: selectedDept === "ALL" ? "not-allowed" : "pointer",
-                    opacity: selectedDept === "ALL" ? 0.5 : 1, appearance: "auto", outline: "none",
-                  }}
+                  className="w-full bg-card border border-border rounded-lg px-3 py-2.5 text-foreground text-[13px] cursor-pointer outline-none focus:border-primary transition-colors appearance-auto disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <option value="ALL">Tous les cantons</option>
                   {data?.levels?.canton
@@ -511,52 +434,48 @@ function DashboardPage() {
                 </select>
               </div>
             </div>
-          </SectionCard>
+          </Card>
 
-          {/* ── Charts Row ──────────────────────────────────────────────── */}
-          <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 20, marginBottom: 20 }}>
+          {/* Charts row */}
+          <div className="grid grid-cols-[2fr_1fr] gap-5">
 
-            {/* Bar chart — model comparison */}
-            <div style={{ background: L.white, borderRadius: 16, border: `1px solid ${L.border}`, padding: 20 }}>
-              <p style={{ color: L.dark, fontWeight: 700, fontSize: 15, margin: "0 0 4px" }}>
-                <TrendingUp style={{ display: "inline", width: 16, height: 16, marginRight: 6, verticalAlign: "text-bottom" }} />
-                Comparaison Accuracy — 5 Modèles
-              </p>
-              <p style={{ color: L.faint, fontSize: 11, margin: "0 0 16px" }}>
-                Cliquez sur un modèle ci-dessus pour changer la vue
-              </p>
+            {/* Bar chart */}
+            <div className="bg-card rounded-2xl border border-border p-5 shadow-[var(--shadow-card)]">
+              <div className="flex items-center gap-2 mb-1">
+                <TrendingUp className="w-4 h-4 text-primary shrink-0" />
+                <p className="text-foreground font-semibold text-[14px]">Comparaison Accuracy — 5 Modèles</p>
+              </div>
+              <p className="text-muted-foreground text-[11px] mb-4">Cliquez sur un modèle ci-dessus pour changer la vue</p>
               {barData.some(d => d.accuracy > 0) ? (
                 <ResponsiveContainer width="100%" height={220}>
-                  <BarChart data={barData} barSize={36}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f2f8" vertical={false} />
-                    <XAxis dataKey="name" tick={{ fill: L.labelUp, fontSize: 11 }} axisLine={false} tickLine={false} />
-                    <YAxis domain={[50, 100]} tick={{ fill: L.labelUp, fontSize: 11 }} axisLine={false} tickLine={false} unit="%" />
+                  <BarChart data={barData} barSize={34}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+                    <XAxis dataKey="name" tick={{ fill: "#94a3b8", fontSize: 11 }} axisLine={false} tickLine={false} />
+                    <YAxis domain={[50, 100]} tick={{ fill: "#94a3b8", fontSize: 11 }} axisLine={false} tickLine={false} unit="%" />
                     <Tooltip
                       formatter={(v: unknown) => [`${Number(v).toFixed(2)}%`, "Accuracy"] as [string, string]}
-                      contentStyle={{ background: L.white, border: `1px solid ${L.border}`, borderRadius: 8, fontSize: 12 }}
-                      cursor={{ fill: L.pageBg }}
+                      contentStyle={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: 10, fontSize: 12, boxShadow: "0 4px 12px rgba(0,0,0,0.06)" }}
+                      cursor={{ fill: "#f8fafc" }}
                     />
-                    <Bar dataKey="accuracy" radius={[6, 6, 0, 0]}>
+                    <Bar dataKey="accuracy" radius={[5, 5, 0, 0]}>
                       {barData.map((entry, i) => (
                         // eslint-disable-next-line @typescript-eslint/no-deprecated
-                        <Cell key={i} fill={entry.fill} opacity={entry.active ? 1 : 0.65} />
+                        <Cell key={i} fill={entry.fill} opacity={entry.active ? 1 : 0.6} />
                       ))}
                     </Bar>
                   </BarChart>
                 </ResponsiveContainer>
               ) : (
-                <div style={{ height: 220, display: "flex", alignItems: "center", justifyContent: "center", color: L.faint, fontSize: 13 }}>
+                <div className="h-[220px] flex items-center justify-center text-muted-foreground text-[13px]">
                   Chargement des métriques…
                 </div>
               )}
             </div>
 
-            {/* Donut — Macron vs Le Pen */}
-            <div style={{ background: L.white, borderRadius: 16, border: `1px solid ${L.border}`, padding: 20 }}>
-              <p style={{ color: L.dark, fontWeight: 700, fontSize: 15, margin: "0 0 4px" }}>
-                Probabilités prédites
-              </p>
-              <p style={{ color: L.faint, fontSize: 11, margin: "0 0 8px" }}>
+            {/* Donut chart */}
+            <div className="bg-card rounded-2xl border border-border p-5 shadow-[var(--shadow-card)]">
+              <p className="text-foreground font-semibold text-[14px] mb-1">Probabilités prédites</p>
+              <p className="text-muted-foreground text-[11px] mb-2">
                 {activeEntity?.entity ?? "Nouvelle-Aquitaine"}
               </p>
               {donutData.length > 0 ? (
@@ -565,7 +484,7 @@ function DashboardPage() {
                     <Pie
                       data={donutData}
                       cx="50%" cy="50%"
-                      innerRadius={60} outerRadius={90}
+                      innerRadius={58} outerRadius={86}
                       paddingAngle={3}
                       dataKey="value"
                       label={({ name, value }) => `${name} ${value}%`}
@@ -576,32 +495,42 @@ function DashboardPage() {
                         <Cell key={i} fill={entry.fill} />
                       ))}
                     </Pie>
-                    <Legend formatter={(v) => <span style={{ color: L.mid, fontSize: 12 }}>{v}</span>} />
-                    <Tooltip formatter={(v: unknown) => [`${Number(v)}%`] as [string]} contentStyle={{ background: L.white, border: `1px solid ${L.border}`, borderRadius: 8, fontSize: 12 }} />
+                    <Legend formatter={(v) => <span style={{ color: "#64748b", fontSize: 12 }}>{v}</span>} />
+                    <Tooltip
+                      formatter={(v: unknown) => [`${Number(v)}%`] as [string]}
+                      contentStyle={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: 10, fontSize: 12 }}
+                    />
                   </PieChart>
                 </ResponsiveContainer>
               ) : (
-                <div style={{ height: 220, display: "flex", alignItems: "center", justifyContent: "center", color: L.faint, fontSize: 13 }}>
+                <div className="h-[220px] flex items-center justify-center text-muted-foreground text-[13px]">
                   {isLoading ? "Chargement…" : "Sélectionnez un département"}
                 </div>
               )}
             </div>
           </div>
 
-          {/* ── Results Table ────────────────────────────────────────────── */}
+          {/* Results table */}
           {tableData.length > 0 && (
-            <SectionCard title={`📋  Résultats — ${selectedDept === "ALL" ? "Départements" : selectedCanton === "ALL" ? `Cantons de ${selectedDept}` : selectedCanton}`}>
-              <div style={{ overflowX: "auto" }}>
-                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+            <div className="bg-card rounded-2xl border border-border shadow-[var(--shadow-card)] overflow-hidden">
+              <div className="px-5 py-4 border-b border-border">
+                <p className="text-[13px] font-semibold text-foreground">
+                  Résultats —{" "}
+                  {selectedDept === "ALL"
+                    ? "Départements"
+                    : selectedCanton === "ALL"
+                    ? `Cantons de ${selectedDept}`
+                    : selectedCanton}
+                </p>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-[13px] border-collapse">
                   <thead>
-                    <tr style={{ background: L.pageBg }}>
+                    <tr className="bg-secondary">
                       {["Entité", "Prédit", "Réel", "Correct", "Macron %", "Le Pen %", "Conf."].map(h => (
-                        <th key={h} style={{
-                          padding: "10px 14px", textAlign: "left",
-                          color: L.labelUp, fontWeight: 700, fontSize: 10,
-                          textTransform: "uppercase", letterSpacing: "0.1em",
-                          borderBottom: `1px solid ${L.border}`,
-                        }}>{h}</th>
+                        <th key={h} className="px-4 py-3 text-left text-muted-foreground font-bold text-[10px] uppercase tracking-widest border-b border-border">
+                          {h}
+                        </th>
                       ))}
                     </tr>
                   </thead>
@@ -611,65 +540,68 @@ function DashboardPage() {
                         key={i}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        transition={{ delay: i * 0.02 }}
-                        style={{ borderBottom: `1px solid #f0f2f8`, cursor: "default" }}
-                        onMouseEnter={e => (e.currentTarget.style.background = L.pageBg)}
-                        onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
+                        transition={{ delay: i * 0.018 }}
+                        className="border-b border-border/50 hover:bg-secondary/60 transition-colors cursor-default"
                       >
-                        <td style={{ padding: "10px 14px", fontWeight: 600, color: L.dark }}>{row.entity}</td>
-                        <td style={{ padding: "10px 14px" }}>
-                          <span style={{
-                            background: row.predicted === "MACRON" ? L.activeLt : L.wrongLt,
-                            color: row.predicted === "MACRON" ? L.activeDk : L.wrongDk,
-                            borderRadius: 6, padding: "2px 8px", fontWeight: 600, fontSize: 12,
-                          }}>{row.predicted}</span>
+                        <td className="px-4 py-3 font-semibold text-foreground">{row.entity}</td>
+                        <td className="px-4 py-3">
+                          <span className={`rounded-md px-2.5 py-0.5 text-[11px] font-bold ${
+                            row.predicted === "MACRON"
+                              ? "bg-primary/10 text-primary"
+                              : "bg-destructive/10 text-destructive"
+                          }`}>
+                            {row.predicted}
+                          </span>
                         </td>
-                        <td style={{ padding: "10px 14px", color: L.mid }}>{row.real}</td>
-                        <td style={{ padding: "10px 14px" }}>
+                        <td className="px-4 py-3 text-foreground/60">{row.real}</td>
+                        <td className="px-4 py-3">
                           {row.is_correct
-                            ? <CheckCircle2 style={{ color: "#059669", width: 16, height: 16 }} />
-                            : <XCircle      style={{ color: "#dc2626", width: 16, height: 16 }} />}
+                            ? <CheckCircle2 className="text-emerald-500 w-4 h-4" />
+                            : <XCircle      className="text-destructive w-4 h-4" />}
                         </td>
-                        <td style={{ padding: "10px 14px", color: L.mid }}>
+                        <td className="px-4 py-3 text-foreground/60">
                           {row.proba_macron != null ? `${row.proba_macron.toFixed(1)}%` : "—"}
                         </td>
-                        <td style={{ padding: "10px 14px", color: L.mid }}>
+                        <td className="px-4 py-3 text-foreground/60">
                           {row.proba_lepen != null ? `${row.proba_lepen.toFixed(1)}%` : "—"}
                         </td>
-                        <td style={{ padding: "10px 14px", color: L.faint }}>{row.confidence ?? "—"}</td>
+                        <td className="px-4 py-3 text-muted-foreground">{row.confidence ?? "—"}</td>
                       </motion.tr>
                     ))}
                   </tbody>
                 </table>
-                {tableData.length > 30 && (
-                  <p style={{ color: L.faint, fontSize: 12, margin: "12px 0 0", textAlign: "center" }}>
-                    {tableData.length - 30} lignes supplémentaires (affinez le filtre canton pour voir plus)
-                  </p>
-                )}
               </div>
-            </SectionCard>
+              {tableData.length > 30 && (
+                <p className="text-muted-foreground text-[12px] py-3 text-center border-t border-border">
+                  {tableData.length - 30} lignes supplémentaires — affinez le filtre canton pour en voir plus
+                </p>
+              )}
+            </div>
           )}
 
-          {/* ── Département badges ───────────────────────────────────────── */}
-          <div style={{ textAlign: "center", padding: "8px 0 32px" }}>
-            <div style={{ display: "flex", justifyContent: "center", gap: 8, marginBottom: 8, flexWrap: "wrap" }}>
+          {/* Department color palette */}
+          <div className="flex flex-col items-center gap-2 pb-6">
+            <div className="flex gap-2 flex-wrap justify-center">
               {DEPT_COLORS.map((c, i) => (
                 <motion.div
                   key={i}
-                  whileHover={{ scale: 1.3 }}
-                  style={{ width: 22, height: 22, background: c, borderRadius: 6, cursor: "default" }}
+                  whileHover={{ scale: 1.25 }}
+                  className="w-5 h-5 rounded-md"
+                  style={{ background: c }}
                 />
               ))}
             </div>
-            <p style={{ color: L.faint, fontSize: 12, margin: 0 }}>
-              12 départements · Nouvelle-Aquitaine
-            </p>
+            <p className="text-muted-foreground text-[12px]">12 départements · Nouvelle-Aquitaine</p>
           </div>
 
           {isLoading && (
-            <div style={{ textAlign: "center", padding: "40px 0", color: L.muted, fontSize: 13 }}>
-              <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: "linear" }} style={{ display: "inline-block", width: 20, height: 20, border: "2px solid #dde3f0", borderTopColor: L.active, borderRadius: "50%", marginBottom: 10 }} />
-              <p style={{ margin: 0 }}>Chargement des prédictions…</p>
+            <div className="flex flex-col items-center gap-3 py-10 text-muted-foreground text-[13px]">
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+                className="w-5 h-5 border-2 border-border border-t-primary rounded-full"
+              />
+              Chargement des prédictions…
             </div>
           )}
         </div>

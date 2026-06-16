@@ -96,10 +96,10 @@ function Index() {
   return (
     <div className="min-h-screen text-foreground">
       {/* Top nav */}
-      <nav className="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-xl">
+      <nav className="sticky top-0 z-50 border-b border-border bg-card shadow-sm">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-accent text-background font-bold">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground font-bold text-sm">
               G
             </div>
             <div className="leading-tight">
@@ -110,25 +110,25 @@ function Index() {
           <div className="hidden items-center gap-2 md:flex">
             <Link
               to="/dashboard"
-              className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary/60 px-4 py-2 text-xs font-semibold text-foreground transition-all hover:border-primary/50 hover:scale-105"
+              className="inline-flex items-center gap-2 rounded-xl border border-border bg-secondary px-4 py-2 text-xs font-semibold text-foreground transition-all hover:border-primary/40 hover:bg-primary/5 no-underline"
             >
               <Activity className="h-3.5 w-3.5" />
               Dashboard
             </Link>
             <Link
               to="/visualisation"
-              className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-primary to-accent px-4 py-2 text-xs font-semibold text-background transition-all hover:shadow-lg hover:shadow-primary/30 hover:scale-105"
+              className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground transition-all hover:bg-primary/90 hover:shadow-md shadow-primary/20 no-underline"
             >
               <BarChart3 className="h-3.5 w-3.5" />
               Visualisation
             </Link>
-            <span className="rounded-full border border-border bg-secondary/60 px-3 py-1 text-xs text-muted-foreground">
+            <span className="rounded-xl border border-border bg-secondary px-3 py-1.5 text-xs text-muted-foreground">
               {data?.summary.model_name ?? "—"} · {data?.summary.model_accuracy ?? "—"}% acc
             </span>
-            <span className="flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-400">
+            <span className="flex items-center gap-1.5 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-600">
               <span className="relative flex h-1.5 w-1.5">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-75" />
+                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
               </span>
               Live
             </span>
@@ -137,29 +137,29 @@ function Index() {
       </nav>
 
       {/* Hero */}
-      <header className="relative overflow-hidden border-b border-border/40">
-        <div className="absolute inset-0" style={{ background: "var(--gradient-glow)" }} />
-        <div className="relative mx-auto max-w-7xl px-6 py-16 md:py-24">
+      <header className="relative overflow-hidden border-b border-border/50 bg-card">
+        <div className="absolute inset-0 opacity-40" style={{ background: "var(--gradient-glow)" }} />
+        <div className="relative mx-auto max-w-7xl px-6 py-14 md:py-20">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             className="max-w-3xl"
           >
-            <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card/60 px-3 py-1 text-xs text-muted-foreground backdrop-blur">
-              <Sparkles className="h-3.5 w-3.5 text-accent" />
+            <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs text-primary font-semibold uppercase tracking-widest">
+              <Sparkles className="h-3.5 w-3.5" />
               Présidentielle 2022 · Région Nouvelle-Aquitaine
             </span>
-            <h1 className="mt-5 text-4xl font-semibold tracking-tight md:text-6xl">
+            <h1 className="mt-5 text-4xl font-bold tracking-tight text-foreground md:text-5xl">
               Prédire le vote{" "}
-              <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+              <span className="text-primary">
                 par la donnée
               </span>
             </h1>
             <p className="mt-5 max-w-2xl text-base text-muted-foreground md:text-lg">
               Pipeline complet — collecte,
               feature engineering Delta Lake, entraînement XGBoost, et lecture macro-politique des résultats
-              à l'échelle <span className="text-foreground">région · département · canton</span>.
+              à l'échelle <span className="font-semibold text-foreground">région · département · canton</span>.
             </p>
 
             <div className="mt-7 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
@@ -189,60 +189,56 @@ function Index() {
             variants={itemVariant}
             initial="hidden"
             animate="show"
-            className="grid gap-6 rounded-3xl border border-border p-6 md:p-8 lg:grid-cols-[1.35fr_0.95fr]"
-            style={{
-              background:
-                "linear-gradient(135deg, oklch(0.24 0.045 260 / 0.96), oklch(0.19 0.04 260 / 0.88))",
-              boxShadow: "var(--shadow-elegant)",
-            }}
+            className="grid gap-6 rounded-3xl border border-primary/20 bg-primary p-6 md:p-8 lg:grid-cols-[1.35fr_0.95fr]"
+            style={{ boxShadow: "var(--shadow-elegant)" }}
           >
             <div>
-              <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-accent">
+              <p className="text-[11px] font-semibold uppercase tracking-widest text-primary-foreground/70">
                 Accès rapide à la visualisation
               </p>
-              <h2 className="mt-3 max-w-2xl text-2xl font-semibold tracking-tight md:text-4xl">
-                Ouvre une page dédiée pour lire les courbes, les corrélations et les comparaisons de modèles.
+              <h2 className="mt-3 max-w-2xl text-2xl font-bold tracking-tight text-primary-foreground md:text-3xl">
+                Explorez les courbes, corrélations et comparaisons de modèles ML.
               </h2>
-              <p className="mt-4 max-w-2xl text-sm text-muted-foreground md:text-base">
-                La visualisation reprend tes résultats ML réels et les présente dans un format plus net : matrice de corrélation,
+              <p className="mt-4 max-w-2xl text-sm text-primary-foreground/70 md:text-base">
+                La visualisation reprend les résultats ML réels : matrice de corrélation,
                 courbes d'apprentissage et bar charts de performance.
               </p>
 
               <div className="mt-6 flex flex-wrap items-center gap-3">
                 <Link
                   to="/visualisation"
-                  className="group inline-flex items-center gap-3 rounded-2xl bg-gradient-to-r from-primary via-primary to-accent px-6 py-3 text-sm font-semibold text-background shadow-lg shadow-primary/25 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-primary/35"
+                  className="group inline-flex items-center gap-2 rounded-xl bg-white/15 border border-white/25 px-5 py-2.5 text-sm font-semibold text-white backdrop-blur transition-all hover:bg-white/25 no-underline"
                 >
-                  <BarChart3 className="h-5 w-5 transition-transform duration-300 group-hover:rotate-12" />
+                  <BarChart3 className="h-4 w-4" />
                   Voir la visualisation
                   <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
                 </Link>
-                <span className="rounded-full border border-border bg-secondary/60 px-4 py-2 text-xs text-muted-foreground">
+                <span className="rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs text-primary-foreground/80">
                   {data.summary.model_name} · {data.summary.model_accuracy}% accuracy
                 </span>
               </div>
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2">
-              <div className="rounded-2xl border border-border/70 bg-background/20 p-4 backdrop-blur-sm">
-                <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-muted-foreground">Meilleur modèle</p>
-                <p className="mt-3 text-2xl font-semibold text-foreground">{data.summary.model_name}</p>
-                <p className="mt-1 text-xs text-muted-foreground">Score global affiché dans le dashboard</p>
+              <div className="rounded-2xl border border-white/15 bg-white/10 p-4">
+                <p className="text-[10px] font-semibold uppercase tracking-widest text-primary-foreground/60">Meilleur modèle</p>
+                <p className="mt-3 text-2xl font-bold text-primary-foreground">{data.summary.model_name}</p>
+                <p className="mt-1 text-xs text-primary-foreground/60">Score global affiché dans le dashboard</p>
               </div>
-              <div className="rounded-2xl border border-border/70 bg-background/20 p-4 backdrop-blur-sm">
-                <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-muted-foreground">Accuracy</p>
-                <p className="mt-3 text-2xl font-semibold text-foreground">{data.summary.model_accuracy}%</p>
-                <p className="mt-1 text-xs text-muted-foreground">Résultat du modèle chargé</p>
+              <div className="rounded-2xl border border-white/15 bg-white/10 p-4">
+                <p className="text-[10px] font-semibold uppercase tracking-widest text-primary-foreground/60">Accuracy</p>
+                <p className="mt-3 text-2xl font-bold text-primary-foreground">{data.summary.model_accuracy}%</p>
+                <p className="mt-1 text-xs text-primary-foreground/60">Résultat du modèle chargé</p>
               </div>
-              <div className="rounded-2xl border border-border/70 bg-background/20 p-4 backdrop-blur-sm">
-                <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-muted-foreground">Vue active</p>
-                <p className="mt-3 text-2xl font-semibold text-foreground">{activeEntity?.entity || "Région"}</p>
-                <p className="mt-1 text-xs text-muted-foreground">Lecture détaillée selon le filtre courant</p>
+              <div className="rounded-2xl border border-white/15 bg-white/10 p-4">
+                <p className="text-[10px] font-semibold uppercase tracking-widest text-primary-foreground/60">Vue active</p>
+                <p className="mt-3 text-2xl font-bold text-primary-foreground">{activeEntity?.entity || "Région"}</p>
+                <p className="mt-1 text-xs text-primary-foreground/60">Lecture détaillée selon le filtre courant</p>
               </div>
-              <div className="rounded-2xl border border-border/70 bg-background/20 p-4 backdrop-blur-sm">
-                <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-muted-foreground">Graphiques</p>
-                <p className="mt-3 text-2xl font-semibold text-foreground">5+</p>
-                <p className="mt-1 text-xs text-muted-foreground">Corrélations, courbes et comparaisons</p>
+              <div className="rounded-2xl border border-white/15 bg-white/10 p-4">
+                <p className="text-[10px] font-semibold uppercase tracking-widest text-primary-foreground/60">Graphiques</p>
+                <p className="mt-3 text-2xl font-bold text-primary-foreground">5+</p>
+                <p className="mt-1 text-xs text-primary-foreground/60">Corrélations, courbes et comparaisons</p>
               </div>
             </div>
           </motion.section>
